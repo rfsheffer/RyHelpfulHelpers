@@ -31,4 +31,8 @@ public:
     // Return true if the level passed in is the persistent level
     UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
     static bool IsLevelPersistentLevel(ULevel* levelIn);
+
+    // Searches the level package for an object by name
+    UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
+    static UObject* FindObjectInLevelByName(ULevel* levelToSearch, const FString& nameToFind);
 };

@@ -68,3 +68,11 @@ bool URyRuntimeLevelHelpers::IsLevelPersistentLevel(ULevel* levelIn)
 
     return levelIn == levelIn->OwningWorld->PersistentLevel;
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+UObject* URyRuntimeLevelHelpers::FindObjectInLevelByName(ULevel* levelToSearch, const FString& nameToFind)
+{
+    return StaticFindObject(/*Class=*/ NULL, levelToSearch, *nameToFind, true);
+}
