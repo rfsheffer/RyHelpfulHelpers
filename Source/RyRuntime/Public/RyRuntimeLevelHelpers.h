@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Kismet/BlueprintFunctionLibrary.h"
 #include "RyRuntimeLevelHelpers.generated.h"
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -33,6 +34,6 @@ public:
     static bool IsLevelPersistentLevel(ULevel* levelIn);
 
     // Searches the level package for an object by name
-    UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
+    UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers")
     static UObject* FindObjectInLevelByName(ULevel* levelToSearch, const FString& nameToFind);
 };
