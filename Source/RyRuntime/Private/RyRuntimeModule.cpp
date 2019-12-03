@@ -1,4 +1,4 @@
-// Copyright 2019 Ryan Sheffer. All Rights Reserved.
+// Copyright 2020 Sheffer Online Services. All Rights Reserved.
 
 #include "RyRuntimePrivatePCH.h"
 
