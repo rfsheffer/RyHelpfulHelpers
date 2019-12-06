@@ -18,4 +18,8 @@ public:
     /** Returns true if the Soft Object Reference is not null AND not pending kill */
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers", meta = (BlueprintThreadSafe))
 	static bool IsLiveSoftObjectReference(const TSoftObjectPtr<UObject>& SoftObjectReference);
+
+    // A call to see if a package is currently loaded and load that. If not loaded, tries to load the package.
+    UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
+    static UPackage* FindOrLoadPackage(const FString& PackageName);
 };
