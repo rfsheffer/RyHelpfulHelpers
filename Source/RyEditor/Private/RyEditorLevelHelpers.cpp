@@ -18,7 +18,8 @@ URyEditorLevelHelpers::URyEditorLevelHelpers(const FObjectInitializer& ObjectIni
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-UActorComponent* URyEditorLevelHelpers::CreateComponentForActor(AActor *owner, UClass* newComponentClass)
+UActorComponent* URyEditorLevelHelpers::CreateComponentForActor(AActor *owner, TSubclassOf<UActorComponent> newComponentClass, 
+                                                                USceneComponent *attachComponent /*= nullptr*/)
 {
     if(!owner || !newComponentClass)
         return nullptr;
@@ -54,14 +55,21 @@ UActorComponent* URyEditorLevelHelpers::CreateComponentForActor(AActor *owner, U
     UActorComponent* NewInstanceComponent = NewObject<UActorComponent>(owner, newComponentClass, NewComponentName, RF_Transactional);
     if(USceneComponent* NewSceneComponent = Cast<USceneComponent>(NewInstanceComponent))
     {
-        USceneComponent* RootComponent = owner->GetRootComponent();
-        if(RootComponent)
+        if(attachComponent)
         {
-            NewSceneComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+            NewSceneComponent->AttachToComponent(attachComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
         }
         else
         {
-            owner->SetRootComponent(NewSceneComponent);
+            USceneComponent* RootComponent = owner->GetRootComponent();
+            if(RootComponent)
+            {
+                NewSceneComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+            }
+            else
+            {
+                owner->SetRootComponent(NewSceneComponent);
+            }
         }
     }
 

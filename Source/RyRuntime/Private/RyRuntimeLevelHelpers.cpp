@@ -15,7 +15,7 @@ URyRuntimeLevelHelpers::URyRuntimeLevelHelpers(const FObjectInitializer& ObjectI
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-ULevel* URyRuntimeLevelHelpers::GetActorLevel(AActor* actorIn)
+ULevel* URyRuntimeLevelHelpers::GetActorLevel(const AActor* actorIn)
 {
     if(!actorIn || !actorIn->IsValidLowLevelFast(true) || actorIn->IsPendingKill())
     {
@@ -75,4 +75,55 @@ bool URyRuntimeLevelHelpers::IsLevelPersistentLevel(ULevel* levelIn)
 UObject* URyRuntimeLevelHelpers::FindObjectInLevelByName(ULevel* levelToSearch, const FString& nameToFind)
 {
     return StaticFindObject(/*Class=*/ NULL, levelToSearch, *nameToFind, true);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeLevelHelpers::GetActorsOfTypeInLevel(ULevel* level, TSubclassOf<AActor> ActorClass, TArray<AActor*>& actorsOut)
+{
+    if(!level)
+    {
+        UE_LOG(LogRyRuntime, Error, TEXT("RyRuntimeLevelHelpers error. level is NULL!"));
+        return;
+    }
+
+    UWorld* const World = level->GetWorld();
+    if(!World)
+    {
+        UE_LOG(LogRyRuntime, Error, TEXT("RyRuntimeLevelHelpers error. No World Context!"));
+        return;
+    }
+
+    TArray<AActor*> FoundActors;
+    UGameplayStatics::GetAllActorsOfClass(World, ActorClass, FoundActors);
+    for(AActor* pActor : FoundActors)
+    {
+        if(URyRuntimeLevelHelpers::IsActorInLevel(pActor, level))
+        {
+            actorsOut.Add(pActor);
+        }
+    }
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+UActorComponent* URyRuntimeLevelHelpers::CreateComponentForActor(AActor *owner, TSubclassOf<UActorComponent> newComponentClass, 
+                                                                 USceneComponent *attachComponent /*= nullptr*/)
+{
+    UActorComponent* NewInstanceComponent = NewObject<UActorComponent>(owner, newComponentClass);
+    if(!NewInstanceComponent)
+        return nullptr;
+
+    if(attachComponent)
+    {
+        USceneComponent* sceneComp = Cast<USceneComponent>(NewInstanceComponent);
+        if(sceneComp)
+        {
+            sceneComp->AttachToComponent(attachComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+        }
+    }
+    NewInstanceComponent->RegisterComponent();
+    return NewInstanceComponent;
 }

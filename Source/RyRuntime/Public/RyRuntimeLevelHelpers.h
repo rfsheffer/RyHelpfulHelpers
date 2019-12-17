@@ -18,7 +18,7 @@ public:
 
     // Return the associated level this actor exists in
     UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
-	static ULevel* GetActorLevel(AActor* actorIn);
+	static ULevel* GetActorLevel(const AActor* actorIn);
 
     // Returns true if 'actorToCheck' is in the level 'levelToCheck'
     UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
@@ -36,4 +36,13 @@ public:
     // Searches the level package for an object by name
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers")
     static UObject* FindObjectInLevelByName(ULevel* levelToSearch, const FString& nameToFind);
+
+    // Return the associated level this actor exists in
+    UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "RyRuntime|LevelHelpers")
+	static void GetActorsOfTypeInLevel(ULevel* level, TSubclassOf<AActor> ActorClass, TArray<AActor*>& actorsOut);
+
+    // A Helper function to create a component of a class type and attach it to the actor at runtime
+    // This is not intended for Blueprint as blueprint has a whole set of component creation nodes.
+    static UActorComponent* CreateComponentForActor(AActor *owner, TSubclassOf<UActorComponent> newComponentClass,
+                                                    USceneComponent *attachComponent = nullptr);
 };
