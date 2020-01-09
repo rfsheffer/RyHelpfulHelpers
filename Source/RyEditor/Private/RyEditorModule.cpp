@@ -1,6 +1,6 @@
 // Copyright 2020 Sheffer Online Services. All Rights Reserved.
 
-#include "RyEditorPrivatePCH.h"
+#include "RyEditorModule.h"
 
 #define LOCTEXT_NAMESPACE "RyEditorModule"
 

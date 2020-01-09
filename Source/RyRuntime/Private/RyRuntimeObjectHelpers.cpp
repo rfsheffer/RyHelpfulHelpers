@@ -2,6 +2,7 @@
 
 #include "RyRuntimeObjectHelpers.h"
 #include "UObject/ObjectRedirector.h"
+#include "RyRuntimeModule.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**

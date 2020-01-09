@@ -6,7 +6,7 @@ public class RyEditor : ModuleRules
 {
     public RyEditor(ReadOnlyTargetRules Target) : base(Target)
     {
-		PrivatePCHHeaderFile = "RyEditorPrivatePCH.h";
+		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PrivateIncludePaths.AddRange(
 			new string[] 

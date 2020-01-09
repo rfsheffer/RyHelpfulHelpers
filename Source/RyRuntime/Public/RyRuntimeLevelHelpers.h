@@ -14,7 +14,6 @@ class RYRUNTIME_API URyRuntimeLevelHelpers : public UBlueprintFunctionLibrary
 {
     GENERATED_BODY()
 public:
-    URyRuntimeLevelHelpers(const FObjectInitializer& ObjectInitializer);
 
     // Return the associated level this actor exists in
     UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
@@ -38,11 +37,11 @@ public:
     static UObject* FindObjectInLevelByName(ULevel* levelToSearch, const FString& nameToFind);
 
     // Return the associated level this actor exists in
-    UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "RyRuntime|LevelHelpers")
+    UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers")
 	static void GetActorsOfTypeInLevel(ULevel* level, TSubclassOf<AActor> ActorClass, TArray<AActor*>& actorsOut);
 
     // A Helper function to create a component of a class type and attach it to the actor at runtime
-    // This is not intended for Blueprint as blueprint has a whole set of component creation nodes.
-    static UActorComponent* CreateComponentForActor(AActor *owner, TSubclassOf<UActorComponent> newComponentClass,
-                                                    USceneComponent *attachComponent = nullptr);
+    UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers")
+    static class UActorComponent* CreateComponentForActor(AActor *owner, TSubclassOf<class UActorComponent> newComponentClass,
+                                                          class USceneComponent *attachComponent = nullptr);
 };

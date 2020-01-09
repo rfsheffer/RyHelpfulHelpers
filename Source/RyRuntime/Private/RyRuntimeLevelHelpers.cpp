@@ -1,16 +1,8 @@
 // Copyright 2020 Sheffer Online Services. All Rights Reserved.
 
-#include "RyRuntimePrivatePCH.h"
 #include "RyRuntimeLevelHelpers.h"
-
-//---------------------------------------------------------------------------------------------------------------------
-/**
-*/
-URyRuntimeLevelHelpers::URyRuntimeLevelHelpers(const FObjectInitializer& ObjectInitializer)
-                            : Super(ObjectInitializer)
-{
-
-}
+#include "RyRuntimeModule.h"
+#include "Kismet/GameplayStatics.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**

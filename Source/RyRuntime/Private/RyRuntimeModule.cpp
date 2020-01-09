@@ -1,6 +1,6 @@
 // Copyright 2020 Sheffer Online Services. All Rights Reserved.
 
-#include "RyRuntimePrivatePCH.h"
+#include "RyRuntimeModule.h"
 
 #define LOCTEXT_NAMESPACE "RyRuntimeModule"
 

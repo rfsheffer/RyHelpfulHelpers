@@ -6,7 +6,7 @@ public class RyRuntime : ModuleRules
 {
     public RyRuntime(ReadOnlyTargetRules Target) : base(Target)
     {
-		PrivatePCHHeaderFile = "RyRuntimePrivatePCH.h";
+		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PrivateIncludePaths.AddRange(
             new string[]

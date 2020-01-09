@@ -1,10 +1,10 @@
 // Copyright 2020 Sheffer Online Services. All Rights Reserved.
 
-#include "RyEditorPrivatePCH.h"
 #include "RyEditorLevelHelpers.h"
 #include "Kismet2/ComponentEditorUtils.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "Kismet2/KismetEditorUtilities.h"
+#include "RyEditorModule.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
