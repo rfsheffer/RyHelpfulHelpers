@@ -42,5 +42,4 @@ public:
     // /Engine/* : Content found in the engine
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
     static UObject* LoadObject(const FString& fullObjectPath);
-
 };
