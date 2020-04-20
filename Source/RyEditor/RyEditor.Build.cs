@@ -34,8 +34,9 @@ public class RyEditor : ModuleRules
                 "UnrealEd",
                 "AnimGraph",
                 "BlueprintGraph",
-                "AnimGraphRuntime"
-            }
+                "AnimGraphRuntime",
+				"AssetRegistry",
+			}
 		);
 	}
 }
