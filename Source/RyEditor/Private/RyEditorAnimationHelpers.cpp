@@ -115,4 +115,28 @@ UAnimMontage* URyEditorAnimationHelpers::CreateMontageOfAnimations(const TArray<
     return montage;
 }
 
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyEditorAnimationHelpers::CreateMontageSectionsFromSegments(UAnimMontage* MontageIn)
+{
+    if(!MontageIn || MontageIn->SlotAnimTracks.Num() == 0)
+        return;
+
+    float curTime = 0;
+    MontageIn->CompositeSections.Empty();
+    for(int32 segIndex = 0; segIndex < MontageIn->SlotAnimTracks[0].AnimTrack.AnimSegments.Num(); ++segIndex)
+    {
+        FAnimSegment& segment = MontageIn->SlotAnimTracks[0].AnimTrack.AnimSegments[segIndex];
+        if(segment.AnimReference)
+        {
+            MontageIn->AddAnimCompositeSection(segment.AnimReference->GetFName(), curTime);
+            curTime += segment.AnimReference->SequenceLength;
+        }
+    }
+
+    MontageIn->MarkPackageDirty();
+    MontageIn->PostEditChange();
+}
+
 #undef LOCTEXT_NAMESPACE

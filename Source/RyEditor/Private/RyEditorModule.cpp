@@ -23,3 +23,4 @@ void FRyEditorModule::ShutdownModule()
 #undef LOCTEXT_NAMESPACE
 	
 IMPLEMENT_MODULE(FRyEditorModule, RyEditor)
+DEFINE_LOG_CATEGORY(LogRyEditor);
