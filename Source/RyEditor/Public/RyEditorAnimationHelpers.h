@@ -14,7 +14,8 @@ class RYEDITOR_API URyEditorAnimationHelpers : public UBlueprintFunctionLibrary
     GENERATED_BODY()
 public:
 
-    // A Helper function to create a component of a class type and attach it to the actor
+    // Create a new montage asset containing a number of animation sequences as montage segments.
+    // Also creates sections in the montage named after and aligned to the sequence lengths.
     UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|AnimationHelpers")
     static class UAnimMontage* CreateMontageOfAnimations(const TArray<class UAnimSequence*>& AnimsIn, const FName MontageName);
 

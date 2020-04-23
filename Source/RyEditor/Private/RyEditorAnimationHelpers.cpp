@@ -124,13 +124,24 @@ void URyEditorAnimationHelpers::CreateMontageSectionsFromSegments(UAnimMontage* 
         return;
 
     float curTime = 0;
-    MontageIn->CompositeSections.Empty();
     for(int32 segIndex = 0; segIndex < MontageIn->SlotAnimTracks[0].AnimTrack.AnimSegments.Num(); ++segIndex)
     {
         FAnimSegment& segment = MontageIn->SlotAnimTracks[0].AnimTrack.AnimSegments[segIndex];
         if(segment.AnimReference)
         {
-            MontageIn->AddAnimCompositeSection(segment.AnimReference->GetFName(), curTime);
+            int32 sectionIndex = MontageIn->GetSectionIndex(segment.AnimReference->GetFName());
+            if(sectionIndex == INDEX_NONE)
+            {
+                // Add the missing section
+                MontageIn->AddAnimCompositeSection(segment.AnimReference->GetFName(), curTime);
+            }
+            else
+            {
+                // Update the time of the section that exists
+                FCompositeSection& section = MontageIn->GetAnimCompositeSection(sectionIndex);
+                section.SetTime(curTime, EAnimLinkMethod::Absolute);
+            }
+
             curTime += segment.AnimReference->SequenceLength;
         }
     }
