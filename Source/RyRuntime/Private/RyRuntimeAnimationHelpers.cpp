@@ -6,6 +6,7 @@
 #include "Animation/AnimSequence.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/Skeleton.h"
+#include "Animation/AnimMetaData.h"
 
 #define LOCTEXT_NAMESPACE "RyRuntime"
 
@@ -32,10 +33,15 @@ UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageFromMontage(UAnimM
     NewMontage->SetSkeleton(AssetSkeleton);
 
     // Copy tracks and sections
-    const TArray<class UAnimMetaData*>& metaToCpy = MontageIn->GetMetaData();
+    const TArray<UAnimMetaData*>& metaToCpy = MontageIn->GetMetaData();
     for(UAnimMetaData* metaData : metaToCpy)
     {
-        NewMontage->AddMetaData(metaData);
+        if(metaData == nullptr)
+            continue;
+
+        NewMontage->AddMetaData(NewObject<UAnimMetaData>(NewMontage, metaData->GetClass(), 
+                                                         MakeUniqueObjectName(NewMontage, metaData->GetClass(), metaData->GetFName()), 
+                                                         RF_Public, metaData));
     }
     NewMontage->SlotAnimTracks = MontageIn->SlotAnimTracks;
     NewMontage->CompositeSections = MontageIn->CompositeSections;
