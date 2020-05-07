@@ -56,4 +56,78 @@ UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageFromMontage(UAnimM
     return NewMontage;
 }
 
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeAnimationHelpers::GetMontageSectionNames(class UAnimMontage* MontageIn, TArray<FName>& NamesOut)
+{
+    if(!MontageIn)
+        return;
+
+    for(const FCompositeSection& section : MontageIn->CompositeSections)
+    {
+        NamesOut.Add(section.SectionName);
+    }
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeAnimationHelpers::MontageHasSection(class UAnimMontage* MontageIn, const FName SectionName)
+{
+    if(!MontageIn)
+        return false;
+
+    return MontageIn->GetSectionIndex(SectionName) != INDEX_NONE;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FName URyRuntimeAnimationHelpers::GetMontageSectionNameFromPosition(class UAnimMontage* MontageIn, const float Position)
+{
+    if(!MontageIn)
+        return NAME_None;
+
+    int32 SectionID = MontageIn->GetSectionIndexFromPosition(Position);
+    if(SectionID == INDEX_NONE)
+        return NAME_None;
+
+    return MontageIn->GetSectionName(SectionID);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeAnimationHelpers::GetMontageSectionStartAndEndTime(class UAnimMontage* MontageIn, const FName SectionName, float& OutStartTime, float& OutEndTime)
+{
+    if(!MontageIn)
+        return;
+
+    int32 SectionID = MontageIn->GetSectionIndex(SectionName);
+    if(SectionID == INDEX_NONE)
+        return;
+
+    MontageIn->GetSectionStartAndEndTime(SectionID, OutStartTime, OutEndTime);
+}
+
+float URyRuntimeAnimationHelpers::GetMontageSectionTimeLeftFromPos(class UAnimMontage* MontageIn, const FName SectionName, const float Position)
+{
+    if(!MontageIn)
+        return 0.0f;
+
+    int32 SectionID = MontageIn->GetSectionIndex(SectionName);
+    if(SectionID == INDEX_NONE)
+        return 0.0f;
+
+    if(MontageIn->IsValidSectionIndex(SectionID + 1))
+    {
+        return FMath::Max(0.0f, MontageIn->GetAnimCompositeSection(SectionID + 1).GetTime() - Position);
+    }
+    else
+    {
+        return FMath::Max(0.0f, MontageIn->SequenceLength - Position);
+    }
+}
+
 #undef LOCTEXT_NAMESPACE
