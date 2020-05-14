@@ -2,6 +2,7 @@
 
 #include "RyEditorStaticMeshHelpers.h"
 
+#include "Editor.h"
 #include "Engine/StaticMesh.h"
 #include "StaticMeshResources.h"
 #include "BusyCursor.h"
