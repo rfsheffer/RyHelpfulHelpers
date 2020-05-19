@@ -22,7 +22,8 @@ public class RyRuntime : ModuleRules
                 "Slate",
                 "SlateCore",
                 "Engine",
-            }
+				"NavigationSystem",
+			}
         );
     }
 }
