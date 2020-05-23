@@ -37,6 +37,7 @@ public class RyEditor : ModuleRules
                 "AnimGraphRuntime",
 				"AssetRegistry",
 				"RenderCore",
+				"UMGEditor",
 			}
 		);
 	}

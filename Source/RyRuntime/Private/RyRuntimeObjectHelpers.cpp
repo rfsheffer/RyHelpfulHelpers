@@ -68,3 +68,27 @@ UObject* URyRuntimeObjectHelpers::LoadObject(const FString& fullObjectPath)
 
     return LoadedObject;
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+UClass* URyRuntimeObjectHelpers::GetParentClass(UClass* Class)
+{
+    if(!Class)
+        return nullptr;
+
+    return Class->GetSuperClass();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeObjectHelpers::GetClassHierarchy(UClass* Class, TArray<UClass*>& ClassHierarchy)
+{
+    UClass* NextClass = Class;
+    while(NextClass && NextClass->GetSuperClass())
+    {
+        ClassHierarchy.Add(NextClass->GetSuperClass());
+        NextClass = NextClass->GetSuperClass();
+    }
+}

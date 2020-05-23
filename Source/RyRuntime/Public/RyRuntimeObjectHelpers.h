@@ -42,4 +42,12 @@ public:
     // /Engine/* : Content found in the engine
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
     static UObject* LoadObject(const FString& fullObjectPath);
+
+    // Return the parent class of a class
+    UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers")
+    static UClass* GetParentClass(UClass* Class);
+
+    // Return the class hierarchy in an array ordered from children to root parent
+    UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers")
+    static void GetClassHierarchy(UClass* Class, TArray<UClass*>& ClassHierarchy);
 };
