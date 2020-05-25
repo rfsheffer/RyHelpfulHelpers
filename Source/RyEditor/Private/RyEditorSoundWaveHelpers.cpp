@@ -30,4 +30,9 @@ void URyEditorSoundWaveHelpers::SetSubtitles(USoundWave* soundWave, const TArray
         cueIn.Time = cue.Time;
         soundWave->Subtitles.Add(cueIn);
     }
+
+    if(soundWave->CanModify())
+    {
+        soundWave->Modify();
+    }
 }
