@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "Kismet/BlueprintFunctionLibrary.h"
+
 #include "RyEditorLevelHelpers.generated.h"
 
 //---------------------------------------------------------------------------------------------------------------------

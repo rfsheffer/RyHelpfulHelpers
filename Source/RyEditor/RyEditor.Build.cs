@@ -38,6 +38,7 @@ public class RyEditor : ModuleRules
 				"AssetRegistry",
 				"RenderCore",
 				"UMGEditor",
+				"RyRuntime",
 			}
 		);
 	}

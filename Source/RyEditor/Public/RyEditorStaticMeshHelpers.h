@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Kismet/BlueprintFunctionLibrary.h"
 #include "PhysicsEngine/BodySetupEnums.h"
 
 #include "RyEditorStaticMeshHelpers.generated.h"

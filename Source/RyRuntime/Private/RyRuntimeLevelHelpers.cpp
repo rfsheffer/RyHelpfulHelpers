@@ -115,7 +115,15 @@ UActorComponent* URyRuntimeLevelHelpers::CreateComponentForActor(AActor *owner, 
         {
             sceneComp->AttachToComponent(attachComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
         }
+
+        if(!owner)
+        {
+            owner = attachComponent->GetOwner();
+        }
     }
-    NewInstanceComponent->RegisterComponent();
+    if(owner)
+    {
+        NewInstanceComponent->RegisterComponent();
+    }
     return NewInstanceComponent;
 }
