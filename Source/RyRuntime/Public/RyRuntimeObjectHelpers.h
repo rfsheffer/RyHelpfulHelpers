@@ -33,7 +33,12 @@ public:
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
     static UObject* LoadObjectFromPackage(UPackage* package, const FString& objectName);
 
-    // A call to see if a package is currently loaded and load that. If not loaded, tries to load the package.
+    // With a package, returns all objects within that package
+    // NOTE: This loads every asset within the package so it can be returned.
+    UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
+    static void GetObjectsInPackage(UPackage* package, TArray<UObject*>& ObjectsOut);
+
+    // A call to see if a package asset is currently loaded and load that. If not loaded, tries to load the package asset.
     // Package path is in this format: /Game/MyFolder/MyPackage.MyAsset
     // Where /Game/ is the mounting point.
     // Common mount points are:
@@ -50,4 +55,7 @@ public:
     // Return the class hierarchy in an array ordered from children to root parent
     UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers")
     static void GetClassHierarchy(UClass* Class, TArray<UClass*>& ClassHierarchy);
+
+    UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
+    static UObject* GetClassDefaultObject(TSubclassOf<UObject> theClass);
 };

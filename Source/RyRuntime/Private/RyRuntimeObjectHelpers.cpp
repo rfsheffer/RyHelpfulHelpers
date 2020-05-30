@@ -3,6 +3,8 @@
 #include "RyRuntimeObjectHelpers.h"
 #include "UObject/ObjectRedirector.h"
 #include "RyRuntimeModule.h"
+#include "UObject/Package.h"
+#include "UObject/UObjectIterator.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
@@ -40,6 +42,31 @@ UObject* URyRuntimeObjectHelpers::LoadObjectFromPackage(UPackage* package, const
     }
 
     return ::LoadObject<UObject>(package, *objectName);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeObjectHelpers::GetObjectsInPackage(UPackage* package, TArray<UObject*>& ObjectsOut)
+{
+    if(!package)
+    {
+        return;
+    }
+
+    if(!package->IsFullyLoaded())
+    {
+        package->FullyLoad();
+    }
+
+    for(TObjectIterator<UObject> ObjIt; ObjIt; ++ObjIt)
+    {
+        UObject* Object = *ObjIt;
+        if(Object->IsIn(package))
+        {
+            ObjectsOut.Add(Object);
+        }
+    }
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -91,4 +118,17 @@ void URyRuntimeObjectHelpers::GetClassHierarchy(UClass* Class, TArray<UClass*>& 
         ClassHierarchy.Add(NextClass->GetSuperClass());
         NextClass = NextClass->GetSuperClass();
     }
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+UObject* URyRuntimeObjectHelpers::GetClassDefaultObject(TSubclassOf<UObject> theClass)
+{
+    if(!theClass)
+    {
+        return nullptr;
+    }
+
+    return theClass->GetDefaultObject();
 }
