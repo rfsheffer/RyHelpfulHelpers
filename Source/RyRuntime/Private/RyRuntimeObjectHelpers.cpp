@@ -47,6 +47,17 @@ UObject* URyRuntimeObjectHelpers::LoadObjectFromPackage(UPackage* package, const
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
+UPackage* URyRuntimeObjectHelpers::GetPackageOfObject(UObject* object)
+{
+    if(!object)
+        return nullptr;
+
+    return object->GetOutermost();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
 void URyRuntimeObjectHelpers::GetObjectsInPackage(UPackage* package, TArray<UObject*>& ObjectsOut)
 {
     if(!package)
@@ -110,9 +121,13 @@ UClass* URyRuntimeObjectHelpers::GetParentClass(UClass* Class)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-void URyRuntimeObjectHelpers::GetClassHierarchy(UClass* Class, TArray<UClass*>& ClassHierarchy)
+void URyRuntimeObjectHelpers::GetClassHierarchy(UClass* Class, TArray<UClass*>& ClassHierarchy, const bool includeSelf)
 {
     UClass* NextClass = Class;
+    if(NextClass && includeSelf)
+    {
+        ClassHierarchy.Add(NextClass);
+    }
     while(NextClass && NextClass->GetSuperClass())
     {
         ClassHierarchy.Add(NextClass->GetSuperClass());

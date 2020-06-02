@@ -33,6 +33,10 @@ public:
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
     static UObject* LoadObjectFromPackage(UPackage* package, const FString& objectName);
 
+    // Gets the package of an object. Returns None if this object isn't part of a package
+    UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers")
+    static UPackage* GetPackageOfObject(UObject* object);
+
     // With a package, returns all objects within that package
     // NOTE: This loads every asset within the package so it can be returned.
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
@@ -54,7 +58,7 @@ public:
 
     // Return the class hierarchy in an array ordered from children to root parent
     UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers")
-    static void GetClassHierarchy(UClass* Class, TArray<UClass*>& ClassHierarchy);
+    static void GetClassHierarchy(UClass* Class, TArray<UClass*>& ClassHierarchy, const bool includeSelf = true);
 
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
     static UObject* GetClassDefaultObject(TSubclassOf<UObject> theClass);
