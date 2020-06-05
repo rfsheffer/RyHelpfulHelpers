@@ -1,6 +1,7 @@
 // Copyright 2020 Sheffer Online Services. All Rights Reserved.
 
 #include "RyEditorAnimationHelpers.h"
+#include "RyRuntimeObjectHelpers.h"
 #include "RyEditorModule.h"
 
 #include "Animation/AnimSequence.h"
@@ -50,7 +51,7 @@ UAnimMontage* URyEditorAnimationHelpers::CreateMontageOfAnimations(const TArray<
     FString assetName = MontageName.ToString() + TEXT("_Montage");
     FString assetPackagePath = FString::Printf(TEXT("%s/%s"), *basePackagePath, *assetName);
 
-    UPackage* assetPackage = FindPackage(nullptr, *assetPackagePath);
+    UPackage* assetPackage = URyRuntimeObjectHelpers::FindOrLoadPackage(*assetPackagePath);
     UAnimMontage* montage = nullptr;
     if(assetPackage)
     {
