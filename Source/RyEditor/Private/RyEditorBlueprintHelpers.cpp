@@ -129,8 +129,8 @@ UBlueprintGeneratedClass* URyEditorBlueprintHelpers::GetBlueprintGeneratedClassA
         return nullptr;
     }
 
-    FString generatedPath = FString::Printf(TEXT("%s.%s_C"), *packagePath, *FPaths::GetBaseFilename(packagePath));
-    return LoadObject<UBlueprintGeneratedClass>(NULL, *generatedPath, NULL, LOAD_None, NULL);
+    FString generatedClassName = FString::Printf(TEXT("%s_C"), *FPaths::GetBaseFilename(packagePath));
+    return LoadObject<UBlueprintGeneratedClass>(package, *generatedClassName, NULL, LOAD_None, NULL);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
