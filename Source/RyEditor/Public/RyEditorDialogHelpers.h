@@ -51,10 +51,10 @@ public:
                                const FString& FileTypes = TEXT("All Files (*)|*|Text Files (*.txt)|*.txt"));
 
     UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|DialogHelpers")
-    bool OpenDirectoryDialog(const FString& DialogTitle, const FString& DefaultPath, FString& OutFolderName);
+    static bool OpenDirectoryDialog(const FString& DialogTitle, const FString& DefaultPath, FString& OutFolderName);
 
     UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|DialogHelpers")
-    bool SaveFileDialog(const FString& DialogTitle, const FString& DefaultPath, const FString& DefaultFile, TArray<FString>& OutFilenames,
+    static bool SaveFileDialog(const FString& DialogTitle, const FString& DefaultPath, const FString& DefaultFile, TArray<FString>& OutFilenames,
                         UPARAM(meta = (Bitmask, BitmaskEnum = ERyOpenFileDialogFlags)) int32 Flags = 0,
                         const FString& FileTypes = TEXT("All Files (*)|*|Text Files (*.txt)|*.txt"));
 
