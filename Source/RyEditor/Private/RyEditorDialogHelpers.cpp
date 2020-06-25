@@ -6,6 +6,8 @@
 #include "EditorDirectories.h"
 #include "Framework/Application/SlateApplication.h"
 
+#include "Misc/MessageDialog.h"
+
 //--------------------------------------------------------------------------------------------------------------------
 /**
 */
@@ -90,4 +92,35 @@ FString URyEditorDialogHelpers::GetLastDirectory(ERyLastDirectory lastDirectory)
 {
     ELastDirectory::Type convertType = (ELastDirectory::Type)lastDirectory;
     return FEditorDirectories::Get().GetLastDirectory(convertType);
+}
+
+static_assert(ERyAppReturnType::Continue == (ERyAppReturnType)EAppReturnType::Continue, "EAppReturnType changed. Update ERyAppReturnType to match EAppReturnType!");
+static_assert(ERyAppMsgType::YesNoYesAll == (ERyAppMsgType)EAppMsgType::YesNoYesAll, "EAppMsgType changed. Update ERyAppMsgType to match EAppMsgType!");
+
+//--------------------------------------------------------------------------------------------------------------------
+/**
+*/
+ERyAppReturnType URyEditorDialogHelpers::OpenMessageDialog(ERyAppMsgType MessageType, const FText& Message, const FText& OptTitle)
+{
+    const FText* optTitle = nullptr;
+    if(!OptTitle.IsEmpty())
+    {
+        optTitle = &OptTitle;
+    }
+
+    return (ERyAppReturnType)FMessageDialog::Open((EAppMsgType::Type)MessageType, EAppReturnType::Cancel, Message, optTitle);
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyEditorDialogHelpers::OpenDebugMessageDialog(const FText& Message, const FText& OptTitle)
+{
+    const FText* optTitle = nullptr;
+    if(!OptTitle.IsEmpty())
+    {
+        optTitle = &OptTitle;
+    }
+
+    FMessageDialog::Debugf(Message, optTitle);
 }
