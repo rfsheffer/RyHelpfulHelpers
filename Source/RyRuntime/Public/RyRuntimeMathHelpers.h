@@ -9,7 +9,7 @@
 /**
   * Static Helper functions for mathematics.
 */
-UCLASS()
+UCLASS(meta=(BlueprintThreadSafe))
 class RYRUNTIME_API URyRuntimeMathHelpers : public UBlueprintFunctionLibrary
 {
     GENERATED_BODY()
@@ -45,6 +45,46 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|Math|HUD")
 	static FVector2D FindEdgeOf2DSquare(const FVector2D &TheSize, const float TheAngle);
+
+    /** Bitwise AND (A & B) */
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "Bitwise AND", CompactNodeTitle = "&", Keywords = "& and", CommutativeAssociativeBinaryOperator = "true"), Category="RyRuntime|Math|Byte")
+	static uint8 And_ByteByte(uint8 A, uint8 B);
+
+	/** Bitwise XOR (A ^ B) */
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "Bitwise XOR", CompactNodeTitle = "^", Keywords = "^ xor"), Category="RyRuntime|Math|Byte")
+	static uint8 Xor_ByteByte(uint8 A, uint8 B);
+
+	/** Bitwise OR (A | B) */
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "Bitwise OR", CompactNodeTitle = "|", Keywords = "| or", CommutativeAssociativeBinaryOperator = "true"), Category="RyRuntime|Math|Byte")
+	static uint8 Or_ByteByte(uint8 A, uint8 B);
+
+	/** Bitwise NOT (~A) */
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "Bitwise NOT", CompactNodeTitle = "~", Keywords = "~ not"), Category = "RyRuntime|Math|Byte")
+	static uint8 Not_Byte(uint8 A);
+
+    /** Bitwise Shift Left << */
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "Bitwise Shift Left", CompactNodeTitle = "<<", Keywords = "<< shift"), Category="RyRuntime|Math|Byte")
+	static uint8 ShiftLeft_Byte(uint8 val, int32 shift = 1);
+
+    /** Bitwise Shift Right >> */
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "Bitwise Shift Right", CompactNodeTitle = ">>", Keywords = ">> shift"), Category="RyRuntime|Math|Byte")
+	static uint8 ShiftRight_Byte(uint8 val, int32 shift = 1);
+
+    /** Bitwise Shift Left << */
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "Bitwise Shift Left", CompactNodeTitle = "<<", Keywords = "<< shift"), Category="RyRuntime|Math|Integer")
+	static int32 ShiftLeft_Int(int32 val, int32 shift = 1);
+
+    /** Bitwise Shift Right >> */
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "Bitwise Shift Right", CompactNodeTitle = ">>", Keywords = ">> shift"), Category="RyRuntime|Math|Integer")
+	static int32 ShiftRight_Int(int32 val, int32 shift = 1);
+
+    /** Bitwise Shift Left << */
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "Bitwise Shift Left", CompactNodeTitle = "<<", Keywords = "<< shift"), Category="RyRuntime|Math|Integer64")
+	static int64 ShiftLeft_Int64(int64 val, int32 shift = 1);
+
+    /** Bitwise Shift Right >> */
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "Bitwise Shift Right", CompactNodeTitle = ">>", Keywords = ">> shift"), Category="RyRuntime|Math|Integer64")
+	static int64 ShiftRight_Int64(int64 val, int32 shift = 1);
 };
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -72,4 +112,94 @@ FORCEINLINE_DEBUGGABLE
 float URyRuntimeMathHelpers::CalculateCatenary(float X, float scalingFactor)
 {
     return scalingFactor * coshf(X / scalingFactor);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE_DEBUGGABLE
+uint8 URyRuntimeMathHelpers::And_ByteByte(uint8 A, uint8 B)
+{
+    return A & B;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE_DEBUGGABLE
+uint8 URyRuntimeMathHelpers::Xor_ByteByte(uint8 A, uint8 B)
+{
+    return A ^ B;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE_DEBUGGABLE
+uint8 URyRuntimeMathHelpers::Or_ByteByte(uint8 A, uint8 B)
+{
+    return A | B;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE_DEBUGGABLE
+uint8 URyRuntimeMathHelpers::Not_Byte(uint8 A)
+{
+    return ~A;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE_DEBUGGABLE
+uint8 URyRuntimeMathHelpers::ShiftLeft_Byte(uint8 val, int32 shift)
+{
+    return val << shift;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE_DEBUGGABLE
+uint8 URyRuntimeMathHelpers::ShiftRight_Byte(uint8 val, int32 shift)
+{
+    return val >> shift;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE_DEBUGGABLE
+int32 URyRuntimeMathHelpers::ShiftLeft_Int(int32 val, int32 shift)
+{
+    return val << shift;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE_DEBUGGABLE
+int32 URyRuntimeMathHelpers::ShiftRight_Int(int32 val, int32 shift)
+{
+    return val >> shift;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE_DEBUGGABLE
+int64 URyRuntimeMathHelpers::ShiftLeft_Int64(int64 val, int32 shift)
+{
+    return val << shift;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE_DEBUGGABLE
+int64 URyRuntimeMathHelpers::ShiftRight_Int64(int64 val, int32 shift)
+{
+    return val >> shift;
 }
