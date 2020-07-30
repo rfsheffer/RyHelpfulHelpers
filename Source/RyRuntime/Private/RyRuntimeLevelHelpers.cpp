@@ -3,6 +3,10 @@
 #include "RyRuntimeLevelHelpers.h"
 #include "RyRuntimeModule.h"
 #include "Kismet/GameplayStatics.h"
+#include "Misc/PackageName.h"
+#include "Engine/Level.h"
+#include "Engine/World.h"
+#include "Engine/Engine.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
@@ -126,4 +130,20 @@ UActorComponent* URyRuntimeLevelHelpers::CreateComponentForActor(AActor *owner, 
         NewInstanceComponent->RegisterComponent();
     }
     return NewInstanceComponent;
+}
+
+static_assert(ERyWorldType::Inactive == (ERyWorldType)EWorldType::Inactive, "ERyWorldType is not aligned to EWorldType! Update ERyWorldType to contain all elements of EWorldType!");
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+ERyWorldType URyRuntimeLevelHelpers::GetWorldType(UObject* WorldContextObject)
+{
+    UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull);
+    FString Prefix;
+    if(World)
+    {
+        return (ERyWorldType)World->WorldType.GetValue();
+    }
+    return ERyWorldType::None;
 }
