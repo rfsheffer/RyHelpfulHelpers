@@ -1,4 +1,5 @@
-// Copyright 2020 Sheffer Online Services. All Rights Reserved.
+// Copyright 2020 Sheffer Online Services.
+// MIT License. See LICENSE for details.
 
 #pragma once
 
@@ -6,9 +7,9 @@
 #include "RyRuntimePlatformHelpers.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(bool, FRyFileFilter, const FString&, PathString);
-DECLARE_DYNAMIC_DELEGATE_RetVal_ThreeParams(bool, FRyDirectoryVisitor, const FString&, FileOrDirectoryPath, const bool, IsDirectory, const int32, DirectoryLevel);
+DECLARE_DYNAMIC_DELEGATE_RetVal_FourParams(bool, FRyDirectoryVisitor, const FString&, FileOrDirectoryPath, const bool, IsDirectory, const bool, WasFiltered, const int32, DirectoryLevel);
 typedef TFunction<bool(const FString& PathString)> RyNativeFileFilterSig;
-typedef TFunction<bool(const FString& FileOrDirectoryPath, const bool IsDirectory, const int32 DirectoryLevel)> RyNativeVisitorSig;
+typedef TFunction<bool(const FString& FileOrDirectoryPath, const bool IsDirectory, const bool WasFiltered, const int32 DirectoryLevel)> RyNativeVisitorSig;
 
 UENUM(BlueprintType)
 enum class ERyIterateDirectoryOut : uint8

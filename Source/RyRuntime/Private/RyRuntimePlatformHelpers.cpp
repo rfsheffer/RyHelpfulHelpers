@@ -1,4 +1,5 @@
-// Copyright 2020 Sheffer Online Services. All Rights Reserved.
+// Copyright 2020 Sheffer Online Services.
+// MIT License. See LICENSE for details.
 
 #include "RyRuntimePlatformHelpers.h"
 #include "GenericPlatform/GenericPlatformFile.h"
@@ -19,29 +20,19 @@ public:
 
     virtual bool Visit(const TCHAR* FilenameOrDirectory, bool bIsDirectory) override
     {
-        if(outOption == ERyIterateDirectoryOut::DirectoriesOnly && bIsDirectory)
+        bool wasFiltered = true;
+        if(outOption == ERyIterateDirectoryOut::FilesAndDirectories ||
+           (outOption == ERyIterateDirectoryOut::DirectoriesOnly && bIsDirectory) ||
+           (outOption == ERyIterateDirectoryOut::FilesOnly && !bIsDirectory))
         {
-            if(!DoFilter(FilenameOrDirectory))
-            {
-                paths.Add(FilenameOrDirectory);
-            }
-        }
-        else if(outOption == ERyIterateDirectoryOut::FilesOnly && !bIsDirectory)
-        {
-            if(!DoFilter(FilenameOrDirectory))
-            {
-                paths.Add(FilenameOrDirectory);
-            }
-        }
-        else
-        {
-            if(!DoFilter(FilenameOrDirectory))
+            wasFiltered = DoFilter(FilenameOrDirectory);
+            if(!wasFiltered)
             {
                 paths.Add(FilenameOrDirectory);
             }
         }
 
-        bool shouldVisit = DoVisit(FilenameOrDirectory, bIsDirectory);
+        bool shouldVisit = DoVisit(FilenameOrDirectory, bIsDirectory, wasFiltered);
         if(shouldVisit && bIsDirectory)
         {
             dirs.Add(FilenameOrDirectory);
@@ -50,7 +41,7 @@ public:
         return shouldVisit;
     }
 
-    virtual bool DoVisit(const FString& FileOrDirectoryPath, const bool IsDirectory){ return true; }
+    virtual bool DoVisit(const FString& FileOrDirectoryPath, const bool IsDirectory, const bool WasFiltered){ return true; }
     virtual bool DoFilter(const FString& PathString) { return false; }
 
     TArray<FString> dirs;
@@ -66,13 +57,13 @@ class RyNativePlatformFileFunctor : public RyBasePlatforFileFunctor
 {
 public:
 
-    virtual bool DoVisit(const FString& FileOrDirectoryPath, const bool IsDirectory) override
+    virtual bool DoVisit(const FString& FileOrDirectoryPath, const bool IsDirectory, const bool WasFiltered) override
     {
         if(visitor)
         {
-            return visitor(FileOrDirectoryPath, IsDirectory, dirLevel);
+            return visitor(FileOrDirectoryPath, IsDirectory, WasFiltered, dirLevel);
         }
-        return RyBasePlatforFileFunctor::DoVisit(FileOrDirectoryPath, IsDirectory);
+        return RyBasePlatforFileFunctor::DoVisit(FileOrDirectoryPath, IsDirectory, WasFiltered);
     }
     virtual bool DoFilter(const FString& PathString) override
     {
@@ -102,13 +93,13 @@ class RyBPPlatformFileFunctor : public RyBasePlatforFileFunctor
 {
 public:
 
-    virtual bool DoVisit(const FString& FileOrDirectoryPath, const bool IsDirectory) override
+    virtual bool DoVisit(const FString& FileOrDirectoryPath, const bool IsDirectory, const bool WasFiltered) override
     {
         if(visitor.IsBound())
         {
-            return visitor.Execute(FileOrDirectoryPath, IsDirectory, dirLevel);
+            return visitor.Execute(FileOrDirectoryPath, IsDirectory, WasFiltered, dirLevel);
         }
-        return RyBasePlatforFileFunctor::DoVisit(FileOrDirectoryPath, IsDirectory);
+        return RyBasePlatforFileFunctor::DoVisit(FileOrDirectoryPath, IsDirectory, WasFiltered);
     }
     virtual bool DoFilter(const FString& PathString) override
     {

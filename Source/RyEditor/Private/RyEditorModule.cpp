@@ -1,4 +1,5 @@
-// Copyright 2020 Sheffer Online Services. All Rights Reserved.
+// Copyright 2020 Sheffer Online Services.
+// MIT License. See LICENSE for details.
 
 #include "RyEditorModule.h"
 
