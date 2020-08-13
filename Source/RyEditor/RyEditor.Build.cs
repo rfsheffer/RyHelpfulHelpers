@@ -40,7 +40,8 @@ public class RyEditor : ModuleRules
 				"RenderCore",
 				"UMGEditor",
 				"RyRuntime",
-				"DesktopPlatform"
+				"DesktopPlatform",
+				"MainFrame",
 			}
 		);
 	}

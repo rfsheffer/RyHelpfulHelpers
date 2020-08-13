@@ -100,9 +100,25 @@ public:
 
     // Open a generic message dialog
     UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|DialogHelpers")
-    static ERyAppReturnType OpenMessageDialog(ERyAppMsgType MessageType, const FText& Message, const FText& OptTitle);
+    static ERyAppReturnType OpenMessageDialog(ERyAppMsgType MessageType, const FText& Message, const FText& OptTitle = FText());
 
     // Open a debug message dialog
     UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|DialogHelpers")
-    static void OpenDebugMessageDialog(const FText& Message, const FText& OptTitle);
+    static void OpenDebugMessageDialog(const FText& Message, const FText& OptTitle = FText());
+
+    // Opens a dialog containing the details of the supplied class. When the window is closed, an object of the class is returned with whatever edits were made.
+    // This is useful for creating custom import windows, etc.
+    // NOTE: Once you are finished with the details object, destroy it using ReleaseObjectDetailsDialog or it will stick around for the entirety of the editor session.
+    // @param DetailsClass - The class to create an instance of and show details for
+    // @param WindowTitle - The title text on the window
+    // @param ButtonText - The text on the button
+    // @param ButtonPressedOut - The button was pressed, the window wasn't closed.
+    // @param WindowSize - Default Window Size
+    // @return The object created and edited in the details panel
+    UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|DialogHelpers")
+    static UObject* OpenObjectDetailsDialog(TSubclassOf<UObject> DetailsClass, 
+                                            const FText WindowTitle, 
+                                            const FText ButtonText, 
+                                            bool& ButtonPressedOut, 
+                                            const FVector2D& WindowSize = FVector2D(400, 550));
 };

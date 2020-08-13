@@ -3,6 +3,14 @@
 
 #include "RyEditorDialogHelpers.h"
 
+#include "AssetToolsModule.h"
+#include "PropertyEditorModule.h"
+
+#include "Toolkits/AssetEditorToolkit.h"
+#include "Editor/LevelEditor/Public/LevelEditor.h"
+#include "Editor/PropertyEditor/Public/PropertyEditorModule.h"
+#include "Interfaces/IMainFrameModule.h"
+
 #include "DesktopPlatformModule.h"
 #include "EditorDirectories.h"
 #include "Framework/Application/SlateApplication.h"
@@ -124,4 +132,168 @@ void URyEditorDialogHelpers::OpenDebugMessageDialog(const FText& Message, const 
     }
 
     FMessageDialog::Debugf(Message, optTitle);
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+/**
+*/
+DECLARE_DELEGATE_OneParam(FOnRyDialogButtonClicked, TWeakObjectPtr<UObject>);
+DECLARE_DELEGATE(FOnRyDialogWindowClosed);
+
+class RyObjectDetailsDialog
+{ 
+public:
+    static TSharedPtr<RyObjectDetailsDialog> CreateWindow(UClass* importFieldsClass, const FText windowTitle, const FText buttonText, const FVector2D& clientSize)
+    {
+        TSharedPtr<RyObjectDetailsDialog> detailsDialog = MakeShared<RyObjectDetailsDialog>();
+
+        detailsDialog->ParamsObject = NewObject<UObject>(GetTransientPackage(), importFieldsClass);
+        check(detailsDialog->ParamsObject.IsValid());
+        detailsDialog->ParamsObject->AddToRoot();
+
+        FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
+        TArray< UObject* > ObjectsToView;
+        ObjectsToView.Add(detailsDialog->ParamsObject.Get());
+
+        SAssignNew(detailsDialog->DialogWindow, SWindow)
+            .Title(windowTitle)
+            .ClientSize(clientSize);
+
+        FDetailsViewArgs Args;
+        Args.bHideSelectionTip = true;
+        Args.bLockable = false;
+
+        FPropertyEditorModule& PropertyEditorModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
+        TSharedRef<IDetailsView> DetailView = PropertyEditorModule.CreateDetailView(Args);
+
+        bool bHaveTemplate = false;
+        for(int32 i = 0; i < ObjectsToView.Num(); i++)
+        {
+            if(ObjectsToView[i] != NULL && ObjectsToView[i]->IsTemplate())
+            {
+                bHaveTemplate = true;
+                break;
+            }
+        }
+
+        DetailView->SetIsPropertyVisibleDelegate(FIsPropertyVisible::CreateLambda([](const FPropertyAndParent& PropertyAndParent, bool bHaveTemplate) -> bool
+        {
+            const UProperty& Property = PropertyAndParent.Property;
+
+            if(bHaveTemplate)
+            {
+                const UClass* PropertyOwnerClass = Cast<const UClass>(Property.GetOuter());
+                const bool bDisableEditOnTemplate = PropertyOwnerClass
+                    && PropertyOwnerClass->IsNative()
+                    && Property.HasAnyPropertyFlags(CPF_DisableEditOnTemplate);
+                if(bDisableEditOnTemplate)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }, bHaveTemplate));
+
+        DetailView->SetObjects(ObjectsToView);
+
+        detailsDialog->DialogWindow->SetContent(
+            SNew(SVerticalBox)
+            + SVerticalBox::Slot()
+            .FillHeight(1.0f)
+            [
+                SNew(SBorder)
+                .BorderImage(FEditorStyle::GetBrush(TEXT("PropertyWindow.WindowBorder")))
+                [
+                    DetailView
+                ]
+            ]
+            + SVerticalBox::Slot()
+            .AutoHeight()
+            [
+                SNew(SBorder)
+                .BorderImage(FEditorStyle::GetBrush(TEXT("PropertyWindow.WindowBorder")))
+                [
+                    SNew(SButton)
+                    .Text(buttonText)
+                    .ForegroundColor(FLinearColor::Black)
+                    .OnClicked(detailsDialog.ToSharedRef(), &RyObjectDetailsDialog::OnImportClicked)
+                ]
+            ]
+        );
+
+        detailsDialog->DialogWindow->SetOnWindowClosed(FOnWindowClosed::CreateSP(detailsDialog.ToSharedRef(), &RyObjectDetailsDialog::OnImportWindowClosed));
+        return detailsDialog;
+    }
+
+    TSharedPtr<SWindow> DialogWindow;
+    TWeakObjectPtr<UObject> ParamsObject;
+
+    FOnRyDialogButtonClicked OnButtonClickedEvent;
+    FOnRyDialogWindowClosed OnDialogClosedEvent;
+
+    ~RyObjectDetailsDialog()
+    {
+        if(ParamsObject.IsValid())
+        {
+            ParamsObject->RemoveFromRoot();
+        }
+    }
+
+    FReply OnImportClicked()
+    {
+        OnButtonClickedEvent.ExecuteIfBound(ParamsObject);
+        DialogWindow->RequestDestroyWindow();
+        return FReply::Handled();
+    }
+    void OnImportWindowClosed(const TSharedRef<SWindow>& window)
+    {
+        OnDialogClosedEvent.ExecuteIfBound();
+    }
+
+    void Show()
+    {
+        // If the main frame exists parent the window to it
+        TSharedPtr< SWindow > ParentWindow;
+        if(FModuleManager::Get().IsModuleLoaded("MainFrame"))
+        {
+            IMainFrameModule& MainFrame = FModuleManager::GetModuleChecked<IMainFrameModule>("MainFrame");
+            ParentWindow = MainFrame.GetParentWindow();
+        }
+
+        FSlateApplication::Get().AddModalWindow(DialogWindow.ToSharedRef(), ParentWindow);
+
+//         if(ParentWindow.IsValid())
+//         {
+//             // Parent the window to the main frame 
+//             FSlateApplication::Get().AddWindowAsNativeChild(DialogWindow.ToSharedRef(), ParentWindow.ToSharedRef());
+//         }
+//         else
+//         {
+//             FSlateApplication::Get().AddWindow(DialogWindow.ToSharedRef());
+//         }
+    }
+};
+
+//--------------------------------------------------------------------------------------------------------------------
+/**
+*/
+UObject* URyEditorDialogHelpers::OpenObjectDetailsDialog(TSubclassOf<UObject> DetailsClass, const FText WindowTitle, const FText ButtonText, bool& ButtonPressedOut, const FVector2D& WindowSize)
+{
+    ButtonPressedOut = false;
+    TWeakObjectPtr<UObject> ParamsObjectOut;
+    TSharedPtr<RyObjectDetailsDialog> CurrentImportWindow = RyObjectDetailsDialog::CreateWindow(DetailsClass, WindowTitle, ButtonText, WindowSize);
+    CurrentImportWindow->OnButtonClickedEvent.BindLambda([&ParamsObjectOut, &ButtonPressedOut](TWeakObjectPtr<UObject> ParamsObject) {
+        ParamsObjectOut = ParamsObject;
+        ButtonPressedOut = true;
+    });
+//     CurrentImportWindow->OnDialogClosedEvent.BindLambda([]() {
+//         
+//     });
+    CurrentImportWindow->Show();
+
+    if(ParamsObjectOut.IsValid())
+    {
+        return ParamsObjectOut.Get();
+    }
+    return nullptr;
 }
