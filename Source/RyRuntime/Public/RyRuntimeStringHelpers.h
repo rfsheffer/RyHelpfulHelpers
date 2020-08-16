@@ -17,10 +17,16 @@ class RYRUNTIME_API URyRuntimeStringHelpers : public UBlueprintFunctionLibrary
 public:
 
     /**
-     * Is the source string empty? (Has no characters)
+     * Is the name None?
+    */
+    UFUNCTION(BlueprintPure, Category = "RyRuntime|Name")
+    static bool IsNone(const FName name);
+
+    /**
+     * Is the string empty? (Has no characters)
     */
     UFUNCTION(BlueprintPure, Category = "RyRuntime|String")
-    static bool IsEmpty(const FString& sourceString);
+    static bool IsEmpty(const FString& string);
 
     /**
      * Sets a char by index in the string

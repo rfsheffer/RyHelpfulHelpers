@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "Kismet/BlueprintFunctionLibrary.h"
 #include "RyRuntimeAnimationHelpers.generated.h"
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -16,8 +17,10 @@ class RYRUNTIME_API URyRuntimeAnimationHelpers : public UBlueprintFunctionLibrar
 public:
 
     // Creates a duplicate montage from another montage. This is useful for cases where you want to modify a montage asset at runtime.
-    UFUNCTION(BlueprintCallable, Category = "RyRuntime|AnimationHelpers")
-    static class UAnimMontage* CreateDynamicMontageFromMontage(class UAnimMontage* MontageIn);
+    // @param SlotOverride - The animation slot can be overridden setting this parameter. None means do nothing.
+    UFUNCTION(BlueprintCallable, Category = "RyRuntime|AnimationHelpers", meta=(AdvancedDisplay = "1"))
+    static class UAnimMontage* CreateDynamicMontageFromMontage(class UAnimMontage* MontageIn, const FName SlotOverride = NAME_None,
+                                                               const float OverrideBlendIn = -1.0f, const float OverrideBlendOut = -1.0f, const float OverrideBlendOutTriggerTime = -1.0f);
 
     // Get the names of sections in this montage
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|AnimationHelpers")

@@ -6,9 +6,17 @@
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-bool URyRuntimeStringHelpers::IsEmpty(const FString& sourceString)
+bool URyRuntimeStringHelpers::IsNone(const FName name)
 {
-    return sourceString.IsEmpty();
+    return name.IsNone();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeStringHelpers::IsEmpty(const FString& string)
+{
+    return string.IsEmpty();
 }
 
 //---------------------------------------------------------------------------------------------------------------------

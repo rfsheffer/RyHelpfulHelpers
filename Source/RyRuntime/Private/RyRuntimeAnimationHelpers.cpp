@@ -14,7 +14,8 @@
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageFromMontage(UAnimMontage* MontageIn)
+UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageFromMontage(UAnimMontage* MontageIn, const FName SlotOverride, 
+                                                                          const float OverrideBlendIn, const float OverrideBlendOut, const float OverrideBlendOutTriggerTime)
 {
     if(!MontageIn)
     {
@@ -50,9 +51,38 @@ UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageFromMontage(UAnimM
     NewMontage->SequenceLength = MontageIn->SequenceLength;
     NewMontage->RateScale = MontageIn->RateScale;
 
-    NewMontage->BlendIn.SetBlendTime(MontageIn->BlendIn.GetBlendTime());
-    NewMontage->BlendOut.SetBlendTime(MontageIn->BlendOut.GetBlendTime());
-    NewMontage->BlendOutTriggerTime = MontageIn->BlendOutTriggerTime;
+    if(OverrideBlendIn != -1.0f)
+    {
+        NewMontage->BlendIn.SetBlendTime(OverrideBlendIn);
+    }
+    else
+    {
+        NewMontage->BlendIn.SetBlendTime(MontageIn->BlendIn.GetBlendTime());
+    }
+    if(OverrideBlendOut != -1.0f)
+    {
+        NewMontage->BlendOut.SetBlendTime(OverrideBlendOut);
+    }
+    else
+    {
+        NewMontage->BlendOut.SetBlendTime(MontageIn->BlendOut.GetBlendTime());
+    }
+    if(OverrideBlendOutTriggerTime != -1.0f)
+    {
+        NewMontage->BlendOutTriggerTime = OverrideBlendOutTriggerTime;
+    }
+    else
+    {
+        NewMontage->BlendOutTriggerTime = MontageIn->BlendOutTriggerTime;
+    }
+
+    if(!SlotOverride.IsNone())
+    {
+        for(FSlotAnimationTrack &slotTrack : NewMontage->SlotAnimTracks)
+        {
+            slotTrack.SlotName = SlotOverride;
+        }
+    }
 
     return NewMontage;
 }

@@ -141,10 +141,95 @@ void URyRuntimeObjectHelpers::GetClassHierarchy(UClass* Class, TArray<UClass*>& 
 */
 UObject* URyRuntimeObjectHelpers::GetClassDefaultObject(TSubclassOf<UObject> theClass)
 {
+#if RY_INCLUDE_DANGEROUS_FUNCTIONS
     if(!theClass)
     {
         return nullptr;
     }
 
     return theClass->GetDefaultObject();
+#else
+    return nullptr;
+#endif
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeObjectHelpers::SetObjectPropertyValue(UObject* object, const FName PropertyName, const FString& Value, const bool PrintWarnings)
+{
+#if RY_INCLUDE_DANGEROUS_FUNCTIONS
+    if(!object)
+    {
+        return false;
+    }
+
+    UProperty *FoundProperty = object->GetClass()->FindPropertyByName(PropertyName);
+    if(FoundProperty)
+    {
+        void *PropertyPtr = FoundProperty->ContainerPtrToValuePtr<void>(object);
+        check(PropertyPtr);
+        if(UNumericProperty *pIntProp = Cast<UNumericProperty>(FoundProperty))
+        {
+            if(Value.IsNumeric())
+            {
+                pIntProp->SetNumericPropertyValueFromString(PropertyPtr, *Value);
+                return true;
+            }
+            else
+            {
+                if(PrintWarnings)
+                {
+                    UE_LOG(LogRyRuntime, Warning, TEXT("SetObjectPropertyValue: Property named '%s' is numeric but the Value string is not"), *PropertyName.ToString());
+                }
+                return false;
+            }
+        }
+        else if(UBoolProperty *pBoolProp = Cast<UBoolProperty>(FoundProperty))
+        {
+            pBoolProp->SetPropertyValue(PropertyPtr, FCString::ToBool(*Value));
+            return true;
+        }
+        else if(UStructProperty* StructProperty = Cast<UStructProperty>(FoundProperty))
+        {
+            FName StructType = StructProperty->Struct->GetFName();
+            if(StructType == NAME_LinearColor)
+            {
+                FLinearColor *pCol = (FLinearColor*)PropertyPtr;
+                return pCol->InitFromString(Value);
+            }
+            else if(StructType == NAME_Color)
+            {
+                FColor *pCol = (FColor*)PropertyPtr;
+                return pCol->InitFromString(Value);
+            }
+            else if(StructType == NAME_Vector)
+            {
+                FVector *pVec = (FVector*)PropertyPtr;
+                return pVec->InitFromString(Value);
+            }
+            else if(StructType == NAME_Rotator)
+            {
+                FRotator *pRot = (FRotator*)PropertyPtr;
+                return pRot->InitFromString(Value);
+            }
+            else if(StructType == NAME_Transform)
+            {
+                FTransform *pTrans = (FTransform*)PropertyPtr;
+                return pTrans->InitFromString(Value);
+            }
+        }
+
+        if(PrintWarnings)
+        {
+            UE_LOG(LogRyRuntime, Warning, TEXT("SetObjectPropertyValue: Unsupported property named '%s'"), *PropertyName.ToString());
+        }
+    }
+    else if(PrintWarnings)
+    {
+        UE_LOG(LogRyRuntime, Warning, TEXT("SetObjectPropertyValue: Unable to find property in object named '%s'"), *PropertyName.ToString());
+    }
+#endif // RY_INCLUDE_DANGEROUS_FUNCTIONS
+
+    return false;
 }
