@@ -164,12 +164,20 @@ bool URyRuntimeObjectHelpers::SetObjectPropertyValue(UObject* object, const FNam
         return false;
     }
 
+#if ENGINE_MINOR_VERSION < 25
     UProperty *FoundProperty = object->GetClass()->FindPropertyByName(PropertyName);
+#else
+    FProperty *FoundProperty = object->GetClass()->FindPropertyByName(PropertyName);
+#endif
     if(FoundProperty)
     {
         void *PropertyPtr = FoundProperty->ContainerPtrToValuePtr<void>(object);
         check(PropertyPtr);
+#if ENGINE_MINOR_VERSION < 25
         if(UNumericProperty *pIntProp = Cast<UNumericProperty>(FoundProperty))
+#else
+        if(FNumericProperty *pIntProp = CastField<FNumericProperty>(FoundProperty))
+#endif
         {
             if(Value.IsNumeric())
             {
@@ -185,12 +193,20 @@ bool URyRuntimeObjectHelpers::SetObjectPropertyValue(UObject* object, const FNam
                 return false;
             }
         }
+#if ENGINE_MINOR_VERSION < 25
         else if(UBoolProperty *pBoolProp = Cast<UBoolProperty>(FoundProperty))
+#else
+        else if(FBoolProperty *pBoolProp = CastField<FBoolProperty>(FoundProperty))
+#endif
         {
             pBoolProp->SetPropertyValue(PropertyPtr, FCString::ToBool(*Value));
             return true;
         }
+#if ENGINE_MINOR_VERSION < 25
         else if(UStructProperty* StructProperty = Cast<UStructProperty>(FoundProperty))
+#else
+        else if(FStructProperty* StructProperty = CastField<FStructProperty>(FoundProperty))
+#endif
         {
             FName StructType = StructProperty->Struct->GetFName();
             if(StructType == NAME_LinearColor)

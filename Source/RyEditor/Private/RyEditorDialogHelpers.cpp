@@ -178,11 +178,19 @@ public:
 
         DetailView->SetIsPropertyVisibleDelegate(FIsPropertyVisible::CreateLambda([](const FPropertyAndParent& PropertyAndParent, bool bHaveTemplate) -> bool
         {
+#if ENGINE_MINOR_VERSION < 25
             const UProperty& Property = PropertyAndParent.Property;
+#else
+            const FProperty& Property = PropertyAndParent.Property;
+#endif
 
             if(bHaveTemplate)
             {
+#if ENGINE_MINOR_VERSION < 25
                 const UClass* PropertyOwnerClass = Cast<const UClass>(Property.GetOuter());
+#else
+                const UClass* PropertyOwnerClass = Property.GetOwnerClass();
+#endif
                 const bool bDisableEditOnTemplate = PropertyOwnerClass
                     && PropertyOwnerClass->IsNative()
                     && Property.HasAnyPropertyFlags(CPF_DisableEditOnTemplate);
