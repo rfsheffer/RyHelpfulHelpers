@@ -107,9 +107,9 @@ void URyRuntimeLevelHelpers::GetActorsOfTypeInLevel(ULevel* level, TSubclassOf<A
 /**
 */
 UActorComponent* URyRuntimeLevelHelpers::CreateComponentForActor(AActor *owner, TSubclassOf<UActorComponent> newComponentClass, 
-                                                                 USceneComponent *attachComponent /*= nullptr*/)
+                                                                 USceneComponent *attachComponent /*= nullptr*/, const FName newName)
 {
-    UActorComponent* NewInstanceComponent = NewObject<UActorComponent>(owner, newComponentClass);
+    UActorComponent* NewInstanceComponent = NewObject<UActorComponent>(owner, newComponentClass, newName);
     if(!NewInstanceComponent)
         return nullptr;
 

@@ -19,4 +19,11 @@ public:
     /** box extent used ONLY when owning actor doesn't have collision component */
     UFUNCTION(BlueprintPure, Category = "RyRuntime|NavigationHelpers")
 	static FVector GetFailsafeExtent(class UNavModifierComponent* NavModifierComponent);
+
+    /** 
+     * Set 'SetCanEverAffectNavigation' on an actor component.
+     * NOTE: This should only be used in construction scripts. It will probably fail to work as expected at runtime.
+    */
+    UFUNCTION(BlueprintCallable, Category = "RyRuntime|NavigationHelpers")
+    static void SetCanEverAffectNavigation(class UActorComponent* actorComponent, const bool canEverAffectNavigation);
 };

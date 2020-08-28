@@ -16,3 +16,14 @@ FVector URyRuntimeNavigationHelpers::GetFailsafeExtent(UNavModifierComponent* Na
 
     return NavModifierComponent->FailsafeExtent;
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeNavigationHelpers::SetCanEverAffectNavigation(class UActorComponent* actorComponent, const bool canEverAffectNavigation)
+{
+    if(actorComponent)
+    {
+        actorComponent->SetCanEverAffectNavigation(canEverAffectNavigation);
+    }
+}

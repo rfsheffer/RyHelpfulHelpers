@@ -73,7 +73,7 @@ public:
     // A Helper function to create a component of a class type and attach it to the actor at runtime
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers")
     static class UActorComponent* CreateComponentForActor(AActor *owner, TSubclassOf<class UActorComponent> newComponentClass,
-                                                          class USceneComponent *attachComponent = nullptr);
+                                                          class USceneComponent *attachComponent = nullptr, const FName newName = NAME_None);
 
     // Get the type of world the context object is in (editor, preview, game, PlayInEditor[PIE], etc)
     UFUNCTION(BlueprintPure, Category = "RyRuntime|WorldHelpers", meta = (WorldContext = "WorldContextObject"))
