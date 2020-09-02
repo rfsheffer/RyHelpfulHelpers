@@ -19,8 +19,33 @@ public:
     // Creates a duplicate montage from another montage. This is useful for cases where you want to modify a montage asset at runtime.
     // @param SlotOverride - The animation slot can be overridden setting this parameter. None means do nothing.
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|AnimationHelpers", meta=(AdvancedDisplay = "1"))
-    static class UAnimMontage* CreateDynamicMontageFromMontage(class UAnimMontage* MontageIn, const FName SlotOverride = NAME_None,
-                                                               const float OverrideBlendIn = -1.0f, const float OverrideBlendOut = -1.0f, const float OverrideBlendOutTriggerTime = -1.0f);
+    static class UAnimMontage* CreateDynamicMontageFromMontage(class UAnimMontage* MontageIn, 
+                                                               const FName SlotOverride = NAME_None,
+                                                               const float OverrideBlendIn = -1.0f, 
+                                                               const float OverrideBlendOut = -1.0f, 
+                                                               const float OverrideBlendOutTriggerTime = -1.0f);
+
+    /**
+     * Create a dynamic montage containing the sequences in SequencesIn, optionally creating named sections for each sequence.
+     * SequencesIn and PerSequenceSectionNames should contain the same number of elements but isn't required.
+     * Duplicate section names will be ignored / skipped.
+     * Sequences will only be sectioned up to length of sections array. 
+     * Sequences beyond the number of section names will not be assigned a section.
+     * @param SequencesIn - The sequences in order to be put in the dynamic montage
+     * @param PerSequenceSectionNames - Section names to be assigned per sequence index
+     * @param AnimSlot - Specific animation slot, or none for default.
+     * @param BlendIn - blend in time for this montage
+     * @param BlendOut - blend out time for this montage
+     * @param BlendOutTriggerTime - blend out trigger time for this montage
+    */
+    UFUNCTION(BlueprintCallable, Category = "RyRuntime|AnimationHelpers", meta=(AdvancedDisplay = "1"))
+    static class UAnimMontage* CreateDynamicMontageOfSequences(const TArray<class UAnimSequence*>& SequencesIn, 
+                                                               const TArray<FName>& PerSequenceSectionNames,
+                                                               const FName AnimSlot = NAME_None,
+                                                               const float BlendIn = 0.25f,
+                                                               const float BlendOut = 0.25f,
+                                                               const float BlendOutTriggerTime = -1.f,
+                                                               const bool EnableAutoBlendOut = true);
 
     // Get the names of sections in this montage
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|AnimationHelpers")

@@ -18,7 +18,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-UAnimMontage* URyEditorAnimationHelpers::CreateMontageOfAnimations(const TArray<UAnimSequence*>& AnimsIn, const FName MontageName)
+UAnimMontage* URyEditorAnimationHelpers::CreateMontageOfSequences(const TArray<UAnimSequence*>& AnimsIn, const FName MontageName)
 {
     if(MontageName.IsNone())
         return nullptr;
@@ -90,6 +90,7 @@ UAnimMontage* URyEditorAnimationHelpers::CreateMontageOfAnimations(const TArray<
         if(!sequence)
             continue;
 
+        // Create the segment
         FAnimSegment newSegment;
         newSegment.AnimReference = sequence;
         newSegment.StartPos = curTime;
@@ -97,10 +98,13 @@ UAnimMontage* URyEditorAnimationHelpers::CreateMontageOfAnimations(const TArray<
         newSegment.AnimEndTime = sequence->SequenceLength;
         newSegment.AnimPlayRate = 1.0f;
         newSegment.LoopingCount = 1;
-        montage->AddAnimCompositeSection(sequence->GetFName(), curTime);
-        curTime += sequence->SequenceLength;
-
         montage->SlotAnimTracks[0].AnimTrack.AnimSegments.Add(newSegment);
+
+        // Add the section
+        int32 sectionIndex = montage->AddAnimCompositeSection(sequence->GetFName(), curTime);
+        montage->CompositeSections[sectionIndex].ChangeLinkMethod(EAnimLinkMethod::Relative);
+
+        curTime += sequence->SequenceLength;
     }
 
     montage->SequenceLength = curTime;
@@ -125,25 +129,15 @@ void URyEditorAnimationHelpers::CreateMontageSectionsFromSegments(UAnimMontage* 
     if(!MontageIn || MontageIn->SlotAnimTracks.Num() == 0)
         return;
 
+    MontageIn->CompositeSections.Empty();
     float curTime = 0;
     for(int32 segIndex = 0; segIndex < MontageIn->SlotAnimTracks[0].AnimTrack.AnimSegments.Num(); ++segIndex)
     {
         FAnimSegment& segment = MontageIn->SlotAnimTracks[0].AnimTrack.AnimSegments[segIndex];
         if(segment.AnimReference)
         {
-            int32 sectionIndex = MontageIn->GetSectionIndex(segment.AnimReference->GetFName());
-            if(sectionIndex == INDEX_NONE)
-            {
-                // Add the missing section
-                MontageIn->AddAnimCompositeSection(segment.AnimReference->GetFName(), curTime);
-            }
-            else
-            {
-                // Update the time of the section that exists
-                FCompositeSection& section = MontageIn->GetAnimCompositeSection(sectionIndex);
-                section.SetTime(curTime, EAnimLinkMethod::Absolute);
-            }
-
+            int32 sectionIndex = MontageIn->AddAnimCompositeSection(segment.AnimReference->GetFName(), curTime);
+            MontageIn->CompositeSections[sectionIndex].ChangeLinkMethod(EAnimLinkMethod::Relative);
             curTime += segment.AnimReference->SequenceLength;
         }
     }

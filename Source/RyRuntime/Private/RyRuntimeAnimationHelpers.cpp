@@ -19,19 +19,19 @@ UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageFromMontage(UAnimM
 {
     if(!MontageIn)
     {
-        UE_LOG(LogRyRuntime, Warning, TEXT("CreateDynamicMontageFromMontage : Invalid montage to copy?!"));
+        UE_LOG(LogRyRuntime, Error, TEXT("CreateDynamicMontageFromMontage : Invalid montage to copy?!"));
         return nullptr;
     }
 
     USkeleton* AssetSkeleton = MontageIn->GetSkeleton();
     if(!AssetSkeleton)
     {
-        UE_LOG(LogRyRuntime, Warning, TEXT("CreateDynamicMontageFromMontage : Montage to copy has no skeleton..."));
+        UE_LOG(LogRyRuntime, Error, TEXT("CreateDynamicMontageFromMontage : Montage to copy has no skeleton..."));
         return nullptr;
     }
 
     // Create new montage
-    UAnimMontage* NewMontage = NewObject<UAnimMontage>();
+    UAnimMontage* NewMontage = NewObject<UAnimMontage>(GetTransientPackage(), NAME_None, RF_Transient);
     NewMontage->SetSkeleton(AssetSkeleton);
 
     // Copy tracks and sections
@@ -83,6 +83,89 @@ UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageFromMontage(UAnimM
             slotTrack.SlotName = SlotOverride;
         }
     }
+
+    return NewMontage;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageOfSequences(const TArray<UAnimSequence*>& SequencesIn, 
+                                                                          const TArray<FName>& PerSequenceSectionNames,
+                                                                          const FName AnimSlot /*= NAME_None*/,
+                                                                          const float BlendIn /*= -1.0f*/,
+                                                                          const float BlendOut /*= -1.0f*/,
+                                                                          const float BlendOutTriggerTime /*= -1.0f*/,
+                                                                          const bool EnableAutoBlendOut /*= true*/)
+{
+    if(!SequencesIn.Num())
+    {
+        UE_LOG(LogRyRuntime, Error, TEXT("CreateDynamicMontageFromSequences : With empty sequences array!"));
+        return nullptr;
+    }
+
+    USkeleton* AssetSkeleton = SequencesIn[0]->GetSkeleton();
+    if(!AssetSkeleton)
+    {
+        UE_LOG(LogRyRuntime, Error, TEXT("CreateDynamicMontageFromSequences : Sequences array contains null sequence!"));
+        return nullptr;
+    }
+
+    // Create new montage
+    UAnimMontage* NewMontage = NewObject<UAnimMontage>(GetTransientPackage(), NAME_None, RF_Transient);
+    NewMontage->SetSkeleton(AssetSkeleton);
+
+    FSlotAnimationTrack& animTrack = NewMontage->SlotAnimTracks[0];
+    if(!AnimSlot.IsNone())
+    {
+        animTrack.SlotName = AnimSlot;
+    }
+
+    float curTime = 0.0f;
+    TSet<FName> usedSections;
+    for(int32 sequenceIndex = 0; sequenceIndex < SequencesIn.Num(); ++sequenceIndex)
+    {
+        UAnimSequence* sequence = SequencesIn[sequenceIndex];
+        if(!sequence)
+        {
+            UE_LOG(LogRyRuntime, Warning, TEXT("CreateDynamicMontageFromSequences : Sequences array contains null sequence!"));
+            continue;
+        }
+        if(!AssetSkeleton->IsCompatible(sequence->GetSkeleton()))
+        {
+            UE_LOG(LogRyRuntime, Warning, TEXT("CreateDynamicMontageFromSequences : Sequences array contains sequences which"
+                                             " are not compatible with eachother (skeleton not compatible)!"));
+            continue;
+        }
+
+        // Create the segment
+        FAnimSegment& animSegment = animTrack.AnimTrack.AnimSegments.AddDefaulted_GetRef();
+        animSegment.AnimReference = sequence;
+        animSegment.StartPos = curTime;
+        animSegment.AnimStartTime = 0.0f;
+        animSegment.AnimEndTime = sequence->SequenceLength;
+        animSegment.AnimPlayRate = 1.0f;
+        animSegment.LoopingCount = 1;
+
+        if(PerSequenceSectionNames.Num() > sequenceIndex && !usedSections.Contains(PerSequenceSectionNames[sequenceIndex]))
+        {
+            usedSections.Add(PerSequenceSectionNames[sequenceIndex]);
+
+            // Add the section
+            int32 sectionIndex = NewMontage->AddAnimCompositeSection(PerSequenceSectionNames[sequenceIndex], curTime);
+            NewMontage->CompositeSections[sectionIndex].ChangeLinkMethod(EAnimLinkMethod::Relative);
+        }
+
+        curTime += sequence->SequenceLength;
+    }
+
+    NewMontage->BlendIn.SetBlendTime(BlendIn);
+    NewMontage->BlendOut.SetBlendTime(BlendOut);
+    NewMontage->BlendOutTriggerTime = BlendOutTriggerTime;
+    NewMontage->bEnableAutoBlendOut = EnableAutoBlendOut;
+
+    NewMontage->SequenceLength = curTime;
+    NewMontage->RateScale = 1.0f;
 
     return NewMontage;
 }
