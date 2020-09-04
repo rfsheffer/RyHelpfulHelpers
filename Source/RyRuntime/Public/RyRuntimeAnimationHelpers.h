@@ -32,7 +32,8 @@ public:
      * Sequences will only be sectioned up to length of sections array. 
      * Sequences beyond the number of section names will not be assigned a section.
      * @param SequencesIn - The sequences in order to be put in the dynamic montage
-     * @param PerSequenceSectionNames - Section names to be assigned per sequence index
+     * @param PerSequenceSectionNames - (Optional) Section names to be assigned per sequence index. This array should be aligned to SequencesIn.
+     * @param LoopTimes - (Optional) Number of times to loop the sequences. This array should be aligned to SequencesIn.
      * @param AnimSlot - Specific animation slot, or none for default.
      * @param BlendIn - blend in time for this montage
      * @param BlendOut - blend out time for this montage
@@ -41,6 +42,7 @@ public:
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|AnimationHelpers", meta=(AdvancedDisplay = "1"))
     static class UAnimMontage* CreateDynamicMontageOfSequences(const TArray<class UAnimSequence*>& SequencesIn, 
                                                                const TArray<FName>& PerSequenceSectionNames,
+                                                               const TArray<int32>& LoopTimes,
                                                                const FName AnimSlot = NAME_None,
                                                                const float BlendIn = 0.25f,
                                                                const float BlendOut = 0.25f,

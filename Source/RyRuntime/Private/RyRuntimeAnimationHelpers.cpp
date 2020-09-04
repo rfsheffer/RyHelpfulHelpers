@@ -92,6 +92,7 @@ UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageFromMontage(UAnimM
 */
 UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageOfSequences(const TArray<UAnimSequence*>& SequencesIn, 
                                                                           const TArray<FName>& PerSequenceSectionNames,
+                                                                          const TArray<int32>& LoopTimes,
                                                                           const FName AnimSlot /*= NAME_None*/,
                                                                           const float BlendIn /*= -1.0f*/,
                                                                           const float BlendOut /*= -1.0f*/,
@@ -145,7 +146,14 @@ UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageOfSequences(const 
         animSegment.AnimStartTime = 0.0f;
         animSegment.AnimEndTime = sequence->SequenceLength;
         animSegment.AnimPlayRate = 1.0f;
-        animSegment.LoopingCount = 1;
+        if(LoopTimes.IsValidIndex(sequenceIndex))
+        {
+            animSegment.LoopingCount = FMath::Max(1, LoopTimes[sequenceIndex]);
+        }
+        else
+        {
+            animSegment.LoopingCount = 1;
+        }
 
         if(PerSequenceSectionNames.Num() > sequenceIndex && !usedSections.Contains(PerSequenceSectionNames[sequenceIndex]))
         {
@@ -156,7 +164,7 @@ UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageOfSequences(const 
             NewMontage->CompositeSections[sectionIndex].ChangeLinkMethod(EAnimLinkMethod::Relative);
         }
 
-        curTime += sequence->SequenceLength;
+        curTime += sequence->SequenceLength * animSegment.LoopingCount;
     }
 
     NewMontage->BlendIn.SetBlendTime(BlendIn);
