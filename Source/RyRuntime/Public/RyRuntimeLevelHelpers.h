@@ -66,7 +66,8 @@ public:
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers")
     static UObject* FindObjectInLevelByName(ULevel* levelToSearch, const FString& nameToFind);
 
-    // Gets all actors of ActorClass in the specific level
+    // Gets all actors of ActorClass in a specific level
+    // This is a slow operation, use with caution e.g. do not use every frame.
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers")
 	static void GetActorsOfTypeInLevel(ULevel* level, TSubclassOf<AActor> ActorClass, TArray<AActor*>& actorsOut);
 
