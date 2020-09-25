@@ -6,6 +6,56 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "RyRuntimeMathHelpers.generated.h"
 
+// Copy of the Unreal EUnit enum for blueprint unit conversion access
+UENUM(BlueprintType)
+enum class ERyUnit : uint8
+{
+	/** Scalar distance/length units */
+	Micrometers, Millimeters, Centimeters, Meters, Kilometers,
+    Inches, Feet, Yards, Miles,
+    Lightyears,
+
+    /** Angular units */
+    Degrees, Radians,
+
+    /** Speed units */
+    MetersPerSecond, KilometersPerHour, MilesPerHour,
+
+    /** Temperature units */
+    Celsius, Farenheit, Kelvin,
+
+    /** Mass units */
+    Micrograms, Milligrams, Grams, Kilograms, MetricTons,
+    Ounces, Pounds, Stones,
+
+    /** Force units */
+    Newtons, PoundsForce, KilogramsForce,
+
+    /** Frequency units */
+    Hertz, Kilohertz, Megahertz, Gigahertz, RevolutionsPerMinute,
+
+    /** Data Size units */
+    Bytes, Kilobytes, Megabytes, Gigabytes, Terabytes,
+
+    /** Luminous flux units, luminous intensity, illuminance, luminance */
+    Lumens UMETA(Hidden),
+	Candela UMETA(Hidden),
+	Lux UMETA(Hidden),
+	CandelaPerMeter2 UMETA(Hidden),
+
+    /** Time units */
+    Milliseconds, Seconds, Minutes, Hours, Days, Months, Years,
+
+    /** Pixel density units */
+    PixelsPerInch UMETA(Hidden),
+
+    /** Arbitrary multipliers */
+    Percentage UMETA(Hidden),	Multiplier UMETA(Hidden),
+
+    /** Symbolic entry, not specifiable on meta data */
+    Unspecified  UMETA(Hidden)
+};
+
 //---------------------------------------------------------------------------------------------------------------------
 /**
   * Static Helper functions for mathematics.
@@ -32,13 +82,19 @@ public:
     UFUNCTION(BlueprintPure, Category = "Math|Utility")
     static float CalculateCatenary(float X, float scalingFactor);
 
+	/**
+	 * Convert a unit value to another unit value
+	 */
+	UFUNCTION(BlueprintPure, Category = "Math|Utility")
+	static float ConvertUnit(const float value, const ERyUnit from, const ERyUnit to);
+
     /**
 	* Converts a world location to screen position for HUD drawing. This differs from the results of FSceneView::WorldToScreen in that it returns a position along the edge of the screen for offscreen locations
 	*
 	* @param		InLocation	- The world space location to be converted to screen space
 	* @param		EdgePercent - How close to the edge of the screen, 1.0 = at edge, 0.0 = at center of screen. .9 or .95 is usually desirable
 	* @outparam	OutScreenPosition - the screen coordinates for HUD drawing
-	* @outparam	OutRotationAngleDegrees - The angle to rotate a hud element if you want it pointing toward the offscreen indicator, 0° if onscreen
+	* @outparam	OutRotationAngleDegrees - The angle to rotate a hud element if you want it pointing toward the offscreen indicator, 0ï¿½ if onscreen
 	* @outparam	bIsOnScreen - True if the specified location is in the camera view (may be obstructed)
 	*/
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext), Category = "RyRuntime|Math|HUD")

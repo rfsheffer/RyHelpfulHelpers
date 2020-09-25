@@ -90,6 +90,51 @@ UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageFromMontage(UAnimM
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
+int32 AddAnimCompositeSection(UAnimMontage* NewMontage, FName InSectionName, float StartTime)
+{
+    FCompositeSection NewSection;
+
+    // make sure same name doesn't exists
+    if ( InSectionName != NAME_None )
+    {
+        NewSection.SectionName = InSectionName;
+    }
+    else
+    {
+        // just give default name
+        NewSection.SectionName = FName(*FString::Printf(TEXT("Section%d"), NewMontage->CompositeSections.Num()+1));
+    }
+
+    // we already have that name
+    if ( NewMontage->GetSectionIndex(InSectionName)!=INDEX_NONE )
+    {
+        UE_LOG(LogRyRuntime, Warning, TEXT("AnimCompositeSection : %s(%s) already exists. Choose different name."), 
+            *NewSection.SectionName.ToString(), *InSectionName.ToString());
+        return INDEX_NONE;
+    }
+
+    NewSection.LinkMontage(NewMontage, StartTime);
+
+    // we'd like to sort them in the order of time
+    int32 NewSectionIndex = NewMontage->CompositeSections.Add(NewSection);
+
+    // when first added, just make sure to link previous one to add me as next if previous one doesn't have any link
+    // it's confusing first time when you add this data
+    int32 PrevSectionIndex = NewSectionIndex-1;
+    if ( NewMontage->CompositeSections.IsValidIndex(PrevSectionIndex) )
+    {
+        if (NewMontage->CompositeSections[PrevSectionIndex].NextSectionName == NAME_None)
+        {
+            NewMontage->CompositeSections[PrevSectionIndex].NextSectionName = InSectionName;
+        }
+    }
+
+    return NewSectionIndex;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
 UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageOfSequences(const TArray<UAnimSequence*>& SequencesIn, 
                                                                           const TArray<FName>& PerSequenceSectionNames,
                                                                           const TArray<int32>& LoopTimes,
@@ -160,7 +205,7 @@ UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageOfSequences(const 
             usedSections.Add(PerSequenceSectionNames[sequenceIndex]);
 
             // Add the section
-            int32 sectionIndex = NewMontage->AddAnimCompositeSection(PerSequenceSectionNames[sequenceIndex], curTime);
+            int32 sectionIndex = AddAnimCompositeSection(NewMontage, PerSequenceSectionNames[sequenceIndex], curTime);
             NewMontage->CompositeSections[sectionIndex].ChangeLinkMethod(EAnimLinkMethod::Relative);
         }
 

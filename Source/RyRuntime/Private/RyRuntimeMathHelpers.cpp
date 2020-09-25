@@ -9,6 +9,17 @@
 #include "Engine/GameViewportClient.h"
 #include "GameFramework/Character.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Math/UnitConversion.h"
+
+static_assert(ERyUnit::Unspecified == static_cast<ERyUnit>(EUnit::Unspecified), "ERyUnit isn't aligned to EUnit!");
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+float URyRuntimeMathHelpers::ConvertUnit(const float value, const ERyUnit from, const ERyUnit to)
+{
+	return FUnitConversion::Convert<float>(value, static_cast<EUnit>(from), static_cast<EUnit>(to));
+}
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
