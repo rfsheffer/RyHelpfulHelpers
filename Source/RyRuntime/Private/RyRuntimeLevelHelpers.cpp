@@ -14,9 +14,14 @@
 */
 ULevel* URyRuntimeLevelHelpers::GetActorLevel(const AActor* actorIn)
 {
-    if(!actorIn || !actorIn->IsValidLowLevelFast(true) || actorIn->IsPendingKill())
+    if(!actorIn)
     {
         UE_LOG(LogRyRuntime, Warning, TEXT("URyRuntimeLevelHelpers::GetActorLevel called with invalid actorIn!"));
+        return nullptr;
+    }
+    if(!actorIn->IsValidLowLevelFast(true) || actorIn->IsPendingKill())
+    {
+        UE_LOG(LogRyRuntime, Warning, TEXT("URyRuntimeLevelHelpers::GetActorLevel called with actorIn that is pending kill!"));
         return nullptr;
     }
 
@@ -81,14 +86,14 @@ void URyRuntimeLevelHelpers::GetActorsOfTypeInLevel(ULevel* level, TSubclassOf<A
 {
     if(!level)
     {
-        UE_LOG(LogRyRuntime, Error, TEXT("RyRuntimeLevelHelpers error. level is NULL!"));
+        UE_LOG(LogRyRuntime, Warning, TEXT("RyRuntimeLevelHelpers::GetActorsOfTypeInLevel error. level is NULL!"));
         return;
     }
 
     UWorld* const World = level->GetWorld();
     if(!World)
     {
-        UE_LOG(LogRyRuntime, Error, TEXT("RyRuntimeLevelHelpers error. No World Context!"));
+        UE_LOG(LogRyRuntime, Warning, TEXT("RyRuntimeLevelHelpers::GetActorsOfTypeInLevel error. No World Context!"));
         return;
     }
 
@@ -101,6 +106,83 @@ void URyRuntimeLevelHelpers::GetActorsOfTypeInLevel(ULevel* level, TSubclassOf<A
             actorsOut.Add(pActor);
         }
     }
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+AActor* URyRuntimeLevelHelpers::SpawnActorOfClass(UObject* WorldContextObject,
+                                                  TSubclassOf<class AActor> actorClass,
+                                                  const FTransform& transform,
+                                                  const ESpawnActorCollisionHandlingMethod spawnHandling /*= ESpawnActorCollisionHandlingMethod::AlwaysSpawn*/,
+                                                  const FName name /*= NAME_None*/,
+                                                  AActor* actorTemplate /*= nullptr*/,
+                                                  AActor* actorOwner /*= nullptr*/,
+                                                  APawn* actorInstigator /*= nullptr*/,
+                                                  ULevel* overrideLevel /*= nullptr*/)
+{
+    UWorld* world = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull);
+    if(!world)
+    {
+        UE_LOG(LogRyRuntime, Warning, TEXT("RyRuntimeLevelHelpers::SpawnActorOfClass error. Invalid World Context!"));
+        return nullptr;
+    }
+
+    FActorSpawnParameters params;
+    params.Name = name;
+    params.Template = actorTemplate;
+    params.Owner = actorOwner;
+    params.Instigator = actorInstigator;
+    params.OverrideLevel = overrideLevel;
+    params.SpawnCollisionHandlingOverride = spawnHandling;
+    
+    return world->SpawnActor(actorClass, &transform, params);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+AActor* URyRuntimeLevelHelpers::SpawnActorOfClassDeferred(UObject* WorldContextObject,
+                                                          TSubclassOf<class AActor> actorClass,
+                                                          const FTransform& transform,
+                                                          const ESpawnActorCollisionHandlingMethod spawnHandling /*= ESpawnActorCollisionHandlingMethod::AlwaysSpawn*/,
+                                                          const FName name /*= NAME_None*/,
+                                                          AActor* actorTemplate /*= nullptr*/,
+                                                          AActor* actorOwner /*= nullptr*/,
+                                                          APawn* actorInstigator /*= nullptr*/,
+                                                          ULevel* overrideLevel /*= nullptr*/)
+{
+    UWorld* world = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull);
+    if(!world)
+    {
+        UE_LOG(LogRyRuntime, Warning, TEXT("RyRuntimeLevelHelpers::SpawnActorOfClassDeferred error. Invalid World Context!"));
+        return nullptr;
+    }
+
+    FActorSpawnParameters params;
+    params.Name = name;
+    params.Template = actorTemplate;
+    params.Owner = actorOwner;
+    params.Instigator = actorInstigator;
+    params.OverrideLevel = overrideLevel;
+    params.SpawnCollisionHandlingOverride = spawnHandling;
+    params.bDeferConstruction = true;
+    
+    return world->SpawnActor(actorClass, &transform, params);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeLevelHelpers::FinishSpawningDeferredActor(AActor* actorToFinishSpawning, const FTransform& newTransform, bool useNewTransform /*= false*/)
+{
+    if(!actorToFinishSpawning)
+    {
+        UE_LOG(LogRyRuntime, Warning, TEXT("RyRuntimeLevelHelpers::FinishSpawningDeferredActor error. actorToFinishSpawning is invalid?!"));
+        return;
+    }
+
+    actorToFinishSpawning->FinishSpawning(newTransform, useNewTransform);
 }
 
 //---------------------------------------------------------------------------------------------------------------------

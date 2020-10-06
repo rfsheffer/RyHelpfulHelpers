@@ -70,13 +70,63 @@ public:
     // This is a slow operation, use with caution e.g. do not use every frame.
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers")
 	static void GetActorsOfTypeInLevel(ULevel* level, TSubclassOf<AActor> ActorClass, TArray<AActor*>& actorsOut);
+	
+	// A Helper function to create a actor of a class type. This does not support presenting exposed variables.
+	// Use SpawnActorOfClassDeferred to modify settings pre BeginPlay.
+	// @param actorClass - The class of the actor to spawn
+	// @param transform - The world transform applied to the actor being spawned
+	// @param spawnHandling - How spawning should be handled regarding world geometry
+	// @param name - (Optional) name to assign. If None, will get an auto generated named
+	// @param actorTemplate - (Optional) An Actor to use as a template when spawning the new Actor. The spawned Actor will be initialized using the property values of the template Actor. If left NULL the class default object (CDO) will be used to initialize the spawned Actor
+	// @param actorOwner - (Optional) The Actor that spawned this Actor
+	// @param actorInstigator - (Optional) The APawn that is responsible for damage done by the spawned Actor
+	// @param overrideLevel - (Optional) The ULevel to spawn the Actor in, i.e. the Outer of the Actor. If left as NULL the Outer of the Owner is used. If the Owner is NULL the persistent level is used
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers", meta = (WorldContext = "WorldContextObject", AdvancedDisplay = "3", CallableWithoutWorldContext))
+	static class AActor* SpawnActorOfClass(UObject* WorldContextObject,
+										   TSubclassOf<class AActor> actorClass,
+										   const FTransform& transform,
+										   const ESpawnActorCollisionHandlingMethod spawnHandling = ESpawnActorCollisionHandlingMethod::AlwaysSpawn,
+										   const FName name = NAME_None,
+										   AActor* actorTemplate = nullptr,
+										   AActor* actorOwner = nullptr,
+										   APawn* actorInstigator = nullptr,
+										   ULevel* overrideLevel = nullptr);
 
-    // A Helper function to create a component of a class type and attach it to the actor at runtime
+	// A Helper function to create a actor of a class type. This does not support presenting exposed variables.
+	// Make sure to call FinishSpawningDeferredActor on the returned actor.
+	// This function is useful for creating an actor, making modification, then finishing the spawning process via FinishSpawningDeferredActor.
+	// @param actorClass - The class of the actor to spawn
+	// @param transform - The world transform applied to the actor being spawned
+	// @param spawnHandling - How spawning should be handled regarding world geometry
+	// @param name - (Optional) name to assign. If None, will get an auto generated named
+	// @param actorTemplate - (Optional) An Actor to use as a template when spawning the new Actor. The spawned Actor will be initialized using the property values of the template Actor. If left NULL the class default object (CDO) will be used to initialize the spawned Actor
+	// @param actorOwner - (Optional) The Actor that spawned this Actor
+	// @param actorInstigator - (Optional) The APawn that is responsible for damage done by the spawned Actor
+	// @param overrideLevel - (Optional) The ULevel to spawn the Actor in, i.e. the Outer of the Actor. If left as NULL the Outer of the Owner is used. If the Owner is NULL the persistent level is used
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers", meta = (WorldContext = "WorldContextObject", AdvancedDisplay = "3", CallableWithoutWorldContext))
+    static class AActor* SpawnActorOfClassDeferred(UObject* WorldContextObject,
+    											   TSubclassOf<class AActor> actorClass,
+										           const FTransform& transform,
+										           const ESpawnActorCollisionHandlingMethod spawnHandling = ESpawnActorCollisionHandlingMethod::AlwaysSpawn,
+										           const FName name = NAME_None,
+										           AActor* actorTemplate = nullptr,
+										           AActor* actorOwner = nullptr,
+										           APawn* actorInstigator = nullptr,
+										           ULevel* overrideLevel = nullptr);
+
+	// Finish spawning an actor that was created via SpawnActorOfClassDeferred.
+	// @param actorToFinishSpawning - The actor to finish spawning
+	// @param newTransform - (Optional) A new transform to apply to this actor
+	// @param useNewTransform - (Optional) If true, newTransform will be applied to this actor, else, the transform used in SpawnActorOfClassDeferred will be used.
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers", meta = (AdvancedDisplay = "1"))
+	static void FinishSpawningDeferredActor(AActor* actorToFinishSpawning, const FTransform& newTransform, bool useNewTransform = false);
+
+    // A Helper function to create a component of a class type and attach it to the actor at runtime. This does not support presenting exposed variables.
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers")
     static class UActorComponent* CreateComponentForActor(AActor *owner, TSubclassOf<class UActorComponent> newComponentClass,
                                                           class USceneComponent *attachComponent = nullptr, const FName newName = NAME_None);
 
     // Get the type of world the context object is in (editor, preview, game, PlayInEditor[PIE], etc)
-    UFUNCTION(BlueprintPure, Category = "RyRuntime|WorldHelpers", meta = (WorldContext = "WorldContextObject"))
+    UFUNCTION(BlueprintPure, Category = "RyRuntime|WorldHelpers", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext))
 	static ERyWorldType GetWorldType(UObject* WorldContextObject);
 };
