@@ -18,9 +18,9 @@ class RYEDITOR_API URyEditorStaticMeshHelpers : public UBlueprintFunctionLibrary
     GENERATED_BODY()
 public:
 
-    UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|AnimationHelpers")
+    UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|StaticMeshHelpers")
     static void SetCollisionTraceFlag(class UStaticMesh* StaticMesh, TEnumAsByte<enum ECollisionTraceFlag> collisionTraceFlag);
 
-    UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|AnimationHelpers")
+    UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|StaticMeshHelpers")
     static void SetCanAffectNavMesh(class UStaticMeshComponent* StaticMesh, bool canAffect);
 };
