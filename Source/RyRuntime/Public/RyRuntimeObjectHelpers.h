@@ -54,6 +54,11 @@ public:
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
     static UObject* LoadObject(const FString& fullObjectPath);
 
+    DECLARE_DYNAMIC_DELEGATE_OneParam(FOnAssetLoaded, class UObject*, Loaded);
+
+    UFUNCTION(BlueprintCallable, meta = (Latent, LatentInfo = "LatentInfo", WorldContext = "WorldContextObject", BlueprintInternalUseOnly = "true"), Category = "RyRuntime|ObjectHelpers")
+    static void LoadAssetPriority(UObject* WorldContextObject, TSoftObjectPtr<UObject> Asset, const int32 Priority, FOnAssetLoaded OnLoaded, FLatentActionInfo LatentInfo);
+
     // Return the parent class of a class
     UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers")
     static UClass* GetParentClass(UClass* Class);

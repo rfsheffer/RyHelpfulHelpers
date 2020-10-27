@@ -21,7 +21,8 @@ public class RyEditor : ModuleRules
                 "PropertyEditor",
                 "EditorStyle",
                 "LevelSequence",
-            }
+                "BlueprintGraph",
+			}
 		);
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
@@ -34,7 +35,6 @@ public class RyEditor : ModuleRules
                 "InputCore",
                 "UnrealEd",
                 "AnimGraph",
-                "BlueprintGraph",
                 "AnimGraphRuntime",
 				"AssetRegistry",
 				"RenderCore",
@@ -42,6 +42,7 @@ public class RyEditor : ModuleRules
 				"RyRuntime",
 				"DesktopPlatform",
 				"MainFrame",
+				"KismetCompiler",
 			}
 		);
 	}

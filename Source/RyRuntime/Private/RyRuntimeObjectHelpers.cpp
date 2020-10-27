@@ -7,6 +7,10 @@
 #include "UObject/Package.h"
 #include "UObject/UObjectIterator.h"
 
+// Async asset loading extension
+#include "Engine/StreamableManager.h"
+#include "LatentActions.h"
+
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
@@ -106,6 +110,90 @@ UObject* URyRuntimeObjectHelpers::LoadObject(const FString& fullObjectPath)
     }
 
     return LoadedObject;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+struct FLoadAssetPriorityActionBase : public FPendingLatentAction
+{
+	// @TODO: it would be good to have static/global manager? 
+
+public:
+	FSoftObjectPath SoftObjectPath;
+	FStreamableManager StreamableManager;
+	TSharedPtr<FStreamableHandle> Handle;
+	FName ExecutionFunction;
+	int32 OutputLink;
+	FWeakObjectPtr CallbackTarget;
+
+	virtual void OnLoaded() PURE_VIRTUAL(FLoadAssetPriorityActionBase::OnLoaded, );
+
+	FLoadAssetPriorityActionBase(const FSoftObjectPath& InSoftObjectPath, const int32 Priority, const FLatentActionInfo& InLatentInfo)
+		: SoftObjectPath(InSoftObjectPath)
+		, ExecutionFunction(InLatentInfo.ExecutionFunction)
+		, OutputLink(InLatentInfo.Linkage)
+		, CallbackTarget(InLatentInfo.CallbackTarget)
+	{
+		Handle = StreamableManager.RequestAsyncLoad(SoftObjectPath, FStreamableDelegate(), Priority);
+	}
+
+	virtual ~FLoadAssetPriorityActionBase()
+	{
+		if (Handle.IsValid())
+		{
+			Handle->ReleaseHandle();
+		}
+	}
+
+	virtual void UpdateOperation(FLatentResponse& Response) override
+	{
+		const bool bLoaded = !Handle.IsValid() || Handle->HasLoadCompleted() || Handle->WasCanceled();
+		if (bLoaded)
+		{
+			OnLoaded();
+		}
+		Response.FinishAndTriggerIf(bLoaded, ExecutionFunction, OutputLink, CallbackTarget);
+	}
+
+#if WITH_EDITOR
+	virtual FString GetDescription() const override
+	{
+		return FString::Printf(TEXT("Load Asset Priority Action Base: %s"), *SoftObjectPath.ToString());
+	}
+#endif
+};
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeObjectHelpers::LoadAssetPriority(UObject* WorldContextObject, TSoftObjectPtr<UObject> Asset, const int32 Priority, URyRuntimeObjectHelpers::FOnAssetLoaded OnLoaded, FLatentActionInfo LatentInfo)
+{
+	struct FLoadAssetAction : public FLoadAssetPriorityActionBase
+	{
+	public:
+		URyRuntimeObjectHelpers::FOnAssetLoaded OnLoadedCallback;
+
+		FLoadAssetAction(const FSoftObjectPath& InSoftObjectPath, const int32 Priority, URyRuntimeObjectHelpers::FOnAssetLoaded InOnLoadedCallback, const FLatentActionInfo& InLatentInfo)
+			: FLoadAssetPriorityActionBase(InSoftObjectPath, Priority, InLatentInfo)
+			, OnLoadedCallback(InOnLoadedCallback)
+		{}
+
+		virtual void OnLoaded() override
+		{
+			UObject* LoadedObject = SoftObjectPath.ResolveObject();
+			OnLoadedCallback.ExecuteIfBound(LoadedObject);
+		}
+	};
+
+	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		FLatentActionManager& LatentManager = World->GetLatentActionManager();
+
+		// We always spawn a new load even if this node already queued one, the outside node handles this case
+		FLoadAssetAction* NewAction = new FLoadAssetAction(Asset.ToSoftObjectPath(), Priority, OnLoaded, LatentInfo);
+		LatentManager.AddNewAction(LatentInfo.CallbackTarget, LatentInfo.UUID, NewAction);
+	}
 }
 
 //---------------------------------------------------------------------------------------------------------------------
