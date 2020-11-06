@@ -28,6 +28,7 @@ public class RyRuntime : ModuleRules
                 "SlateCore",
                 "Engine",
 				"NavigationSystem",
+				"AIModule",
 				"UMG",
 			}
         );

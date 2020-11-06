@@ -4,6 +4,8 @@
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Math/UnitConversion.h"
+
 #include "RyRuntimeMathHelpers.generated.h"
 
 // Copy of the Unreal EUnit enum for blueprint unit conversion access
@@ -88,8 +90,31 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Math|Utility")
 	static float ConvertUnit(const float value, const ERyUnit from, const ERyUnit to);
 
+	/**
+	 * Takes a startRotation and finds the shortest path to endRotation.
+	 * Input rotations are clamped, and output rotation is clamped. [0-360]
+	 * Positive output means 'endRotation; is towards a increasing value of 'startRotation'
+	 * Negative output means 'endRotation' is towards a decreasing value of 'startRotation'
+	 *
+	 * @param startRotation - The rotation towards endRotation
+	 * @param endRotation - The rotation from startRotation
+	 *
+	 * @return a new rotation component value
+	*/
+	UFUNCTION(BlueprintPure, Category = "Math|Utility")
+	static float ShortestRotationPath(const float startRotation, const float endRotation);
+
+	// Returns inFloat as a negative value, even if inFloat is already negative.
+	UFUNCTION(BlueprintPure, Category = "Math|Utility")
+	static float MakeNegative(const float inFloat);
+
+	// Same as Abs, returns a positive float value.
+	UFUNCTION(BlueprintPure, Category = "Math|Utility")
+	static float MakePositive(const float inFloat);
+
     /**
-	* Converts a world location to screen position for HUD drawing. This differs from the results of FSceneView::WorldToScreen in that it returns a position along the edge of the screen for offscreen locations
+	* Converts a world location to screen position for HUD drawing. This differs from the results of FSceneView::WorldToScreen
+	* in that it returns a position along the edge of the screen for offscreen locations
 	*
 	* @param		InLocation	- The world space location to be converted to screen space
 	* @param		EdgePercent - How close to the edge of the screen, 1.0 = at edge, 0.0 = at center of screen. .9 or .95 is usually desirable
@@ -169,6 +194,33 @@ FORCEINLINE_DEBUGGABLE
 float URyRuntimeMathHelpers::CalculateCatenary(float X, float scalingFactor)
 {
     return scalingFactor * coshf(X / scalingFactor);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE_DEBUGGABLE
+float URyRuntimeMathHelpers::ConvertUnit(const float value, const ERyUnit from, const ERyUnit to)
+{
+	return FUnitConversion::Convert<float>(value, static_cast<EUnit>(from), static_cast<EUnit>(to));
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE_DEBUGGABLE
+float URyRuntimeMathHelpers::MakeNegative(const float inFloat)
+{
+	return FMath::Abs(inFloat) * -1.0f;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE_DEBUGGABLE
+float URyRuntimeMathHelpers::MakePositive(const float inFloat)
+{
+	return FMath::Abs(inFloat);
 }
 
 //---------------------------------------------------------------------------------------------------------------------

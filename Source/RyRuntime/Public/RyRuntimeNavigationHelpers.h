@@ -8,7 +8,7 @@
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
-  * Static Helper functions related to runtime levels
+  * Static Helper functions related to the Unreal navigation system
 */
 UCLASS()
 class RYRUNTIME_API URyRuntimeNavigationHelpers : public UBlueprintFunctionLibrary
@@ -26,4 +26,20 @@ public:
     */
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|NavigationHelpers")
     static void SetCanEverAffectNavigation(class UActorComponent* actorComponent, const bool canEverAffectNavigation);
+
+    // Get the start point in world space of a smart link
+    UFUNCTION(BlueprintPure, Category = "RyRuntime|NavLinkHelpers")
+    static FVector GetStartPoint(class UNavLinkCustomComponent* smartLinkComponent);
+
+    // Get the end point in world space of a smart link
+    UFUNCTION(BlueprintPure, Category = "RyRuntime|NavLinkHelpers")
+    static FVector GetEndPoint(class UNavLinkCustomComponent* smartLinkComponent);
+
+    // Set whether the smart link in a nav link proxy is relevant
+    UFUNCTION(BlueprintCallable, Category = "RyRuntime|NavigationHelpers")
+    static void SetSmartLinkIsRelevant(class ANavLinkProxy* navLinkProxy, const bool isRelevant);
+
+    // Get the smart link component of the nav link proxy
+    UFUNCTION(BlueprintPure, Category = "RyRuntime|NavLinkHelpers")
+    static UNavLinkCustomComponent* GetSmartLinkComponent(class ANavLinkProxy* navLinkProxy);
 };
