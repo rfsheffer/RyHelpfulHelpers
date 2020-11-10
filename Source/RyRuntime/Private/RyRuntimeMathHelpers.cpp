@@ -38,6 +38,16 @@ float URyRuntimeMathHelpers::ShortestRotationPath(const float startRotation, con
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
+bool URyRuntimeMathHelpers::RotationsEqual(const float rotation1, const float rotation2, const float ErrorTolerance)
+{
+	const float clamp1 = FRotator::ClampAxis(rotation1);
+	const float clamp2 = FRotator::ClampAxis(rotation2);
+	return FMath::IsNearlyEqual(clamp1, clamp2, ErrorTolerance);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
 void URyRuntimeMathHelpers::FindScreenEdgeLocationForWorldLocation(UObject* WorldContextObject, const FVector& InLocation, 
                                                                    const float EdgePercent, FVector2D& OutScreenPosition, 
                                                                    float& OutRotationAngleDegrees, bool &bIsOnScreen)

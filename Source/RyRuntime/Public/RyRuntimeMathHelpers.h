@@ -101,15 +101,20 @@ public:
 	 *
 	 * @return a new rotation component value
 	*/
-	UFUNCTION(BlueprintPure, Category = "Math|Utility")
+	UFUNCTION(BlueprintPure, Category = "Math|Rotations")
 	static float ShortestRotationPath(const float startRotation, const float endRotation);
 
+	// Do two rotations equal?
+	// Clamps both rotations to consistent limits and compares them using an Error Tolerance
+	UFUNCTION(BlueprintPure, Category = "Math|Rotations")
+	static bool RotationsEqual(const float rotation1, const float rotation2, const float ErrorTolerance = 1.e-6f);
+
 	// Returns inFloat as a negative value, even if inFloat is already negative.
-	UFUNCTION(BlueprintPure, Category = "Math|Utility")
+	UFUNCTION(BlueprintPure, Category = "Math|Float")
 	static float MakeNegative(const float inFloat);
 
 	// Same as Abs, returns a positive float value.
-	UFUNCTION(BlueprintPure, Category = "Math|Utility")
+	UFUNCTION(BlueprintPure, Category = "Math|Float")
 	static float MakePositive(const float inFloat);
 
     /**
