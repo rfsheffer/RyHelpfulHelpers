@@ -117,6 +117,13 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Math|Float")
 	static float MakePositive(const float inFloat);
 
+	// A constant used by the engine denoting an invalid index.
+	// Array Find operations return IndexNone if an element could not be found.
+	// Most returned indices are IndexNone if invalid.
+	// Sometimes IndexNone is passed into functions to show the user doesn't care what the index is.
+	UFUNCTION(BlueprintPure, Category = "Math|Index")
+	static int32 IndexNone();
+
     /**
 	* Converts a world location to screen position for HUD drawing. This differs from the results of FSceneView::WorldToScreen
 	* in that it returns a position along the edge of the screen for offscreen locations
@@ -226,6 +233,15 @@ FORCEINLINE_DEBUGGABLE
 float URyRuntimeMathHelpers::MakePositive(const float inFloat)
 {
 	return FMath::Abs(inFloat);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+int32 URyRuntimeMathHelpers::IndexNone()
+{
+	return INDEX_NONE;
 }
 
 //---------------------------------------------------------------------------------------------------------------------
