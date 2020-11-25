@@ -31,7 +31,7 @@ ULevel* URyRuntimeLevelHelpers::GetActorLevel(const AActor* actorIn)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-bool URyRuntimeLevelHelpers::IsActorInLevel(AActor* actorToCheck, ULevel* levelToCheck)
+bool URyRuntimeLevelHelpers::IsActorInLevel(const AActor* actorToCheck, const ULevel* levelToCheck)
 {
     if(actorToCheck == nullptr || levelToCheck == nullptr)
         return false;
@@ -42,25 +42,39 @@ bool URyRuntimeLevelHelpers::IsActorInLevel(AActor* actorToCheck, ULevel* levelT
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FString URyRuntimeLevelHelpers::GetLevelNameString(ULevel* levelIn, bool longName)
+FString URyRuntimeLevelHelpers::GetActorLevelNameString(const AActor* actorIn, bool longName, bool packageName)
+{
+    ULevel* level = GetActorLevel(actorIn);
+    if(level)
+    {
+        return GetLevelNameString(level, longName, packageName);
+    }
+    return TEXT("");
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FString URyRuntimeLevelHelpers::GetLevelNameString(const ULevel* levelIn, bool longName, bool packageName)
 {
     if(levelIn == nullptr || levelIn->GetOutermost() == nullptr)
     {
         UE_LOG(LogRyRuntime, Warning, TEXT("URyRuntimeLevelHelpers::GetLevelNameString called with invalid levelIn!"));
         return TEXT("");
     }
-    if(longName)
+
+    if(packageName)
     {
-        return levelIn->GetOutermost()->GetFName().ToString();
+        return longName ? levelIn->GetOutermost()->GetName() : FPackageName::GetShortName(levelIn->GetOutermost()->GetFName());
     }
-    
-    return FPackageName::GetShortName(levelIn->GetOutermost()->GetFName());
+
+    return longName ? levelIn->GetOuter()->GetName() : FPackageName::GetShortName(levelIn->GetOuter()->GetFName());
 }
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-bool URyRuntimeLevelHelpers::IsLevelPersistentLevel(ULevel* levelIn)
+bool URyRuntimeLevelHelpers::IsLevelPersistentLevel(const ULevel* levelIn)
 {
     if(levelIn == nullptr || levelIn->OwningWorld == nullptr)
     {
@@ -82,7 +96,7 @@ UObject* URyRuntimeLevelHelpers::FindObjectInLevelByName(ULevel* levelToSearch, 
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-void URyRuntimeLevelHelpers::GetActorsOfTypeInLevel(ULevel* level, TSubclassOf<AActor> ActorClass, TArray<AActor*>& actorsOut)
+void URyRuntimeLevelHelpers::GetActorsOfTypeInLevel(const ULevel* level, TSubclassOf<AActor> ActorClass, TArray<AActor*>& actorsOut)
 {
     if(!level)
     {

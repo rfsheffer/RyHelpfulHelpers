@@ -51,16 +51,24 @@ public:
 
     // Returns true if 'actorToCheck' is in the level 'levelToCheck'
     UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
-    static bool IsActorInLevel(AActor* actorToCheck, ULevel* levelToCheck);
+    static bool IsActorInLevel(const AActor* actorToCheck, const ULevel* levelToCheck);
+
+	// Return the name string associated with this actor
+	// @param longName - If set to true, returns the full path name of the level asset
+	// @param packageName - If set to true, returns the name associated with the package. This only changes the result
+	//						in cases where the level has been duplicated or is transient. For example, PIE levels have a
+	//						prefix because they are transient duplications of an actual level.
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers", meta = (AdvancedDisplay = "1"))
+    static FString GetActorLevelNameString(const AActor* actorIn, bool longName = false, bool packageName = false);
 
     // Return the name string associated with this level
-    // If param 'longName' is set to true, returns the full path name of this level asset
-    UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
-    static FString GetLevelNameString(ULevel* levelIn, bool longName = false);
+    // If param 'longName' is set to true, returns the full path name of the level asset
+    UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers", meta = (AdvancedDisplay = "1"))
+    static FString GetLevelNameString(const ULevel* levelIn, bool longName = false, bool packageName = false);
 
     // Return true if the level passed in is the persistent level
     UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
-    static bool IsLevelPersistentLevel(ULevel* levelIn);
+    static bool IsLevelPersistentLevel(const ULevel* levelIn);
 
     // Searches the level package for an object by name
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers")
@@ -69,7 +77,7 @@ public:
     // Gets all actors of ActorClass in a specific level
     // This is a slow operation, use with caution e.g. do not use every frame.
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers")
-	static void GetActorsOfTypeInLevel(ULevel* level, TSubclassOf<AActor> ActorClass, TArray<AActor*>& actorsOut);
+	static void GetActorsOfTypeInLevel(const ULevel* level, TSubclassOf<AActor> ActorClass, TArray<AActor*>& actorsOut);
 	
 	// A Helper function to create a actor of a class type. This does not support presenting exposed variables.
 	// Use SpawnActorOfClassDeferred to modify settings pre BeginPlay.
