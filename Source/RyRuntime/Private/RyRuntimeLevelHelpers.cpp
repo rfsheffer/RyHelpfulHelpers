@@ -42,12 +42,12 @@ bool URyRuntimeLevelHelpers::IsActorInLevel(const AActor* actorToCheck, const UL
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FString URyRuntimeLevelHelpers::GetActorLevelNameString(const AActor* actorIn, bool longName, bool packageName)
+FString URyRuntimeLevelHelpers::GetActorLevelPackageString(const AActor* actorIn, bool longName)
 {
     ULevel* level = GetActorLevel(actorIn);
     if(level)
     {
-        return GetLevelNameString(level, longName, packageName);
+        return GetLevelPackageString(level, longName);
     }
     return TEXT("");
 }
@@ -55,20 +55,42 @@ FString URyRuntimeLevelHelpers::GetActorLevelNameString(const AActor* actorIn, b
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FString URyRuntimeLevelHelpers::GetLevelNameString(const ULevel* levelIn, bool longName, bool packageName)
+FString URyRuntimeLevelHelpers::GetLevelPackageString(const ULevel* levelIn, bool longName)
 {
     if(levelIn == nullptr || levelIn->GetOutermost() == nullptr)
     {
-        UE_LOG(LogRyRuntime, Warning, TEXT("URyRuntimeLevelHelpers::GetLevelNameString called with invalid levelIn!"));
+        UE_LOG(LogRyRuntime, Warning, TEXT("URyRuntimeLevelHelpers::Get*PackageString called with invalid levelIn or actor!"));
         return TEXT("");
     }
 
-    if(packageName)
-    {
-        return longName ? levelIn->GetOutermost()->GetName() : FPackageName::GetShortName(levelIn->GetOutermost()->GetFName());
-    }
+    return longName ? levelIn->GetOutermost()->GetName() : FPackageName::GetShortName(levelIn->GetOutermost()->GetFName());
+}
 
-    return longName ? levelIn->GetOuter()->GetName() : FPackageName::GetShortName(levelIn->GetOuter()->GetFName());
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FString URyRuntimeLevelHelpers::GetLevelNameString(const ULevel* levelIn)
+{
+    if(levelIn == nullptr || levelIn->GetOutermost() == nullptr)
+    {
+        UE_LOG(LogRyRuntime, Warning, TEXT("URyRuntimeLevelHelpers::Get*LevelNameString called with invalid levelIn or actor!"));
+        return TEXT("");
+    }
+    return levelIn->GetOuter()->GetName();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FString URyRuntimeLevelHelpers::GetActorLevelNameString(const AActor* actorIn)
+{
+    ULevel* level = GetActorLevel(actorIn);
+    if(level)
+    {
+        return GetLevelNameString(level);
+    }
+    
+    return TEXT("");
 }
 
 //---------------------------------------------------------------------------------------------------------------------

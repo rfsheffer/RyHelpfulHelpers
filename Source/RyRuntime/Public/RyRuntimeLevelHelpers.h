@@ -53,18 +53,23 @@ public:
     UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
     static bool IsActorInLevel(const AActor* actorToCheck, const ULevel* levelToCheck);
 
-	// Return the name string associated with this actor
-	// @param longName - If set to true, returns the full path name of the level asset
-	// @param packageName - If set to true, returns the name associated with the package. This only changes the result
-	//						in cases where the level has been duplicated or is transient. For example, PIE levels have a
-	//						prefix because they are transient duplications of an actual level.
+	// Return the level package string associated with this actor
+	// @param longName - If set to true, returns the full path name of the level asset (In PIE sessions, this will be the duplicate level name)
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers", meta = (AdvancedDisplay = "1"))
-    static FString GetActorLevelNameString(const AActor* actorIn, bool longName = false, bool packageName = false);
+    static FString GetActorLevelPackageString(const AActor* actorIn, bool longName = true);
 
-    // Return the name string associated with this level
-    // If param 'longName' is set to true, returns the full path name of the level asset
+	// Return the level package string associated with this level
+	// @param longName - If set to true, returns the full path name of the level asset (In PIE sessions, this will be the duplicate level name)
     UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers", meta = (AdvancedDisplay = "1"))
-    static FString GetLevelNameString(const ULevel* levelIn, bool longName = false, bool packageName = false);
+    static FString GetLevelPackageString(const ULevel* levelIn, bool longName = true);
+
+	// Returns the name of the level (Always the correct name, no PIE name change)
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
+	static FString GetLevelNameString(const ULevel* levelIn);
+
+	// Returns the name of the level associated with this actor (Always the correct name, no PIE name change)
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
+	static FString GetActorLevelNameString(const AActor* actorIn);
 
     // Return true if the level passed in is the persistent level
     UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
