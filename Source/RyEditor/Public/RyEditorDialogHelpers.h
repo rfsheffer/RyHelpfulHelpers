@@ -7,7 +7,7 @@
 
 #include "RyEditorDialogHelpers.generated.h"
 
-UENUM(BlueprintType, meta = (Bitflags))
+UENUM(BlueprintType)
 enum class ERyOpenFileDialogFlags : uint8
 {
     // No flags
@@ -81,7 +81,7 @@ public:
     UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|DialogHelpers")
     static bool OpenFileDialog(const FString& DialogTitle, const FString& DefaultPath, const FString& DefaultFile, 
                                TArray<FString>& OutFilenames, int32& OutFilterIndex,
-                               UPARAM(meta = (Bitmask, BitmaskEnum = ERyOpenFileDialogFlags)) int32 Flags = 0,
+                               ERyOpenFileDialogFlags Flag = ERyOpenFileDialogFlags::None,
                                const FString& FileTypes = TEXT("All Files (*)|*|Text Files (*.txt)|*.txt"));
 
     // Open a directory select dialog for selecting a directory to use
@@ -91,8 +91,8 @@ public:
     // Open a save file dialog box for setting a filename or overwrite file path
     UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|DialogHelpers")
     static bool SaveFileDialog(const FString& DialogTitle, const FString& DefaultPath, const FString& DefaultFile, TArray<FString>& OutFilenames,
-                        UPARAM(meta = (Bitmask, BitmaskEnum = ERyOpenFileDialogFlags)) int32 Flags = 0,
-                        const FString& FileTypes = TEXT("All Files (*)|*|Text Files (*.txt)|*.txt"));
+                               ERyOpenFileDialogFlags Flag = ERyOpenFileDialogFlags::None,
+                               const FString& FileTypes = TEXT("All Files (*)|*|Text Files (*.txt)|*.txt"));
 
     // Get the last directory path for a specific type of directory access. Good to pass this value into DefaultPath for OpenFileDialog, SaveFileDialog and OpenDirectoryDialog
     UFUNCTION(BlueprintPure, CallInEditor, Category = "RyEditor|DialogHelpers")
@@ -100,11 +100,11 @@ public:
 
     // Open a generic message dialog
     UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|DialogHelpers")
-    static ERyAppReturnType OpenMessageDialog(ERyAppMsgType MessageType, const FText& Message, const FText& OptTitle = FText());
+    static ERyAppReturnType OpenMessageDialog(ERyAppMsgType MessageType, const FText Message, const FText WindowTitle = FText());
 
     // Open a debug message dialog
     UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|DialogHelpers")
-    static void OpenDebugMessageDialog(const FText& Message, const FText& OptTitle = FText());
+    static void OpenDebugMessageDialog(const FText Message, const FText WindowTitle = FText());
 
     // Opens a dialog containing the details of the supplied class. When the window is closed, an object of the class is returned with whatever edits were made.
     // This is useful for creating custom import windows, etc.
@@ -120,5 +120,5 @@ public:
                                             const FText WindowTitle, 
                                             const FText ButtonText, 
                                             bool& ButtonPressedOut, 
-                                            const FVector2D& WindowSize = FVector2D(400, 550));
+                                            const FVector2D WindowSize = FVector2D(400, 550));
 };

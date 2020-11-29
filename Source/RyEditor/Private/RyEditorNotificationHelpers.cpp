@@ -11,7 +11,7 @@
 //--------------------------------------------------------------------------------------------------------------------
 /**
 */
-void URyEditorNotificationHelpers::CreateEditorNotification(const FText& Message, const ERyNotifyCompletionState notifyType /*= ERyNotifyCompletionState::None*/,
+void URyEditorNotificationHelpers::CreateEditorNotification(const FText Message, const ERyNotifyCompletionState notifyType /*= ERyNotifyCompletionState::None*/,
                                                             const float fadeInDuration /*= 0.5f*/, const float expireDuration /*= 1.0f*/,
                                                             const float fadeOutDuration /*= 2.0f*/, const bool useThrobber /*= false*/,
                                                             const bool useSuccessFailIcons /*= true*/, const bool useLargeFont /*= true*/)

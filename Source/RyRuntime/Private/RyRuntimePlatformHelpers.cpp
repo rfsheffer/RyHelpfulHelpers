@@ -8,11 +8,11 @@
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-class RyBasePlatforFileFunctor : public IPlatformFile::FDirectoryVisitor
+class RyBasePlatformFileFunctor : public IPlatformFile::FDirectoryVisitor
 {
 public:
 
-    RyBasePlatforFileFunctor(ERyIterateDirectoryOut OutType) 
+    RyBasePlatformFileFunctor(ERyIterateDirectoryOut OutType) 
         : outOption(OutType)
         , dirLevel(0)
     {
@@ -32,7 +32,7 @@ public:
             }
         }
 
-        bool shouldVisit = DoVisit(FilenameOrDirectory, bIsDirectory, wasFiltered);
+        const bool shouldVisit = DoVisit(FilenameOrDirectory, bIsDirectory, wasFiltered);
         if(shouldVisit && bIsDirectory)
         {
             dirs.Add(FilenameOrDirectory);
@@ -53,7 +53,7 @@ public:
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-class RyNativePlatformFileFunctor : public RyBasePlatforFileFunctor
+class RyNativePlatformFileFunctor : public RyBasePlatformFileFunctor
 {
 public:
 
@@ -63,7 +63,7 @@ public:
         {
             return visitor(FileOrDirectoryPath, IsDirectory, WasFiltered, dirLevel);
         }
-        return RyBasePlatforFileFunctor::DoVisit(FileOrDirectoryPath, IsDirectory, WasFiltered);
+        return RyBasePlatformFileFunctor::DoVisit(FileOrDirectoryPath, IsDirectory, WasFiltered);
     }
     virtual bool DoFilter(const FString& PathString) override
     {
@@ -71,11 +71,11 @@ public:
         {
             return filter(PathString);
         }
-        return RyBasePlatforFileFunctor::DoFilter(PathString);
+        return RyBasePlatformFileFunctor::DoFilter(PathString);
     }
 
     RyNativePlatformFileFunctor(RyNativeVisitorSig visitorIn, RyNativeFileFilterSig filterIn, ERyIterateDirectoryOut OutType)
-        : RyBasePlatforFileFunctor(OutType)
+        : RyBasePlatformFileFunctor(OutType)
         , visitor(visitorIn)
         , filter(filterIn)
     {
@@ -89,7 +89,7 @@ private:
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-class RyBPPlatformFileFunctor : public RyBasePlatforFileFunctor
+class RyBPPlatformFileFunctor : public RyBasePlatformFileFunctor
 {
 public:
 
@@ -99,7 +99,7 @@ public:
         {
             return visitor.Execute(FileOrDirectoryPath, IsDirectory, WasFiltered, dirLevel);
         }
-        return RyBasePlatforFileFunctor::DoVisit(FileOrDirectoryPath, IsDirectory, WasFiltered);
+        return RyBasePlatformFileFunctor::DoVisit(FileOrDirectoryPath, IsDirectory, WasFiltered);
     }
     virtual bool DoFilter(const FString& PathString) override
     {
@@ -107,11 +107,11 @@ public:
         {
             return filter.Execute(PathString);
         }
-        return RyBasePlatforFileFunctor::DoFilter(PathString);
+        return RyBasePlatformFileFunctor::DoFilter(PathString);
     }
 
     RyBPPlatformFileFunctor(FRyDirectoryVisitor visitorIn, FRyFileFilter filterIn, ERyIterateDirectoryOut OutType)
-        : RyBasePlatforFileFunctor(OutType)
+        : RyBasePlatformFileFunctor(OutType)
         , visitor(visitorIn)
         , filter(filterIn)
     {
@@ -125,7 +125,7 @@ private:
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-bool DoIterateDirectory(const FString& DirectoryName, const bool IncludeSubFolders, ERyIterateDirectoryOut OutType, TArray<FString>& PathsOut, RyBasePlatforFileFunctor& fileVisitor)
+bool DoIterateDirectory(const FString& DirectoryName, const bool IncludeSubFolders, ERyIterateDirectoryOut OutType, TArray<FString>& PathsOut, RyBasePlatformFileFunctor& fileVisitor)
 {
     int32 dirLevel = 0;
     TArray<FString> newDirs;

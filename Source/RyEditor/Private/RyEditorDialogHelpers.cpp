@@ -6,9 +6,7 @@
 #include "AssetToolsModule.h"
 #include "PropertyEditorModule.h"
 
-#include "Toolkits/AssetEditorToolkit.h"
 #include "Editor/LevelEditor/Public/LevelEditor.h"
-#include "Editor/PropertyEditor/Public/PropertyEditorModule.h"
 #include "Interfaces/IMainFrameModule.h"
 
 #include "DesktopPlatformModule.h"
@@ -21,7 +19,8 @@
 /**
 */
 bool URyEditorDialogHelpers::OpenFileDialog(const FString& DialogTitle, const FString& DefaultPath, const FString& DefaultFile, 
-                                            TArray<FString>& OutFilenames, int32& OutFilterIndex, int32 Flags, const FString& FileTypes)
+                                            TArray<FString>& OutFilenames, int32& OutFilterIndex, ERyOpenFileDialogFlags Flag,
+                                            const FString& FileTypes)
 {
     IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
     if(DesktopPlatform)
@@ -36,7 +35,7 @@ bool URyEditorDialogHelpers::OpenFileDialog(const FString& DialogTitle, const FS
                                                DefaultPath,
                                                DefaultFile,
                                                FileTypes,
-                                               Flags,
+                                               static_cast<uint32>(Flag),
                                                OutFilenames,
                                                OutFilterIndex);
     }
@@ -70,7 +69,8 @@ bool URyEditorDialogHelpers::OpenDirectoryDialog(const FString& DialogTitle, con
 /**
 */
 bool URyEditorDialogHelpers::SaveFileDialog(const FString& DialogTitle, const FString& DefaultPath, const FString& DefaultFile, 
-                                            TArray<FString>& OutFilenames, int32 Flags, const FString& FileTypes)
+                                            TArray<FString>& OutFilenames, ERyOpenFileDialogFlags Flag,
+                                            const FString& FileTypes)
 {
     IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
     if(DesktopPlatform)
@@ -85,50 +85,51 @@ bool URyEditorDialogHelpers::SaveFileDialog(const FString& DialogTitle, const FS
                                                DefaultPath,
                                                DefaultFile,
                                                FileTypes,
-                                               Flags,
+                                               static_cast<uint32>(Flag),
                                                OutFilenames);
     }
 
     return false;
 }
 
-static_assert(ERyLastDirectory::MAX == (ERyLastDirectory)ELastDirectory::MAX, "Last Directory Enum changed. Update ERyLastDirectory to match ELastDirectory!");
+static_assert(ERyLastDirectory::MAX == static_cast<ERyLastDirectory>(ELastDirectory::MAX), "Last Directory Enum changed. Update ERyLastDirectory to match ELastDirectory!");
 
 //--------------------------------------------------------------------------------------------------------------------
 /**
 */
 FString URyEditorDialogHelpers::GetLastDirectory(ERyLastDirectory lastDirectory)
 {
-    ELastDirectory::Type convertType = (ELastDirectory::Type)lastDirectory;
+    const ELastDirectory::Type convertType = static_cast<ELastDirectory::Type>(lastDirectory);
     return FEditorDirectories::Get().GetLastDirectory(convertType);
 }
 
-static_assert(ERyAppReturnType::Continue == (ERyAppReturnType)EAppReturnType::Continue, "EAppReturnType changed. Update ERyAppReturnType to match EAppReturnType!");
-static_assert(ERyAppMsgType::YesNoYesAll == (ERyAppMsgType)EAppMsgType::YesNoYesAll, "EAppMsgType changed. Update ERyAppMsgType to match EAppMsgType!");
+static_assert(ERyAppReturnType::Continue == static_cast<ERyAppReturnType>(EAppReturnType::Continue), "EAppReturnType changed. Update ERyAppReturnType to match EAppReturnType!");
+static_assert(ERyAppMsgType::YesNoYesAll == static_cast<ERyAppMsgType>(EAppMsgType::YesNoYesAll), "EAppMsgType changed. Update ERyAppMsgType to match EAppMsgType!");
 
 //--------------------------------------------------------------------------------------------------------------------
 /**
 */
-ERyAppReturnType URyEditorDialogHelpers::OpenMessageDialog(ERyAppMsgType MessageType, const FText& Message, const FText& OptTitle)
+ERyAppReturnType URyEditorDialogHelpers::OpenMessageDialog(ERyAppMsgType MessageType, const FText Message, const FText WindowTitle)
 {
     const FText* optTitle = nullptr;
-    if(!OptTitle.IsEmpty())
+    if(!WindowTitle.IsEmpty())
     {
-        optTitle = &OptTitle;
+        optTitle = &WindowTitle;
     }
 
-    return (ERyAppReturnType)FMessageDialog::Open((EAppMsgType::Type)MessageType, EAppReturnType::Cancel, Message, optTitle);
+    return static_cast<ERyAppReturnType>(FMessageDialog::Open(static_cast<EAppMsgType::Type>(MessageType), EAppReturnType::Cancel,
+                                                              Message, optTitle));
 }
 
 //--------------------------------------------------------------------------------------------------------------------
 /**
 */
-void URyEditorDialogHelpers::OpenDebugMessageDialog(const FText& Message, const FText& OptTitle)
+void URyEditorDialogHelpers::OpenDebugMessageDialog(const FText Message, const FText WindowTitle)
 {
     const FText* optTitle = nullptr;
-    if(!OptTitle.IsEmpty())
+    if(!WindowTitle.IsEmpty())
     {
-        optTitle = &OptTitle;
+        optTitle = &WindowTitle;
     }
 
     FMessageDialog::Debugf(Message, optTitle);
@@ -151,7 +152,7 @@ public:
         check(detailsDialog->ParamsObject.IsValid());
         detailsDialog->ParamsObject->AddToRoot();
 
-        FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
+        //FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
         TArray< UObject* > ObjectsToView;
         ObjectsToView.Add(detailsDialog->ParamsObject.Get());
 
@@ -169,7 +170,7 @@ public:
         bool bHaveTemplate = false;
         for(int32 i = 0; i < ObjectsToView.Num(); i++)
         {
-            if(ObjectsToView[i] != NULL && ObjectsToView[i]->IsTemplate())
+            if(ObjectsToView[i] != nullptr && ObjectsToView[i]->IsTemplate())
             {
                 bHaveTemplate = true;
                 break;
@@ -285,7 +286,7 @@ public:
 //--------------------------------------------------------------------------------------------------------------------
 /**
 */
-UObject* URyEditorDialogHelpers::OpenObjectDetailsDialog(TSubclassOf<UObject> DetailsClass, const FText WindowTitle, const FText ButtonText, bool& ButtonPressedOut, const FVector2D& WindowSize)
+UObject* URyEditorDialogHelpers::OpenObjectDetailsDialog(TSubclassOf<UObject> DetailsClass, const FText WindowTitle, const FText ButtonText, bool& ButtonPressedOut, const FVector2D WindowSize)
 {
     ButtonPressedOut = false;
     TWeakObjectPtr<UObject> ParamsObjectOut;
