@@ -94,6 +94,7 @@ public:
 	// @param actorOwner - (Optional) The Actor that spawned this Actor
 	// @param actorInstigator - (Optional) The APawn that is responsible for damage done by the spawned Actor
 	// @param overrideLevel - (Optional) The ULevel to spawn the Actor in, i.e. the Outer of the Actor. If left as NULL the Outer of the Owner is used. If the Owner is NULL the persistent level is used
+	// @param allowDuringConstructionScript - If true you can spawn actors during construction script. This is can be very useful for spawning helper actors but make sure you are cleaning up after yourself or bad things can happen!
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers", meta = (WorldContext = "WorldContextObject", AdvancedDisplay = "3", CallableWithoutWorldContext))
 	static class AActor* SpawnActorOfClass(UObject* WorldContextObject,
 										   TSubclassOf<class AActor> actorClass,
@@ -103,7 +104,8 @@ public:
 										   AActor* actorTemplate = nullptr,
 										   AActor* actorOwner = nullptr,
 										   APawn* actorInstigator = nullptr,
-										   ULevel* overrideLevel = nullptr);
+										   ULevel* overrideLevel = nullptr,
+										   bool allowDuringConstructionScript = false);
 
 	// A Helper function to create a actor of a class type. This does not support presenting exposed variables.
 	// Make sure to call FinishSpawningDeferredActor on the returned actor.
@@ -116,6 +118,7 @@ public:
 	// @param actorOwner - (Optional) The Actor that spawned this Actor
 	// @param actorInstigator - (Optional) The APawn that is responsible for damage done by the spawned Actor
 	// @param overrideLevel - (Optional) The ULevel to spawn the Actor in, i.e. the Outer of the Actor. If left as NULL the Outer of the Owner is used. If the Owner is NULL the persistent level is used
+	// @param allowDuringConstructionScript - If true you can spawn actors during construction script. This is can be very useful for spawning helper actors but make sure you are cleaning up after yourself or bad things can happen!
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers", meta = (WorldContext = "WorldContextObject", AdvancedDisplay = "3", CallableWithoutWorldContext))
     static class AActor* SpawnActorOfClassDeferred(UObject* WorldContextObject,
     											   TSubclassOf<class AActor> actorClass,
@@ -125,7 +128,8 @@ public:
 										           AActor* actorTemplate = nullptr,
 										           AActor* actorOwner = nullptr,
 										           APawn* actorInstigator = nullptr,
-										           ULevel* overrideLevel = nullptr);
+										           ULevel* overrideLevel = nullptr,
+                                                   bool allowDuringConstructionScript = false);
 
 	// Finish spawning an actor that was created via SpawnActorOfClassDeferred.
 	// @param actorToFinishSpawning - The actor to finish spawning

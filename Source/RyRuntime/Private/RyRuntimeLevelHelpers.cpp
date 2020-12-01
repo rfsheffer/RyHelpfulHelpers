@@ -155,7 +155,8 @@ AActor* URyRuntimeLevelHelpers::SpawnActorOfClass(UObject* WorldContextObject,
                                                   AActor* actorTemplate /*= nullptr*/,
                                                   AActor* actorOwner /*= nullptr*/,
                                                   APawn* actorInstigator /*= nullptr*/,
-                                                  ULevel* overrideLevel /*= nullptr*/)
+                                                  ULevel* overrideLevel /*= nullptr*/,
+                                                  bool allowDuringConstructionScript)
 {
     UWorld* world = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull);
     if(!world)
@@ -171,8 +172,17 @@ AActor* URyRuntimeLevelHelpers::SpawnActorOfClass(UObject* WorldContextObject,
     params.Instigator = actorInstigator;
     params.OverrideLevel = overrideLevel;
     params.SpawnCollisionHandlingOverride = spawnHandling;
+    params.bAllowDuringConstructionScript = allowDuringConstructionScript;
+    params.NameMode = FActorSpawnParameters::ESpawnActorNameMode::Requested;
     
-    return world->SpawnActor(actorClass, &transform, params);
+    AActor* spawnedActor =  world->SpawnActor(actorClass, &transform, params);
+#if WITH_EDITOR
+    if(spawnedActor)
+    {
+        spawnedActor->SetActorLabel(spawnedActor->GetName());
+    }
+#endif
+    return spawnedActor;
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -186,7 +196,8 @@ AActor* URyRuntimeLevelHelpers::SpawnActorOfClassDeferred(UObject* WorldContextO
                                                           AActor* actorTemplate /*= nullptr*/,
                                                           AActor* actorOwner /*= nullptr*/,
                                                           APawn* actorInstigator /*= nullptr*/,
-                                                          ULevel* overrideLevel /*= nullptr*/)
+                                                          ULevel* overrideLevel /*= nullptr*/,
+                                                          bool allowDuringConstructionScript)
 {
     UWorld* world = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull);
     if(!world)
@@ -203,8 +214,17 @@ AActor* URyRuntimeLevelHelpers::SpawnActorOfClassDeferred(UObject* WorldContextO
     params.OverrideLevel = overrideLevel;
     params.SpawnCollisionHandlingOverride = spawnHandling;
     params.bDeferConstruction = true;
-    
-    return world->SpawnActor(actorClass, &transform, params);
+    params.bAllowDuringConstructionScript = allowDuringConstructionScript;
+    params.NameMode = FActorSpawnParameters::ESpawnActorNameMode::Requested;
+
+    AActor* spawnedActor =  world->SpawnActor(actorClass, &transform, params);
+#if WITH_EDITOR
+    if(spawnedActor)
+    {
+        spawnedActor->SetActorLabel(spawnedActor->GetName());
+    }
+#endif
+    return spawnedActor;
 }
 
 //---------------------------------------------------------------------------------------------------------------------

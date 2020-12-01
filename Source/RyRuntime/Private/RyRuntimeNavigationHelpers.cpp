@@ -56,6 +56,28 @@ FVector URyRuntimeNavigationHelpers::GetEndPoint(UNavLinkCustomComponent* smartL
     return FVector::ZeroVector;
 }
 
+static_assert(ERyNavLinkDirection::RightToLeft == static_cast<ERyNavLinkDirection>(ENavLinkDirection::RightToLeft), "Fix NavLinkDirection enum misalignment!");
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeNavigationHelpers::SetSmartLinkData(ANavLinkProxy* navLinkProxy, const FVector& relativeStart,
+    const FVector& relativeEnd, ERyNavLinkDirection direction)
+{
+    if(!navLinkProxy || !navLinkProxy->GetSmartLinkComp())
+    {
+        return;
+    }
+
+    navLinkProxy->GetSmartLinkComp()->SetLinkData(relativeStart, relativeEnd, static_cast<ENavLinkDirection::Type>(direction));
+
+    UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(navLinkProxy->GetWorld());
+    if (NavSys)
+    {
+        NavSys->UpdateActorInNavOctree(*navLinkProxy);
+    }
+}
+
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */

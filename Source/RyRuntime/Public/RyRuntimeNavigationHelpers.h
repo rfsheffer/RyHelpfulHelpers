@@ -6,6 +6,14 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "RyRuntimeNavigationHelpers.generated.h"
 
+UENUM(Blueprintable)
+enum class ERyNavLinkDirection : uint8
+{
+	BothWays,
+    LeftToRight,
+    RightToLeft,
+};
+
 //---------------------------------------------------------------------------------------------------------------------
 /**
   * Static Helper functions related to the Unreal navigation system
@@ -28,18 +36,22 @@ public:
     static void SetCanEverAffectNavigation(class UActorComponent* actorComponent, const bool canEverAffectNavigation);
 
     // Get the start point in world space of a smart link
-    UFUNCTION(BlueprintPure, Category = "RyRuntime|NavLinkHelpers")
+    UFUNCTION(BlueprintPure, Category = "RyRuntime|NavLinkHelpers|SmartLink")
     static FVector GetStartPoint(class UNavLinkCustomComponent* smartLinkComponent);
 
     // Get the end point in world space of a smart link
-    UFUNCTION(BlueprintPure, Category = "RyRuntime|NavLinkHelpers")
+    UFUNCTION(BlueprintPure, Category = "RyRuntime|NavLinkHelpers|SmartLink")
     static FVector GetEndPoint(class UNavLinkCustomComponent* smartLinkComponent);
 
+	// Set the smart link data (start, end, and direction)
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|NavigationHelpers|SmartLink")
+	static void SetSmartLinkData(class ANavLinkProxy* navLinkProxy, const FVector& relativeStart, const FVector& relativeEnd, ERyNavLinkDirection direction);
+
     // Set whether the smart link in a nav link proxy is relevant
-    UFUNCTION(BlueprintCallable, Category = "RyRuntime|NavigationHelpers")
+    UFUNCTION(BlueprintCallable, Category = "RyRuntime|NavigationHelpers|SmartLink")
     static void SetSmartLinkIsRelevant(class ANavLinkProxy* navLinkProxy, const bool isRelevant);
 
     // Get the smart link component of the nav link proxy
-    UFUNCTION(BlueprintPure, Category = "RyRuntime|NavLinkHelpers")
+    UFUNCTION(BlueprintPure, Category = "RyRuntime|NavLinkHelpers|SmartLink")
     static UNavLinkCustomComponent* GetSmartLinkComponent(class ANavLinkProxy* navLinkProxy);
 };
