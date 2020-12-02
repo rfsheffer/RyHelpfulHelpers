@@ -179,6 +179,18 @@ public:
     /** Bitwise Shift Right >> */
 	UFUNCTION(BlueprintPure, meta=(DisplayName = "Bitwise Shift Right", CompactNodeTitle = ">>", Keywords = ">> shift"), Category="RyRuntime|Math|Integer64")
 	static int64 ShiftRight_Int64(int64 val, int32 shift = 1);
+
+	/** Returns the 2D dot product of two 3d vectors, Z axis excluded. - see http://mathworld.wolfram.com/DotProduct.html */
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "Dot Product 2D", CompactNodeTitle = "dot2D", ScriptMethod = "Dot2D", ScriptOperator = "|"), Category="RyRuntime|Math|Vector" )
+    static float Dot_VectorVector2D(FVector A, FVector B);
+
+	/** Returns true if vector A is equal to vector B (A == B) within a specified error tolerance, ignoring Z */
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "Equal (Vector) 2D", CompactNodeTitle = "==2D", ScriptMethod = "IsNearEqual2D", Keywords = "== equal"), Category="RyRuntime|Math|Vector")
+    static bool EqualEqual_VectorVector2D(FVector A, FVector B, float ErrorTolerance = 1.e-4f);
+
+	/** Returns true if vector A is not equal to vector B (A != B) within a specified error tolerance */
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "Not Equal (Vector)", CompactNodeTitle = "!=2D", ScriptMethod = "IsNotNearEqual2D"), Category="RyRuntime|Math|Vector")
+    static bool NotEqual_VectorVector2D(FVector A, FVector B, float ErrorTolerance = 1.e-4f);
 };
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -332,4 +344,34 @@ FORCEINLINE_DEBUGGABLE
 int64 URyRuntimeMathHelpers::ShiftRight_Int64(int64 val, int32 shift)
 {
     return val >> shift;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE_DEBUGGABLE
+float URyRuntimeMathHelpers::Dot_VectorVector2D(FVector A, FVector B)
+{
+	A.Z = 0; B.Z = 0;
+	return FVector::DotProduct(A, B);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE_DEBUGGABLE
+bool URyRuntimeMathHelpers::EqualEqual_VectorVector2D(FVector A, FVector B, float ErrorTolerance)
+{
+	A.Z = 0; B.Z = 0;
+	return A.Equals(B, ErrorTolerance);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE_DEBUGGABLE
+bool URyRuntimeMathHelpers::NotEqual_VectorVector2D(FVector A, FVector B, float ErrorTolerance)
+{
+	A.Z = 0; B.Z = 0;
+	return !A.Equals(B, ErrorTolerance);
 }
