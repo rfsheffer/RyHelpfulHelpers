@@ -12,6 +12,14 @@
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
+TSoftObjectPtr<UWorld> URyRuntimeLevelHelpers::GetWorldSoftObjectPtr(const FString& PathToWorld)
+{
+    return TSoftObjectPtr<UWorld>(PathToWorld);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
 ULevel* URyRuntimeLevelHelpers::GetActorLevel(const AActor* actorIn)
 {
     if(!actorIn)

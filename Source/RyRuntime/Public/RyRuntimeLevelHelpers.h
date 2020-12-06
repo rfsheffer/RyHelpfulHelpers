@@ -45,6 +45,12 @@ class RYRUNTIME_API URyRuntimeLevelHelpers : public UBlueprintFunctionLibrary
     GENERATED_BODY()
 public:
 
+	// Given a full path to your world ex: "/Game/MyLevels/MyLevel" return a constructed soft object ptr.
+	// This is used in cases such as the LevelStreamingDynamics need for a soft object pointer to a World
+	// which cannot be constructed dynamically.
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
+	static TSoftObjectPtr<UWorld> GetWorldSoftObjectPtr(const FString& PathToWorld);
+
     // Return the associated level this actor exists in
     UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
 	static ULevel* GetActorLevel(const AActor* actorIn);
