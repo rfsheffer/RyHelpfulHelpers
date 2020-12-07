@@ -7,6 +7,19 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "RyRuntimeObjectHelpers.generated.h"
 
+/** Async package loading result */
+UENUM(BlueprintType)
+enum class ERyAsyncLoadingResult : uint8
+{
+	/** Package failed to load */
+	Failed,
+    /** Package loaded successfully */
+    Succeeded,
+    /** Async loading was canceled */
+    Canceled
+};
+
+
 //---------------------------------------------------------------------------------------------------------------------
 /**
   * Static Helper functions related to runtime objects
@@ -58,6 +71,11 @@ public:
 
     UFUNCTION(BlueprintCallable, meta = (Latent, LatentInfo = "LatentInfo", WorldContext = "WorldContextObject", BlueprintInternalUseOnly = "true"), Category = "RyRuntime|ObjectHelpers")
     static void LoadAssetPriority(UObject* WorldContextObject, TSoftObjectPtr<UObject> Asset, const int32 Priority, FOnAssetLoaded OnLoaded, FLatentActionInfo LatentInfo);
+
+	DECLARE_DYNAMIC_DELEGATE_TwoParams(FOnPackageLoaded, UPackage*, LoadedPackage, ERyAsyncLoadingResult, Result);
+
+	UFUNCTION(BlueprintCallable, meta = (Latent, LatentInfo = "LatentInfo", WorldContext = "WorldContextObject", BlueprintInternalUseOnly = "true"), Category = "RyRuntime|ObjectHelpers")
+    static void LoadPackagePriority(UObject* WorldContextObject, const FString& PackagePath, const int32 Priority, const bool BlockOnLoad, FOnPackageLoaded OnLoaded, FLatentActionInfo LatentInfo);
 
     // Return the parent class of a class
     UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers")

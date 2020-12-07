@@ -115,11 +115,9 @@ UObject* URyRuntimeObjectHelpers::LoadObject(const FString& fullObjectPath)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-struct FLoadAssetPriorityActionBase : public FPendingLatentAction
+struct FLoadAssetPriorityActionBase : FPendingLatentAction
 {
 	// @TODO: it would be good to have static/global manager? 
-
-public:
 	FSoftObjectPath SoftObjectPath;
 	FStreamableManager StreamableManager;
 	TSharedPtr<FStreamableHandle> Handle;
@@ -167,14 +165,14 @@ public:
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-void URyRuntimeObjectHelpers::LoadAssetPriority(UObject* WorldContextObject, TSoftObjectPtr<UObject> Asset, const int32 Priority, URyRuntimeObjectHelpers::FOnAssetLoaded OnLoaded, FLatentActionInfo LatentInfo)
+void URyRuntimeObjectHelpers::LoadAssetPriority(UObject* WorldContextObject, TSoftObjectPtr<UObject> Asset, const int32 Priority,
+                                                FOnAssetLoaded OnLoaded, FLatentActionInfo LatentInfo)
 {
-	struct FLoadAssetAction : public FLoadAssetPriorityActionBase
+	struct FLoadAssetAction : FLoadAssetPriorityActionBase
 	{
-	public:
-		URyRuntimeObjectHelpers::FOnAssetLoaded OnLoadedCallback;
+		FOnAssetLoaded OnLoadedCallback;
 
-		FLoadAssetAction(const FSoftObjectPath& InSoftObjectPath, const int32 Priority, URyRuntimeObjectHelpers::FOnAssetLoaded InOnLoadedCallback, const FLatentActionInfo& InLatentInfo)
+		FLoadAssetAction(const FSoftObjectPath& InSoftObjectPath, const int32 Priority, FOnAssetLoaded InOnLoadedCallback, const FLatentActionInfo& InLatentInfo)
 			: FLoadAssetPriorityActionBase(InSoftObjectPath, Priority, InLatentInfo)
 			, OnLoadedCallback(InOnLoadedCallback)
 		{}
@@ -194,6 +192,101 @@ void URyRuntimeObjectHelpers::LoadAssetPriority(UObject* WorldContextObject, TSo
 		FLoadAssetAction* NewAction = new FLoadAssetAction(Asset.ToSoftObjectPath(), Priority, OnLoaded, LatentInfo);
 		LatentManager.AddNewAction(LatentInfo.CallbackTarget, LatentInfo.UUID, NewAction);
 	}
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+struct FLoadPackagePriorityActionBase : FPendingLatentAction
+{
+    FString PackagePath;
+    FName ExecutionFunction;
+    int32 OutputLink;
+    FWeakObjectPtr CallbackTarget;
+    EAsyncLoadingResult::Type Result;
+    UPackage* LoadedPackage;
+
+    int32 LoadRequest;
+    FLoadPackageAsyncDelegate LoadCB;
+
+    virtual void OnLoaded() PURE_VIRTUAL(FLoadPackagePriorityActionBase::OnLoaded, );
+
+    FLoadPackagePriorityActionBase(const FString& packagePath, const int32 priority, const bool blockOnLoad, const FLatentActionInfo& inLatentInfo)
+        : PackagePath(packagePath)
+        , ExecutionFunction(inLatentInfo.ExecutionFunction)
+        , OutputLink(inLatentInfo.Linkage)
+        , CallbackTarget(inLatentInfo.CallbackTarget)
+        , Result(EAsyncLoadingResult::Failed)
+        , LoadedPackage(nullptr)
+    {
+        LoadCB.BindRaw(this, &FLoadPackagePriorityActionBase::OnPackageLoadCompleteCB);
+        LoadRequest = LoadPackageAsync(PackagePath, nullptr, nullptr, LoadCB, PKG_None, INDEX_NONE, priority);
+        if(LoadRequest != INDEX_NONE)
+        {
+            if(blockOnLoad)
+            {
+                FlushAsyncLoading(LoadRequest);
+            }
+        }
+    }
+
+    virtual ~FLoadPackagePriorityActionBase()
+    {
+    }
+
+    void OnPackageLoadCompleteCB(const FName& packagePath, UPackage* loadedPackage, EAsyncLoadingResult::Type result)
+    {
+        Result = result;
+        LoadedPackage = loadedPackage;
+    }
+
+    virtual void UpdateOperation(FLatentResponse& Response) override
+    {
+        const bool bLoaded = LoadRequest == INDEX_NONE;
+        if (bLoaded)
+        {
+            OnLoaded();
+        }
+        Response.FinishAndTriggerIf(bLoaded, ExecutionFunction, OutputLink, CallbackTarget);
+    }
+
+#if WITH_EDITOR
+    virtual FString GetDescription() const override
+    {
+        return FString::Printf(TEXT("Load Package Priority Action Base: %s"), *PackagePath);
+    }
+#endif
+};
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeObjectHelpers::LoadPackagePriority(UObject* WorldContextObject, const FString& PackagePath, const int32 Priority,
+                                                  const bool BlockOnLoad, FOnPackageLoaded OnLoaded, FLatentActionInfo LatentInfo)
+{
+    struct FLoadPackageAction : FLoadPackagePriorityActionBase
+    {
+        FOnPackageLoaded OnLoadedCallback;
+
+        FLoadPackageAction(const FString& packagePath, const int32 priority, const bool blockOnLoad, FOnPackageLoaded onPackageLoaded, const FLatentActionInfo& inLatentInfo)
+            : FLoadPackagePriorityActionBase(packagePath, priority, blockOnLoad, inLatentInfo)
+            , OnLoadedCallback(onPackageLoaded)
+        {}
+
+        virtual void OnLoaded() override
+        {
+            OnLoadedCallback.ExecuteIfBound(LoadedPackage, static_cast<ERyAsyncLoadingResult>(Result));
+        }
+    };
+
+    if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+    {
+        FLatentActionManager& LatentManager = World->GetLatentActionManager();
+
+        // We always spawn a new load even if this node already queued one, the outside node handles this case
+        FLoadPackageAction* NewAction = new FLoadPackageAction(PackagePath, Priority, BlockOnLoad, OnLoaded, LatentInfo);
+        LatentManager.AddNewAction(LatentInfo.CallbackTarget, LatentInfo.UUID, NewAction);
+    }
 }
 
 //---------------------------------------------------------------------------------------------------------------------
