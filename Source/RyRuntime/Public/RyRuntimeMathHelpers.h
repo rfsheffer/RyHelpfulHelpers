@@ -110,18 +110,26 @@ public:
 	static bool RotationsEqual(const float rotation1, const float rotation2, const float ErrorTolerance = 1.e-6f);
 
 	// Returns inFloat as a negative value, even if inFloat is already negative.
-	UFUNCTION(BlueprintPure, Category = "Math|Float")
+	UFUNCTION(BlueprintPure, Category = "Math|Float", meta=(DisplayName = "Negate", CompactNodeTitle = "NEG"))
 	static float MakeNegative(const float inFloat);
 
+	// Makes inFloat as a negative value, even if inFloat is already negative.
+	UFUNCTION(BlueprintCallable, Category = "Math|Float", meta=(DisplayName = "NegateInline", CompactNodeTitle = "NEG"))
+	static void MakeNegativeInline(UPARAM(ref) float& inFloat);
+
 	// Same as Abs, returns a positive float value.
-	UFUNCTION(BlueprintPure, Category = "Math|Float")
+	UFUNCTION(BlueprintPure, Category = "Math|Float", meta=(DisplayName = "Positive", CompactNodeTitle = "POS"))
 	static float MakePositive(const float inFloat);
+
+	// Same as Abs, makes inFloat a positive float value.
+	UFUNCTION(BlueprintCallable, Category = "Math|Float", meta=(DisplayName = "PositiveInline", CompactNodeTitle = "POS"))
+    static void MakePositiveInline(UPARAM(ref) float& inFloat);
 
 	// A constant used by the engine denoting an invalid index.
 	// Array Find operations return IndexNone if an element could not be found.
 	// Most returned indices are IndexNone if invalid.
 	// Sometimes IndexNone is passed into functions to show the user doesn't care what the index is.
-	UFUNCTION(BlueprintPure, Category = "Math|Index")
+	UFUNCTION(BlueprintPure, Category = "Math|Index", meta=(DisplayName = "Index None", CompactNodeTitle = "INDEX_NONE"))
 	static int32 IndexNone();
 
     /**
@@ -196,7 +204,7 @@ public:
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FORCEINLINE_DEBUGGABLE
+FORCEINLINE
 float URyRuntimeMathHelpers::SinH(float A)
 {
     return sinhf(A);
@@ -205,7 +213,7 @@ float URyRuntimeMathHelpers::SinH(float A)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FORCEINLINE_DEBUGGABLE
+FORCEINLINE
 float URyRuntimeMathHelpers::CosH(float A)
 {
     return coshf(A);
@@ -214,7 +222,7 @@ float URyRuntimeMathHelpers::CosH(float A)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FORCEINLINE_DEBUGGABLE
+FORCEINLINE
 float URyRuntimeMathHelpers::CalculateCatenary(float X, float scalingFactor)
 {
     return scalingFactor * coshf(X / scalingFactor);
@@ -223,7 +231,7 @@ float URyRuntimeMathHelpers::CalculateCatenary(float X, float scalingFactor)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FORCEINLINE_DEBUGGABLE
+FORCEINLINE
 float URyRuntimeMathHelpers::ConvertUnit(const float value, const ERyUnit from, const ERyUnit to)
 {
 	return FUnitConversion::Convert<float>(value, static_cast<EUnit>(from), static_cast<EUnit>(to));
@@ -232,7 +240,7 @@ float URyRuntimeMathHelpers::ConvertUnit(const float value, const ERyUnit from, 
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FORCEINLINE_DEBUGGABLE
+FORCEINLINE
 float URyRuntimeMathHelpers::MakeNegative(const float inFloat)
 {
 	return FMath::Abs(inFloat) * -1.0f;
@@ -241,10 +249,28 @@ float URyRuntimeMathHelpers::MakeNegative(const float inFloat)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FORCEINLINE_DEBUGGABLE
+FORCEINLINE
+void URyRuntimeMathHelpers::MakeNegativeInline(float& inFloat)
+{
+	inFloat = FMath::Abs(inFloat) * -1.0f;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
 float URyRuntimeMathHelpers::MakePositive(const float inFloat)
 {
 	return FMath::Abs(inFloat);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+void URyRuntimeMathHelpers::MakePositiveInline(float& inFloat)
+{
+	inFloat = FMath::Abs(inFloat);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -259,7 +285,7 @@ int32 URyRuntimeMathHelpers::IndexNone()
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FORCEINLINE_DEBUGGABLE
+FORCEINLINE
 uint8 URyRuntimeMathHelpers::And_ByteByte(uint8 A, uint8 B)
 {
     return A & B;
@@ -268,7 +294,7 @@ uint8 URyRuntimeMathHelpers::And_ByteByte(uint8 A, uint8 B)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FORCEINLINE_DEBUGGABLE
+FORCEINLINE
 uint8 URyRuntimeMathHelpers::Xor_ByteByte(uint8 A, uint8 B)
 {
     return A ^ B;
@@ -277,7 +303,7 @@ uint8 URyRuntimeMathHelpers::Xor_ByteByte(uint8 A, uint8 B)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FORCEINLINE_DEBUGGABLE
+FORCEINLINE
 uint8 URyRuntimeMathHelpers::Or_ByteByte(uint8 A, uint8 B)
 {
     return A | B;
@@ -286,7 +312,7 @@ uint8 URyRuntimeMathHelpers::Or_ByteByte(uint8 A, uint8 B)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FORCEINLINE_DEBUGGABLE
+FORCEINLINE
 uint8 URyRuntimeMathHelpers::Not_Byte(uint8 A)
 {
     return ~A;
@@ -295,7 +321,7 @@ uint8 URyRuntimeMathHelpers::Not_Byte(uint8 A)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FORCEINLINE_DEBUGGABLE
+FORCEINLINE
 uint8 URyRuntimeMathHelpers::ShiftLeft_Byte(uint8 val, int32 shift)
 {
     return val << shift;
@@ -304,7 +330,7 @@ uint8 URyRuntimeMathHelpers::ShiftLeft_Byte(uint8 val, int32 shift)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FORCEINLINE_DEBUGGABLE
+FORCEINLINE
 uint8 URyRuntimeMathHelpers::ShiftRight_Byte(uint8 val, int32 shift)
 {
     return val >> shift;
@@ -313,7 +339,7 @@ uint8 URyRuntimeMathHelpers::ShiftRight_Byte(uint8 val, int32 shift)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FORCEINLINE_DEBUGGABLE
+FORCEINLINE
 int32 URyRuntimeMathHelpers::ShiftLeft_Int(int32 val, int32 shift)
 {
     return val << shift;
@@ -322,7 +348,7 @@ int32 URyRuntimeMathHelpers::ShiftLeft_Int(int32 val, int32 shift)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FORCEINLINE_DEBUGGABLE
+FORCEINLINE
 int32 URyRuntimeMathHelpers::ShiftRight_Int(int32 val, int32 shift)
 {
     return val >> shift;
@@ -331,7 +357,7 @@ int32 URyRuntimeMathHelpers::ShiftRight_Int(int32 val, int32 shift)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FORCEINLINE_DEBUGGABLE
+FORCEINLINE
 int64 URyRuntimeMathHelpers::ShiftLeft_Int64(int64 val, int32 shift)
 {
     return val << shift;
@@ -340,7 +366,7 @@ int64 URyRuntimeMathHelpers::ShiftLeft_Int64(int64 val, int32 shift)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FORCEINLINE_DEBUGGABLE
+FORCEINLINE
 int64 URyRuntimeMathHelpers::ShiftRight_Int64(int64 val, int32 shift)
 {
     return val >> shift;
@@ -349,7 +375,7 @@ int64 URyRuntimeMathHelpers::ShiftRight_Int64(int64 val, int32 shift)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FORCEINLINE_DEBUGGABLE
+FORCEINLINE
 float URyRuntimeMathHelpers::Dot_VectorVector2D(FVector A, FVector B)
 {
 	A.Z = 0; B.Z = 0;
@@ -359,7 +385,7 @@ float URyRuntimeMathHelpers::Dot_VectorVector2D(FVector A, FVector B)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FORCEINLINE_DEBUGGABLE
+FORCEINLINE
 bool URyRuntimeMathHelpers::EqualEqual_VectorVector2D(FVector A, FVector B, float ErrorTolerance)
 {
 	A.Z = 0; B.Z = 0;
@@ -369,7 +395,7 @@ bool URyRuntimeMathHelpers::EqualEqual_VectorVector2D(FVector A, FVector B, floa
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FORCEINLINE_DEBUGGABLE
+FORCEINLINE
 bool URyRuntimeMathHelpers::NotEqual_VectorVector2D(FVector A, FVector B, float ErrorTolerance)
 {
 	A.Z = 0; B.Z = 0;
