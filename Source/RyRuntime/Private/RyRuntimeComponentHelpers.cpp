@@ -31,27 +31,53 @@ void URyRuntimeComponentHelpers::DistributePointsToSpline(USplineComponent* spli
 		return;
 	}
 
-	TArray<FVector> distributePoints;
-	distributePoints.SetNum(numSplinePoints);
 	if(points.Num() != numSplinePoints)
 	{
+		TArray<FVector> distributePoints;
+		distributePoints.SetNum(numSplinePoints);
+		
 		// Always set the first and last point exactly
 		distributePoints[0] = points[0];
 		distributePoints[numSplinePoints - 1] = points[points.Num() - 1];
 
 		// Get mid values between points, works for both expansion and contraction
-		const float frac = static_cast<float>(points.Num() - 2) / (numSplinePoints - 2);
-		for(int32 pointIndex = 1; pointIndex < distributePoints.Num() - 1; ++pointIndex)
+		if(distributePoints.Num() > 2)
 		{
-			const int32 lowIndex = FMath::FloorToInt(pointIndex * frac);
-			const int32 highIndex = FMath::CeilToInt(pointIndex * frac);
-			distributePoints[pointIndex] = points[lowIndex] + (points[highIndex] - points[lowIndex]) / 2.0f;
+			if(points.Num() < numSplinePoints)
+			{
+				for(int32 pointIndex = 1; pointIndex < distributePoints.Num() - 1; ++pointIndex)
+				{
+					const float pointFrac = (static_cast<float>(pointIndex) / distributePoints.Num()) * (points.Num() - 1);
+					const int32 lowIndex = FMath::FloorToInt(pointFrac);
+					const int32 highIndex = FMath::CeilToInt(pointFrac);
+
+					distributePoints[pointIndex] = points[lowIndex] + (points[highIndex] - points[lowIndex]) * (pointFrac - lowIndex);
+				}
+			}
+			else
+			{
+				const float frac = static_cast<float>(points.Num()) / numSplinePoints;
+				for(int32 pointIndex = 1; pointIndex < distributePoints.Num() - 1; ++pointIndex)
+				{
+					const int32 lowIndex = FMath::FloorToInt(pointIndex * frac);
+					const int32 highIndex = FMath::CeilToInt(pointIndex * frac);
+					distributePoints[pointIndex] = points[lowIndex] + (points[highIndex] - points[lowIndex]) / 2.0f;
+				}
+			}
+		}
+
+		for(int32 pointIndex = 0; pointIndex < distributePoints.Num(); ++pointIndex)
+		{
+			splineComponent->SetLocationAtSplinePoint(pointIndex, distributePoints[pointIndex], coordinateSpace, false);
 		}
 	}
-
-	for(int32 pointIndex = 0; pointIndex < distributePoints.Num(); ++pointIndex)
+	else
 	{
-		splineComponent->SetLocationAtSplinePoint(pointIndex, distributePoints[pointIndex], coordinateSpace, false);
+		// Number Aligned arrays, just assign the points directly
+		for(int32 pointIndex = 0; pointIndex < points.Num(); ++pointIndex)
+		{
+			splineComponent->SetLocationAtSplinePoint(pointIndex, points[pointIndex], coordinateSpace, false);
+		}
 	}
 
 	if(updateSpline)
