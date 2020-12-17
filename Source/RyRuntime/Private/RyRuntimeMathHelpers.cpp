@@ -38,11 +38,36 @@ float URyRuntimeMathHelpers::ShortestRotationPath(const float startRotation, con
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-bool URyRuntimeMathHelpers::RotationsEqual(const float rotation1, const float rotation2, const float ErrorTolerance)
+void URyRuntimeMathHelpers::RotationInterpolate(const float inCurrent, const float inTarget, const float deltaTime, const float speed, float& newRotation, bool& atTarget, const float checkTolerance)
 {
-	const float clamp1 = FRotator::ClampAxis(rotation1);
-	const float clamp2 = FRotator::ClampAxis(rotation2);
-	return FMath::IsNearlyEqual(clamp1, clamp2, ErrorTolerance);
+	const float clampCurrent = FRotator::ClampAxis(inCurrent);
+	const float clampTarget = FRotator::ClampAxis(inTarget);
+	const float pathTo = ShortestRotationPath(clampCurrent, clampTarget);
+	
+	if(FMath::Abs(pathTo) <= checkTolerance)
+	{
+		// Already there!
+		atTarget = true;
+		newRotation = FRotator::ClampAxis(inTarget);
+		return;
+	}
+
+	const float dirToTarget = pathTo < 0.0f ? -1.0f : 1.0f;
+	const float movement = (dirToTarget * speed * deltaTime);
+	if(FMath::Abs(movement) >= FMath::Abs(pathTo))
+	{
+		// movement was greater than path to target, we are there!
+		atTarget = true;
+		newRotation = clampTarget;
+		return;
+	}
+
+	newRotation = FRotator::ClampAxis(clampCurrent + movement);
+	atTarget = RotationsEqual(clampTarget, newRotation, checkTolerance);
+	if(atTarget)
+	{
+		newRotation = clampTarget;
+	}
 }
 
 //---------------------------------------------------------------------------------------------------------------------

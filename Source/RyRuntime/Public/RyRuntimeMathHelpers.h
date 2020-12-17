@@ -109,6 +109,21 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Math|Rotations")
 	static bool RotationsEqual(const float rotation1, const float rotation2, const float ErrorTolerance = 1.e-6f);
 
+	/**
+	 * Rotate inCurrent towards inTarget at a rate of speed
+	 * NOTE: This clamps your rotation to be between [0, 360].
+	 *       If calculated newRotation distance to target is less than checkTolerance, newRotation is clamped to inTarget.
+	 * @param inCurrent - The current rotation
+	 * @param inTarget - The target rotation
+	 * @param deltaTime - Time since last update (usually deltaSeconds)
+	 * @param speed - The speed to rotate towards
+	 * @param newRotation - The new rotation
+	 * @param atTarget - True if the target was reached
+	 * @param checkTolerance - When checking if inCurrent is equal to inTarget, the floating point tolerance to check against.
+	 */
+	UFUNCTION(BlueprintPure, Category = "Math|Rotations", meta=(AdvancedDisplay = "6"))
+	static void RotationInterpolate(const float inCurrent, const float inTarget, const float deltaTime, const float speed, float& newRotation, bool& atTarget, const float checkTolerance = 1.e-6f);
+
 	// Returns inFloat as a negative value, even if inFloat is already negative.
 	UFUNCTION(BlueprintPure, Category = "Math|Float", meta=(DisplayName = "Negate", CompactNodeTitle = "NEG"))
 	static float MakeNegative(const float inFloat);
@@ -145,6 +160,7 @@ public:
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext), Category = "RyRuntime|Math|HUD")
 	static void FindScreenEdgeLocationForWorldLocation(UObject* WorldContextObject, const FVector& InLocation, const float EdgePercent, FVector2D& OutScreenPosition, float& OutRotationAngleDegrees, bool &bIsOnScreen);
 
+	// With TheSize of the surface ex (800 x 600) and TheAngle from the center of the surface, what is the point on TheSize where TheAngle would hit?
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|Math|HUD")
 	static FVector2D FindEdgeOf2DSquare(const FVector2D &TheSize, const float TheAngle);
 
@@ -235,6 +251,15 @@ FORCEINLINE
 float URyRuntimeMathHelpers::ConvertUnit(const float value, const ERyUnit from, const ERyUnit to)
 {
 	return FUnitConversion::Convert<float>(value, static_cast<EUnit>(from), static_cast<EUnit>(to));
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+bool URyRuntimeMathHelpers::RotationsEqual(const float rotation1, const float rotation2, const float ErrorTolerance)
+{
+	return FMath::Abs(ShortestRotationPath(rotation1, rotation2)) <= ErrorTolerance;
 }
 
 //---------------------------------------------------------------------------------------------------------------------
