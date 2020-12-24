@@ -123,3 +123,41 @@ void URyRuntimeStringHelpers::CharToBytes(const FString& sourceString, const int
         byte2 = ((uint8*)(&chars[charIndex]))[0];
     }
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeStringHelpers::ToTitleStringInline(FString& inOutString)
+{
+    bool makeUpper = true;
+    const int32 stringLength = inOutString.Len();
+    TArray<TCHAR>& rawData = inOutString.GetCharArray();
+    for (int32 i = 0; i < stringLength; ++i)
+    {
+        if(FChar::IsWhitespace(rawData[i]))
+        {
+            makeUpper = true;
+            continue;
+        }
+
+        if(makeUpper)
+        {
+            rawData[i] = FChar::ToUpper(rawData[i]);
+            makeUpper = false;
+        }
+        else
+        {
+            rawData[i] = FChar::ToLower(rawData[i]);
+        }
+    }
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FString URyRuntimeStringHelpers::ToTitleString(const FString& inString)
+{
+    FString titleStrOut = inString;
+    ToTitleStringInline(titleStrOut);
+    return titleStrOut;
+}

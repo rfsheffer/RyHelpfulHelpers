@@ -64,4 +64,12 @@ public:
     */
     UFUNCTION(BlueprintPure, Category = "RyRuntime|String")
     static void CharToBytes(const FString& sourceString, const int32 charIndex, uint8& byte1, uint8& byte2);
+
+    // Returns a string where the first character in every word is upper case. Like a header, or a title.
+    UFUNCTION(BlueprintCallable, Category = "RyRuntime|String")
+    static void ToTitleStringInline(UPARAM(ref) FString& inOutString);
+
+    // Returns a string where the first character in every word is upper case. Like a header, or a title.
+    UFUNCTION(BlueprintPure, Category = "RyRuntime|String")
+    static FString ToTitleString(const FString& inString);
 };
