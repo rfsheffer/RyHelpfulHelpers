@@ -24,6 +24,47 @@ enum class ERyIterateDirectoryOut : uint8
     DirectoriesOnly = 2,
 };
 
+UENUM(BlueprintType)
+enum class ERyNetworkConnectionType : uint8
+{
+	/**
+	* Enumerates the network connection types
+	*/
+	Unknown,
+    None,
+    AirplaneMode,
+    Cell,
+    WiFi,
+    WiMAX,
+    Bluetooth,
+    Ethernet,
+};
+
+UENUM(BlueprintType)
+enum class ERyDeviceScreenOrientation : uint8
+{
+	/** The orientation is not known */
+	Unknown,
+
+    /** The orientation is portrait with the home button at the bottom */
+    Portrait,
+
+    /** The orientation is portrait with the home button at the top */
+    PortraitUpsideDown,
+
+    /** The orientation is landscape with the home button at the right side */
+    LandscapeLeft,
+
+    /** The orientation is landscape with the home button at the left side */
+    LandscapeRight,
+
+    /** The orientation is as if place on a desk with the screen upward */
+    FaceUp,
+
+    /** The orientation is as if place on a desk with the screen downward */
+    FaceDown
+};
+
 //---------------------------------------------------------------------------------------------------------------------
 /**
   * Static Helper functions for platform.
@@ -222,8 +263,222 @@ public:
 						 FDateTime& accessTime,
 						 FDateTime& modificationTime,
 						 int64& fileSize);
+
+	// Return true if the PLATFORM_DESKTOP define is set
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
+    static bool IsPlatformDesktop();
+
+	/**
+	* Retrieve a environment variable from the system
+	*
+	* @param VariableName The name of the variable (ie "Path")
+	* @param VariableOut The variable
+	* @return True if the variable was found and not empty
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
+	static bool GetEnvironmentVariable(const FString& VariableName, FString& VariableOut);
+
+	/**
+	* Sets an environment variable to the local process's environment
+	*
+	* @param VariableName The name of the variable (ie "Path")
+	* @param ValueToSet The string to set the variable to.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|PlatformHelpers")
+	static void SetEnvironmentVariable(const FString& VariableName, const FString& ValueToSet);
+
+	/** Return true if a debugger is present */
+    UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
+    static bool IsDebuggerPresent();
+
+	/** Break into the debugger, if IsDebuggerPresent returns true, otherwise do nothing  */
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|PlatformHelpers")
+    static void DebugBreak();
+
+	/**
+	* Uses cpuid instruction to get the vendor string
+	*
+	* @return	CPU vendor name
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
+	static FString GetCPUVendor();
+
+	/**
+	* Uses cpuid instruction to get the CPU brand string
+	*
+	* @return	CPU brand string
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
+	static FString GetCPUBrand();
+
+	/**
+	* Returns the CPU chipset if known
+	*
+	* @return	CPU chipset string (or "Unknown")
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
+	static FString GetCPUChipset();
+
+	/**
+	* @return primary GPU brand string
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
+	static FString GetPrimaryGPUBrand();
+
+	/**
+	* @return	"DeviceMake|DeviceModel" if possible, and "CPUVendor|CPUBrand" otherwise, optionally returns "DeviceMake|DeviceModel|CPUChipset" if known
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
+	static FString GetDeviceMakeAndModel();
+
+	/**
+	* Gets the OS Version and OS Subversion.
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers", DisplayName = "Get OS Versions")
+	static void GetOSVersions(FString& OS_VersionLabel, FString& OS_SubVersionLabel);
+
+	/**
+	* Gets a string representing the numeric OS version (as opposed to a translated OS version that GetOSVersions returns).
+	* The returned string should try to be brief and avoid newlines and symbols, but there's technically no restriction on the string it can return.
+	* If the implementation does not support this, it should return an empty string.
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers", DisplayName = "Get OS Version")
+	static FString GetOSVersion();
+
+	/** Retrieves information about the total number of bytes and number of free bytes for the specified disk path. */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers", DisplayName = "Get OS Version")
+	static bool GetDiskTotalAndFreeSpace(const FString& InPath, int64& TotalNumberOfBytes, int64& NumberOfFreeBytes);
+
+	/**
+	* Platform specific function for adding a named event that can be viewed in external tool
+	*/
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|PlatformHelpers")
+	static void BeginNamedEvent(const struct FColor& Color, const FString& Text);
+
+	/**
+	* Platform specific function for closing a named event that can be viewed in external tool
+	*/
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|PlatformHelpers")
+	static void EndNamedEvent();
+
+	/** Platform specific function for adding a named custom stat that can be viewed in external tool */
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|PlatformHelpers")
+	static void CustomNamedStat(const FString& Text, const float Value, const FString& Graph, const FString& Unit);
+
+	/**
+	* Profiler color stack - this overrides the color for named events with undefined colors (e.g stat namedevents)
+	*/
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|PlatformHelpers")
+	static void BeginProfilerColor(const struct FColor& Color);
+	
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|PlatformHelpers")
+	static void EndProfilerColor();
+
+	/** Sends a message to a remote tool, and debugger consoles */
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|PlatformHelpers")
+	static void LowLevelOutputDebugString(const FString& Message);
+
+	/** Copies text to the operating system clipboard. */
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|PlatformHelpers")
+	static void ClipboardCopy(const FString& Str);
+
+	/** Pastes in text from the operating system clipboard. */
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|PlatformHelpers")
+	static void ClipboardPaste(FString& Dest);
+
+	/**
+	* return the number of hardware CPU cores
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
+	static int32 NumberOfCores();
+
+	/**
+	* return the number of logical CPU cores
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
+	static int32 NumberOfCoresIncludingHyperthreads();
+
+	/**
+	* Get the timezone identifier for this platform, or an empty string if the default timezone calculation will work.
+	* @note This should return either an Olson timezone (eg, "America/Los_Angeles") or an offset from GMT/UTC (eg, "GMT-8:00").
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers", DisplayName = "Get Time Zone ID")
+	static FString GetTimeZoneId();
+
+	/**
+	* Gets the current battery level.
+	*
+	* @return the battery level between 0 and 100.
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers", DisplayName = "Get Time Zone ID")
+	static int32 GetBatteryLevel();
+
+	// Is the device is low power mode?
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
+	static bool IsInLowPowerMode();
+
+	/**
+	* Returns the current device temperature level.
+	* Level is a relative value that is platform dependent. Lower is cooler, higher is warmer.
+	* Level of -1 means Unimplemented.
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
+	static float GetDeviceTemperatureLevel();
+
+	/**
+	* Return an ordered list of target platforms this runtime can support (ie Android_DXT, Android
+	* would mean that it prefers Android_DXT, but can use Android as well)
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
+	static void GetValidTargetPlatforms(TArray<FString>& TargetPlatformNames);
+
+	/**
+	* Returns whether WiFi connection is currently active
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
+	static bool HasActiveWiFiConnection();
+
+	/**
+	* Returns the type of network connection for the platform
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
+	static ERyNetworkConnectionType GetNetworkConnectionType();
+
+	/**
+	* Returns whether the given platform feature is currently available (for instance, Metal is only available in IOS8 and with A7 devices)
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
+	static bool HasPlatformFeature(const FString& FeatureName);
+
+	/**
+	* Returns whether the platform is running on battery power or not.
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
+	static bool IsRunningOnBattery();
+
+	/**
+	* Returns the orientation of the device: e.g. Portrait, LandscapeRight.
+	* @see EScreenOrientation
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
+	static ERyDeviceScreenOrientation GetDeviceOrientation();
+
+	/**
+	* Returns the device volume if the device is capable of returning that information.
+	*  -1 : Unknown
+	*   0 : Muted
+	* 100 : Full Volume
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
+	static int32 GetDeviceVolume();
+
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
+	static bool FileExistsInPlatformPackage(const FString& RelativePath);
 };
 
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
 FORCEINLINE void URyRuntimePlatformHelpers::PathInfo(const FString& fileSystemPath,
                                                      bool& exists,
                                                      bool& isFile,
@@ -244,4 +499,285 @@ FORCEINLINE void URyRuntimePlatformHelpers::PathInfo(const FString& fileSystemPa
 	accessTime = statData.AccessTime;
 	modificationTime = statData.ModificationTime;
 	fileSize = statData.FileSize;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE bool URyRuntimePlatformHelpers::IsPlatformDesktop()
+{
+#if PLATFORM_DESKTOP
+	return true;
+#else
+	return false;
+#endif
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE bool URyRuntimePlatformHelpers::GetEnvironmentVariable(const FString& VariableName, FString& VariableOut)
+{
+	VariableOut = FPlatformMisc::GetEnvironmentVariable(*VariableName);
+	return !VariableOut.IsEmpty();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE void URyRuntimePlatformHelpers::SetEnvironmentVariable(const FString& VariableName, const FString& ValueToSet)
+{
+	FPlatformMisc::SetEnvironmentVar(*VariableName, *ValueToSet);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE bool URyRuntimePlatformHelpers::IsDebuggerPresent()
+{
+	return FPlatformMisc::IsDebuggerPresent();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE void URyRuntimePlatformHelpers::DebugBreak()
+{
+	UE_DEBUG_BREAK();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE FString URyRuntimePlatformHelpers::GetCPUVendor()
+{
+	return FPlatformMisc::GetCPUVendor();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE FString URyRuntimePlatformHelpers::GetCPUBrand()
+{
+	return FPlatformMisc::GetCPUBrand();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE FString URyRuntimePlatformHelpers::GetCPUChipset()
+{
+	return FPlatformMisc::GetCPUChipset();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE FString URyRuntimePlatformHelpers::GetPrimaryGPUBrand()
+{
+	return FPlatformMisc::GetPrimaryGPUBrand();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE FString URyRuntimePlatformHelpers::GetDeviceMakeAndModel()
+{
+	return FPlatformMisc::GetDeviceMakeAndModel();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE void URyRuntimePlatformHelpers::GetOSVersions(FString& OS_VersionLabel, FString& OS_SubVersionLabel)
+{
+	FPlatformMisc::GetOSVersions(OS_VersionLabel, OS_SubVersionLabel);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE FString URyRuntimePlatformHelpers::GetOSVersion()
+{
+	return FPlatformMisc::GetOSVersion();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE bool URyRuntimePlatformHelpers::GetDiskTotalAndFreeSpace(const FString& InPath, int64& TotalNumberOfBytes, int64& NumberOfFreeBytes)
+{
+	uint64 total, num;
+	const bool success = FPlatformMisc::GetDiskTotalAndFreeSpace(InPath, total, num);
+	if(success && total <= MAX_int64 && num <= MAX_int64)
+	{
+		TotalNumberOfBytes = static_cast<int64>(total);
+		NumberOfFreeBytes = static_cast<int64>(num);
+		return true;
+	}
+	return false;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE void URyRuntimePlatformHelpers::BeginNamedEvent(const FColor& Color, const FString& Text)
+{
+	FPlatformMisc::BeginNamedEvent(Color, *Text);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE void URyRuntimePlatformHelpers::EndNamedEvent()
+{
+	FPlatformMisc::EndNamedEvent();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE void URyRuntimePlatformHelpers::CustomNamedStat(const FString& Text, const float Value, const FString& Graph, const FString& Unit)
+{
+	FPlatformMisc::CustomNamedStat(*Text, Value, *Graph, *Unit);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE void URyRuntimePlatformHelpers::BeginProfilerColor(const FColor& Color)
+{
+	FPlatformMisc::BeginProfilerColor(Color);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE void URyRuntimePlatformHelpers::EndProfilerColor()
+{
+	FPlatformMisc::EndProfilerColor();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE void URyRuntimePlatformHelpers::LowLevelOutputDebugString(const FString& Message)
+{
+	FPlatformMisc::LowLevelOutputDebugString(*Message);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE int32 URyRuntimePlatformHelpers::NumberOfCores()
+{
+	return FPlatformMisc::NumberOfCores();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE int32 URyRuntimePlatformHelpers::NumberOfCoresIncludingHyperthreads()
+{
+	return FPlatformMisc::NumberOfCoresIncludingHyperthreads();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE FString URyRuntimePlatformHelpers::GetTimeZoneId()
+{
+	return FPlatformMisc::GetTimeZoneId();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE int32 URyRuntimePlatformHelpers::GetBatteryLevel()
+{
+	return FPlatformMisc::GetBatteryLevel();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE bool URyRuntimePlatformHelpers::IsInLowPowerMode()
+{
+	return FPlatformMisc::IsInLowPowerMode();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE float URyRuntimePlatformHelpers::GetDeviceTemperatureLevel()
+{
+	return FPlatformMisc::GetDeviceTemperatureLevel();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE void URyRuntimePlatformHelpers::GetValidTargetPlatforms(TArray<FString>& TargetPlatformNames)
+{
+    FPlatformMisc::GetValidTargetPlatforms(TargetPlatformNames);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE bool URyRuntimePlatformHelpers::HasActiveWiFiConnection()
+{
+    return FPlatformMisc::HasActiveWiFiConnection();
+}
+
+static_assert(ERyNetworkConnectionType::Ethernet == static_cast<ERyNetworkConnectionType>(ENetworkConnectionType::Ethernet), "ENetworkConnectionType misalignment!");
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE ERyNetworkConnectionType URyRuntimePlatformHelpers::GetNetworkConnectionType()
+{
+    return static_cast<ERyNetworkConnectionType>(FPlatformMisc::GetNetworkConnectionType());
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE bool URyRuntimePlatformHelpers::HasPlatformFeature(const FString& FeatureName)
+{
+    return FPlatformMisc::HasPlatformFeature(*FeatureName);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE bool URyRuntimePlatformHelpers::IsRunningOnBattery()
+{
+    return FPlatformMisc::IsRunningOnBattery();
+}
+
+static_assert(ERyDeviceScreenOrientation::FaceDown == static_cast<ERyDeviceScreenOrientation>(EDeviceScreenOrientation::FaceDown), "EDeviceScreenOrientation misalignment!");
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE ERyDeviceScreenOrientation URyRuntimePlatformHelpers::GetDeviceOrientation()
+{
+    return static_cast<ERyDeviceScreenOrientation>(FPlatformMisc::GetDeviceOrientation());
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE int32 URyRuntimePlatformHelpers::GetDeviceVolume()
+{
+    return FPlatformMisc::GetDeviceVolume();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE bool URyRuntimePlatformHelpers::FileExistsInPlatformPackage(const FString& RelativePath)
+{
+	return FPlatformMisc::FileExistsInPlatformPackage(RelativePath);
 }

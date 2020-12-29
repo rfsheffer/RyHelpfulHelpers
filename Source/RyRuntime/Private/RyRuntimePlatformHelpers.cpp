@@ -4,6 +4,7 @@
 #include "RyRuntimePlatformHelpers.h"
 #include "GenericPlatform/GenericPlatformFile.h"
 #include "HAL/PlatformFilemanager.h"
+#include "GenericPlatform/GenericPlatformApplicationMisc.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
@@ -171,4 +172,20 @@ bool URyRuntimePlatformHelpers::IterateDirectory(const FString& DirectoryName, c
 {
     RyNativePlatformFileFunctor nativeVisitor(Visitor, Filter, OutType);
     return DoIterateDirectory(DirectoryName, IterateSubFolders, OutType, PathsOut, nativeVisitor);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimePlatformHelpers::ClipboardCopy(const FString& Str)
+{
+    FGenericPlatformApplicationMisc::ClipboardCopy(*Str);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimePlatformHelpers::ClipboardPaste(FString& Dest)
+{
+    FGenericPlatformApplicationMisc::ClipboardPaste(Dest);
 }

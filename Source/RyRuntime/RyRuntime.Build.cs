@@ -32,6 +32,7 @@ public class RyRuntime : ModuleRules
 				"NavigationSystem",
 				"AIModule",
 				"UMG",
+				"ApplicationCore",
 			}
         );
     }
