@@ -35,6 +35,19 @@ enum class ERyWorldType : uint8
     Inactive
 };
 
+UENUM(BlueprintType)
+enum class ERyCurrentLevelStreamingState : uint8
+{
+	Removed,
+    Unloaded,
+    FailedToLoad,
+    Loading,
+    LoadedNotVisible,
+    MakingVisible,
+    LoadedVisible,
+    MakingInvisible
+};
+
 //---------------------------------------------------------------------------------------------------------------------
 /**
   * Static Helper functions related to runtime levels
@@ -152,4 +165,92 @@ public:
     // Get the type of world the context object is in (editor, preview, game, PlayInEditor[PIE], etc)
     UFUNCTION(BlueprintPure, Category = "RyRuntime|WorldHelpers", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext))
 	static ERyWorldType GetWorldType(UObject* WorldContextObject);
+
+	/**  
+	* Stream in a level with a specific location and rotation.
+	* This is an advanced implementation with extended control of how the level is loaded.
+	*
+	* The level to be loaded does not have to be in the persistent map's Levels list, however to ensure that the .umap does get
+	* packaged, please be sure to include the .umap in your Packaging Settings:
+	*
+	*   Project Settings -> Packaging -> List of Maps to Include in a Packaged Build (you may have to show advanced or type in filter)
+	*
+	* @param WorldContextObject - The world context, to get a pointer to the underlying world to stream this level into
+	* @param LevelName - Level package name, ex: /Game/Maps/MyMapName, specifying short name like MyMapName will force very slow search on disk
+	* @param Location - World space location where the level should be spawned
+	* @param Rotation - World space rotation for rotating the entire level
+	* @param OutSuccess - Whether operation was successful (map was found and added to the sub-levels list)
+	* @param LevelPrefix - Prefix for the dynamic level instance (If an empty string, will be changed to "_LevelInstance_")
+	* @param ShouldBeLoaded - Should the level be loaded?
+	* @param ShouldBeVisible - Should the level be visible once loaded?
+	* @param BlockOnLoad - Should the level load asynchronously or block and load synchronously?
+	* @param Priority - Sets the relative priority of considering the streaming level. Changing the priority will not interrupt the currently considered level, but will affect the next time a level is being selected for evaluation.
+	* @return Streaming level object for a level instance
+	*/ 
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelStreaming", meta=(DisplayName = "Load Level Instance Advanced (by Name)", WorldContext="WorldContextObject", AdvancedDisplay = "5"))
+    static class ULevelStreamingDynamic* LoadLevelInstanceAdvanced(UObject* WorldContextObject,
+    															   FString LevelName,
+    															   FVector Location,
+    															   FRotator Rotation,
+    															   bool& OutSuccess,
+    															   const FString& LevelPrefix = TEXT("_LevelInstance_"),
+    															   const bool ShouldBeLoaded = true,
+    															   const bool ShouldBeVisible = true,
+    															   const bool BlockOnLoad = false,
+    															   const int32 Priority = 0);
+
+	/**  
+	* Stream in a level with a specific location and rotation.
+	* This is an advanced implementation with extended control of how the level is loaded.
+	*
+	* The level to be loaded does not have to be in the persistent map's Levels list, however to ensure that the .umap does get
+	* packaged, please be sure to include the .umap in your Packaging Settings:
+	*
+	*   Project Settings -> Packaging -> List of Maps to Include in a Packaged Build (you may have to show advanced or type in filter)
+	*
+	* @param WorldContextObject - The world context, to get a pointer to the underlying world to stream this level into
+	* @param Level - The soft object point to the level to load.
+	* @param Location - World space location where the level should be spawned
+	* @param Rotation - World space rotation for rotating the entire level
+	* @param OutSuccess - Whether operation was successful (map was found and added to the sub-levels list)
+	* @param LevelPrefix - Prefix for the dynamic level instance (If an empty string, will be changed to "_LevelInstance_")
+	* @param ShouldBeLoaded - Should the level be loaded?
+	* @param ShouldBeVisible - Should the level be visible once loaded?
+	* @param BlockOnLoad - Should the level load asynchronously or block and load synchronously?
+	* @param Priority - Sets the relative priority of considering the streaming level. Changing the priority will not interrupt the currently considered level, but will affect the next time a level is being selected for evaluation.
+	* @return Streaming level object for a level instance
+	*/ 
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelStreaming", meta=(DisplayName = "Load Level Instance Advanced (by Object Reference)", WorldContext="WorldContextObject", AdvancedDisplay = "5"))
+    static class ULevelStreamingDynamic* LoadLevelInstanceBySoftObjectPtrAdvanced(UObject* WorldContextObject,
+    																			  TSoftObjectPtr<UWorld> Level,
+    																			  FVector Location,
+    																			  FRotator Rotation,
+    																			  bool& OutSuccess,
+    																			  const FString& LevelPrefix = TEXT("_LevelInstance_"),
+                                                                                  const bool ShouldBeLoaded = true,
+                                                                                  const bool ShouldBeVisible = true,
+                                                                                  const bool BlockOnLoad = false,
+                                                                                  const int32 Priority = 0);
+
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelStreaming")
+	static ERyCurrentLevelStreamingState GetCurrentLevelStreamingState(class ULevelStreaming* StreamingLevel);
+
+	/** Returns the Level Script Actor of the level if the level is loaded and valid */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelStreaming")
+    static class ALevelScriptActor* GetStreamingLevelScriptActor(class ULevelStreaming* StreamingLevel);
+
+private:
+	// Counter used by LoadLevelInstance to create unique level names
+	static int32 UniqueLevelInstanceId;
+
+	static ULevelStreamingDynamic* LoadLevelInstance_Internal(UWorld* World,
+															  const FString& LongPackageName,
+															  FVector Location,
+															  FRotator Rotation,
+															  bool& OutSuccess,
+															  const FString& LevelPrefix,
+                                                              const bool ShouldBeLoaded,
+                                                              const bool ShouldBeVisible,
+                                                              const bool BlockOnLoad,
+                                                              const int32 Priority);
 };

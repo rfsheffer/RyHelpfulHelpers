@@ -8,6 +8,8 @@
 #include "Engine/Level.h"
 #include "Engine/World.h"
 #include "Engine/Engine.h"
+#include "Engine/LevelStreaming.h"
+#include "Engine/LevelStreamingDynamic.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
@@ -120,7 +122,7 @@ bool URyRuntimeLevelHelpers::IsLevelPersistentLevel(const ULevel* levelIn)
 */
 UObject* URyRuntimeLevelHelpers::FindObjectInLevelByName(ULevel* levelToSearch, const FString& nameToFind)
 {
-    return StaticFindObject(/*Class=*/ NULL, levelToSearch, *nameToFind, true);
+    return StaticFindObject(/*Class=*/ nullptr, levelToSearch, *nameToFind, true);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -279,7 +281,7 @@ UActorComponent* URyRuntimeLevelHelpers::CreateComponentForActor(AActor *owner, 
     return NewInstanceComponent;
 }
 
-static_assert(ERyWorldType::Inactive == (ERyWorldType)EWorldType::Inactive, "ERyWorldType is not aligned to EWorldType! Update ERyWorldType to contain all elements of EWorldType!");
+static_assert(ERyWorldType::Inactive == static_cast<ERyWorldType>(EWorldType::Inactive), "ERyWorldType is not aligned to EWorldType! Update ERyWorldType to contain all elements of EWorldType!");
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
@@ -290,7 +292,168 @@ ERyWorldType URyRuntimeLevelHelpers::GetWorldType(UObject* WorldContextObject)
     FString Prefix;
     if(World)
     {
-        return (ERyWorldType)World->WorldType.GetValue();
+        return static_cast<ERyWorldType>(World->WorldType.GetValue());
     }
     return ERyWorldType::None;
+}
+
+int32 URyRuntimeLevelHelpers::UniqueLevelInstanceId = 0;
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+ULevelStreamingDynamic* URyRuntimeLevelHelpers::LoadLevelInstanceAdvanced(UObject* WorldContextObject,
+                                                                          FString LevelName,
+                                                                          FVector Location,
+                                                                          FRotator Rotation,
+                                                                          bool& OutSuccess,
+                                                                          const FString& LevelPrefix,
+                                                                          const bool ShouldBeLoaded,
+                                                                          const bool ShouldBeVisible,
+                                                                          const bool BlockOnLoad,
+                                                                          const int32 Priority)
+{
+    FString prefixIn = LevelPrefix;
+    if(prefixIn.IsEmpty())
+    {
+        prefixIn = TEXT("_LevelInstance_");
+    }
+
+    OutSuccess = false;
+    UWorld* const World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
+    if (!World)
+    {
+        return nullptr;
+    }
+
+    // Check whether requested map exists, this could be very slow if LevelName is a short package name
+    FString LongPackageName;
+    OutSuccess = FPackageName::SearchForPackageOnDisk(LevelName, &LongPackageName);
+    if (!OutSuccess)
+    {
+        return nullptr;
+    }
+
+    return LoadLevelInstance_Internal(World, LongPackageName, Location, Rotation, OutSuccess, LevelPrefix, ShouldBeLoaded, ShouldBeVisible, BlockOnLoad, Priority);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+ULevelStreamingDynamic* URyRuntimeLevelHelpers::LoadLevelInstanceBySoftObjectPtrAdvanced(UObject* WorldContextObject,
+                                                                                         TSoftObjectPtr<UWorld> Level,
+                                                                                         FVector Location,
+                                                                                         FRotator Rotation,
+                                                                                         bool& OutSuccess,
+                                                                                         const FString& LevelPrefix,
+                                                                                         const bool ShouldBeLoaded,
+                                                                                         const bool ShouldBeVisible,
+                                                                                         const bool BlockOnLoad,
+                                                                                         const int32 Priority)
+{
+    FString prefixIn = LevelPrefix;
+    if(prefixIn.IsEmpty())
+    {
+        prefixIn = TEXT("_LevelInstance_");
+    }
+
+    OutSuccess = false;
+    UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
+    if (!World)
+    {
+        return nullptr;
+    }
+
+    // Check whether requested map exists, this could be very slow if LevelName is a short package name
+    if (Level.IsNull())
+    {
+        return nullptr;
+    }
+
+    return LoadLevelInstance_Internal(World, Level.GetLongPackageName(), Location, Rotation, OutSuccess, LevelPrefix, ShouldBeLoaded, ShouldBeVisible, BlockOnLoad, Priority);
+}
+
+static_assert(ERyCurrentLevelStreamingState::MakingInvisible ==
+    static_cast<ERyCurrentLevelStreamingState>(ULevelStreaming::ECurrentState::MakingInvisible), "ERyCurrentLevelStreamingState is not aligned to ECurrentState! Update ERyCurrentLevelStreamingState to contain all elements of ECurrentState!");
+
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+ERyCurrentLevelStreamingState URyRuntimeLevelHelpers::GetCurrentLevelStreamingState(ULevelStreaming* StreamingLevel)
+{
+    if(!StreamingLevel)
+    {
+        return ERyCurrentLevelStreamingState::Removed;
+    }
+
+    return static_cast<ERyCurrentLevelStreamingState>(StreamingLevel->GetCurrentState());
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+ALevelScriptActor* URyRuntimeLevelHelpers::GetStreamingLevelScriptActor(ULevelStreaming* StreamingLevel)
+{
+    if(!StreamingLevel)
+    {
+        return nullptr;
+    }
+
+    return StreamingLevel->GetLevelScriptActor();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+ULevelStreamingDynamic* URyRuntimeLevelHelpers::LoadLevelInstance_Internal(UWorld* World,
+                                                                           const FString& LongPackageName,
+                                                                           FVector Location,
+                                                                           FRotator Rotation,
+                                                                           bool& OutSuccess,
+                                                                           const FString& LevelPrefix,
+                                                                           const bool ShouldBeLoaded,
+                                                                           const bool ShouldBeVisible,
+                                                                           const bool BlockOnLoad,
+                                                                           const int32 Priority)
+{
+    const FString PackagePath = FPackageName::GetLongPackagePath(LongPackageName);
+    FString ShortPackageName = FPackageName::GetShortName(LongPackageName);
+
+    if (ShortPackageName.StartsWith(World->StreamingLevelsPrefix))
+    {
+        ShortPackageName.RightChopInline(World->StreamingLevelsPrefix.Len(), false);
+    }
+
+    // Remove PIE prefix if it's there before we actually load the level
+    const FString OnDiskPackageName = FString::Printf(TEXT("%s/%s"), *PackagePath, *ShortPackageName);
+
+    // Create Unique Name for sub-level package
+    const FString UniqueLevelPackageName = FString::Printf(TEXT("%s/%s%s%s%d"),
+                                                           *PackagePath,
+                                                           *World->StreamingLevelsPrefix,
+                                                           *ShortPackageName,
+                                                           *LevelPrefix,
+                                                           ++UniqueLevelInstanceId);
+    
+    // Setup streaming level object that will load specified map
+    ULevelStreamingDynamic* StreamingLevel = NewObject<ULevelStreamingDynamic>(World, ULevelStreamingDynamic::StaticClass(), NAME_None, RF_Transient, nullptr);
+    StreamingLevel->SetWorldAssetByPackageName(FName(*UniqueLevelPackageName));
+    StreamingLevel->LevelColor = FColor::MakeRandomColor();
+    StreamingLevel->SetShouldBeLoaded(ShouldBeLoaded);
+    StreamingLevel->SetShouldBeVisible(ShouldBeVisible);
+    StreamingLevel->SetPriority(Priority);
+    StreamingLevel->bShouldBlockOnLoad = BlockOnLoad;
+    StreamingLevel->bInitiallyLoaded = ShouldBeLoaded;
+    StreamingLevel->bInitiallyVisible = ShouldBeVisible;
+    // Transform
+    StreamingLevel->LevelTransform = FTransform(Rotation, Location);
+    // Map to Load
+    StreamingLevel->PackageNameToLoad = FName(*OnDiskPackageName);
+          
+    // Add the new level to world.
+    World->AddStreamingLevel(StreamingLevel);
+      
+    OutSuccess = true;
+    return StreamingLevel;
 }
