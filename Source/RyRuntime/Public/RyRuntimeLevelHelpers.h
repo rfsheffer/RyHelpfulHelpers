@@ -239,6 +239,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelStreaming")
     static class ALevelScriptActor* GetStreamingLevelScriptActor(class ULevelStreaming* StreamingLevel);
 
+	/** Tries to find an event named "EventName" on all level scripts, and calls it */
+	UFUNCTION(BlueprintCallable, Category="RyRuntime|LevelScriptActor", meta=(WorldContext="WorldContextObject"))
+    static bool FireLevelScriptRemoteEvent(UObject* WorldContextObject, FName EventName);
+
 private:
 	// Counter used by LoadLevelInstance to create unique level names
 	static int32 UniqueLevelInstanceId;

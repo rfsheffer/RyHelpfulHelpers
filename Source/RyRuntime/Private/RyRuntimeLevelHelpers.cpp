@@ -10,6 +10,7 @@
 #include "Engine/Engine.h"
 #include "Engine/LevelStreaming.h"
 #include "Engine/LevelStreamingDynamic.h"
+#include "Engine/LevelScriptActor.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
@@ -401,6 +402,42 @@ ALevelScriptActor* URyRuntimeLevelHelpers::GetStreamingLevelScriptActor(ULevelSt
     }
 
     return StreamingLevel->GetLevelScriptActor();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeLevelHelpers::FireLevelScriptRemoteEvent(UObject* WorldContextObject, FName EventName)
+{
+    UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
+    if (!World)
+    {
+        return false;
+    }
+    
+    bool bFoundEvent = false;
+
+    // Iterate over all levels, and try to find a matching function on the level's script actor
+    for( TArray<ULevel*>::TConstIterator it = World->GetLevels().CreateConstIterator(); it; ++it )
+    {
+        ULevel* CurLevel = *it;
+        if( CurLevel && CurLevel->bIsVisible )
+        {
+            ALevelScriptActor* LSA = CurLevel->GetLevelScriptActor();
+            if( LSA )
+            {
+                // Find an event with no parameters
+                UFunction* EventTarget = LSA->FindFunction(EventName);
+                if( EventTarget && EventTarget->NumParms == 0)
+                {
+                    LSA->ProcessEvent(EventTarget, nullptr);
+                    bFoundEvent = true;
+                }
+            }
+        }
+    }
+
+    return bFoundEvent;
 }
 
 //---------------------------------------------------------------------------------------------------------------------
