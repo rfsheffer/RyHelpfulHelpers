@@ -2,6 +2,7 @@
 // MIT License. See LICENSE for details.
 
 using UnrealBuildTool;
+using System.IO;
 
 public class RyRuntime : ModuleRules
 {
@@ -33,7 +34,20 @@ public class RyRuntime : ModuleRules
 				"AIModule",
 				"UMG",
 				"ApplicationCore",
+				"Voice",
 			}
         );
+        
+        if (Target.Platform.IsInGroup(UnrealPlatformGroup.Windows))
+        {
+	        AddEngineThirdPartyPrivateStaticDependencies(Target, "DirectSound");
+	        
+	        PrivateIncludePaths.AddRange(
+		        new string[]
+		        {
+			        Path.GetFullPath(Path.Combine(EngineDirectory, "Source/Runtime/Online/Voice/Private")),
+		        }
+	        );
+        }
     }
 }
