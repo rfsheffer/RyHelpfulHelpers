@@ -26,7 +26,7 @@ void URyRuntimeAudioHelpers::GetAudioDeviceList(TArray<FString>& OutAudioDeviceN
 /**
 */
 /** Callback to access all the voice capture devices on the platform */
-BOOL CALLBACK CaptureDeviceCallback(
+BOOL CALLBACK RyCaptureDeviceCallback(
     LPGUID lpGuid,
     LPCSTR lpcstrDescription,
     LPCSTR lpcstrModule,
@@ -64,7 +64,7 @@ void URyRuntimeAudioHelpers::GetAudioCaptureDeviceList(TArray<FString>& OutAudio
 
 	defaultObj->CachedCaptureDeviceList.Empty();
 
-	HRESULT hr = DirectSoundCaptureEnumerate((LPDSENUMCALLBACK)CaptureDeviceCallback, nullptr);
+	HRESULT hr = DirectSoundCaptureEnumerate((LPDSENUMCALLBACK)RyCaptureDeviceCallback, nullptr);
 	if (FAILED(hr))
 	{
 		UE_LOG(LogRyRuntime, Warning, TEXT("Failed to enumerate capture devices %d"), hr);
