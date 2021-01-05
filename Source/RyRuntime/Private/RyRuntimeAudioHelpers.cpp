@@ -38,12 +38,10 @@ BOOL CALLBACK RyCaptureDeviceCallback(
 		// Save the enumerated device information for later use
 		const FString DeviceDescription((LPCWSTR)lpcstrDescription);
 		URyRuntimeAudioHelpers* defaultObj = GetMutableDefault<URyRuntimeAudioHelpers>();
-		if(!defaultObj)
+		if(defaultObj)
 		{
-			return true;
+			defaultObj->CachedCaptureDeviceList.Add(DeviceDescription);
 		}
-
-		defaultObj->CachedCaptureDeviceList.Add(DeviceDescription);
 	}
 	
 	return true;
