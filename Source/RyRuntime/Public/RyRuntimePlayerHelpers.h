@@ -88,7 +88,7 @@ FORCEINLINE bool URyRuntimePlayerHelpers::IsCameraFaded(APlayerCameraManager* ca
 		return cameraManager->FadeAlpha.X > 0.0f || cameraManager->FadeAlpha.Y > 0.0f;
 	}
 
-	return cameraManager->FadeAlpha.Y == 0.0f;
+	return cameraManager->FadeAmount != 0.0f && cameraManager->FadeAlpha.Y != 0.0f;
 }
 
 //---------------------------------------------------------------------------------------------------------------------
