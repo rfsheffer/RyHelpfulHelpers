@@ -85,3 +85,45 @@ void URyRuntimeComponentHelpers::DistributePointsToSpline(USplineComponent* spli
 		splineComponent->UpdateSpline();
 	}
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeComponentHelpers::CopyCollisionProperties(UPrimitiveComponent* sourceMesh, UPrimitiveComponent* destMesh)
+{
+	if(!sourceMesh || !destMesh)
+	{
+		return;
+	}
+
+	destMesh->SetGenerateOverlapEvents(sourceMesh->GetGenerateOverlapEvents());
+	destMesh->SetCollisionProfileName(sourceMesh->GetCollisionProfileName());
+	destMesh->SetCollisionEnabled(sourceMesh->GetCollisionEnabled());
+	destMesh->SetCanEverAffectNavigation(sourceMesh->CanEverAffectNavigation());
+	// TODO: This would be desirable, but crashes in my tests...
+	// if(destMesh->BodyInstance.IsValidBodyInstance() && sourceMesh->BodyInstance.IsValidBodyInstance())
+	// {
+	// 	destMesh->BodyInstance.CopyBodyInstancePropertiesFrom(&sourceMesh->BodyInstance);
+	// }
+
+	if(destMesh->CanModify())
+	{
+		destMesh->Modify();
+	}
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeComponentHelpers::CopyMaterials(UPrimitiveComponent* sourceMesh, UPrimitiveComponent* destMesh)
+{
+	if(!sourceMesh || !destMesh)
+	{
+		return;
+	}
+
+	for(int32 matIndex = 0; matIndex < sourceMesh->GetNumMaterials() && matIndex < destMesh->GetNumMaterials(); ++matIndex)
+	{
+		destMesh->SetMaterial(matIndex, sourceMesh->GetMaterial(matIndex));
+	}
+}

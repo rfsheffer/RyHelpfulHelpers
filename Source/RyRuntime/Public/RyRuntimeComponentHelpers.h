@@ -28,4 +28,14 @@ class RYRUNTIME_API URyRuntimeComponentHelpers : public UBlueprintFunctionLibrar
     								     const TArray<FVector>& points,
     								     ESplineCoordinateSpace::Type coordinateSpace,
     								     bool updateSpline = true);
+
+	// Copy the collision properties from one primitive component to another.
+	// This does not copy custom profile overrides!
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ComponentHelpers|Primitives")
+	static void CopyCollisionProperties(class UPrimitiveComponent* sourceMesh, class UPrimitiveComponent* destMesh);
+
+	// Copy the materials for source mesh to dest mesh.
+	// This iterates source meshes materials and assigns them to dest mesh.
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ComponentHelpers|Primitives")
+	static void CopyMaterials(class UPrimitiveComponent* sourceMesh, class UPrimitiveComponent* destMesh);
 };

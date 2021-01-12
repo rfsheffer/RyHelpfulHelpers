@@ -14,7 +14,7 @@ public class RyRuntime : ModuleRules
 		// This blocks functions which access engine internals which only advanced engine users should consider.
 		PrivateDefinitions.Add("RY_INCLUDE_DANGEROUS_FUNCTIONS=1");
 		
-		//OptimizeCode = CodeOptimization.Never;
+		OptimizeCode = CodeOptimization.Never;
 
 		PrivateIncludePaths.AddRange(
             new string[]
@@ -22,6 +22,12 @@ public class RyRuntime : ModuleRules
                 "RyRuntime/Private",
             }
         );
+		PublicDependencyModuleNames.AddRange(
+			new string[]
+			{
+				"HeadMountedDisplay",
+			}
+		);
         PrivateDependencyModuleNames.AddRange(
             new string[]
             {
@@ -35,12 +41,41 @@ public class RyRuntime : ModuleRules
 				"UMG",
 				"ApplicationCore",
 				"Voice",
-			}
+            }
         );
         
+        /* Add to plugins section for messing with getting some extra HMD info
+        	"Plugins": [
+		{
+			"Name": "SteamVR",
+			"Enabled": true,
+			"Optional": true,
+			"WhitelistPlatforms": [
+				"Win32", "Win64", "Linux", "Mac"
+			]
+		},
+		{
+			"Name": "OculusVR",
+			"Enabled": true,
+			"Optional": true,
+			"WhitelistPlatforms": [
+				"Win32", "Win64", "Android"
+			]
+		}
+	]
+         */
+
         if (Target.Platform.IsInGroup(UnrealPlatformGroup.Windows))
         {
+	        /*PrivateDependencyModuleNames.AddRange(
+		        new string[]
+		        {
+			        "SteamVR",
+			        "OculusHMD",
+		        }
+	        );*/
 	        AddEngineThirdPartyPrivateStaticDependencies(Target, "DirectSound");
+	        //AddEngineThirdPartyPrivateStaticDependencies(Target, "OpenVR");
 	        
 	        PrivateIncludePaths.AddRange(
 		        new string[]
@@ -49,5 +84,15 @@ public class RyRuntime : ModuleRules
 		        }
 	        );
         }
+
+        // if (Target.Platform.IsInGroup(UnrealPlatformGroup.Android))
+        // {
+	       //  PrivateDependencyModuleNames.AddRange(
+		      //   new string[]
+		      //   {
+			     //    "OculusHMD",
+		      //   }
+	       //  );
+        // }
     }
 }
