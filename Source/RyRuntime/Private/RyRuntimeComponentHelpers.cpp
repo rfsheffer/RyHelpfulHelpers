@@ -105,11 +105,12 @@ void URyRuntimeComponentHelpers::CopyCollisionProperties(UPrimitiveComponent* so
 	// {
 	// 	destMesh->BodyInstance.CopyBodyInstancePropertiesFrom(&sourceMesh->BodyInstance);
 	// }
-
+#if WITH_EDITOR
 	if(destMesh->CanModify())
 	{
 		destMesh->Modify();
 	}
+#endif
 }
 
 //---------------------------------------------------------------------------------------------------------------------
