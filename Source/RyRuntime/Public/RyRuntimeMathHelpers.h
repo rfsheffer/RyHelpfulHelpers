@@ -212,8 +212,8 @@ public:
 	UFUNCTION(BlueprintPure, meta=(DisplayName = "Equal (Vector) 2D", CompactNodeTitle = "==2D", ScriptMethod = "IsNearEqual2D", Keywords = "== equal"), Category="RyRuntime|Math|Vector")
     static bool EqualEqual_VectorVector2D(FVector A, FVector B, float ErrorTolerance = 1.e-4f);
 
-	/** Returns true if vector A is not equal to vector B (A != B) within a specified error tolerance */
-	UFUNCTION(BlueprintPure, meta=(DisplayName = "Not Equal (Vector)", CompactNodeTitle = "!=2D", ScriptMethod = "IsNotNearEqual2D"), Category="RyRuntime|Math|Vector")
+	/** Returns true if vector A is not equal to vector B (A != B) within a specified error tolerance, ignoring Z */
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "Not Equal (Vector) 2D", CompactNodeTitle = "!=2D", ScriptMethod = "IsNotNearEqual2D"), Category="RyRuntime|Math|Vector")
     static bool NotEqual_VectorVector2D(FVector A, FVector B, float ErrorTolerance = 1.e-4f);
 };
 
