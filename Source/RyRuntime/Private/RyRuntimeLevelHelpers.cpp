@@ -15,9 +15,30 @@
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-TSoftObjectPtr<UWorld> URyRuntimeLevelHelpers::GetWorldSoftObjectPtr(const FString& PathToWorld)
+TSoftObjectPtr<UWorld> URyRuntimeLevelHelpers::GetWorldSoftReferenceFromPath(const FString& PathToWorld)
 {
     return TSoftObjectPtr<UWorld>(PathToWorld);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+UWorld* URyRuntimeLevelHelpers::GetWorldOfActor(const AActor* actorIn)
+{
+    if(actorIn)
+    {
+        return actorIn->GetWorld();
+    }
+
+    return nullptr;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+TSoftObjectPtr<UWorld> URyRuntimeLevelHelpers::GetWorldSoftReference(UWorld* worldIn)
+{
+    return TSoftObjectPtr<UWorld>(worldIn);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -37,6 +58,19 @@ ULevel* URyRuntimeLevelHelpers::GetActorLevel(const AActor* actorIn)
     }
 
     return actorIn->GetTypedOuter<ULevel>();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FString URyRuntimeLevelHelpers::GetActorWorldNameString(const AActor* actorIn)
+{
+    if(!actorIn || !actorIn->GetWorld())
+    {
+        return TEXT("");
+    }
+
+    return actorIn->GetWorld()->GetName();
 }
 
 //---------------------------------------------------------------------------------------------------------------------

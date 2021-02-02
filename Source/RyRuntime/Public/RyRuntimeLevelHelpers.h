@@ -62,11 +62,23 @@ public:
 	// This is used in cases such as the LevelStreamingDynamics need for a soft object pointer to a World
 	// which cannot be constructed dynamically.
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
-	static TSoftObjectPtr<UWorld> GetWorldSoftObjectPtr(const FString& PathToWorld);
+	static TSoftObjectPtr<UWorld> GetWorldSoftReferenceFromPath(const FString& PathToWorld);
+
+	// Returns the world object of an actor
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
+	static UWorld* GetWorldOfActor(const AActor* actorIn);
+
+	// Creates a soft reference for a world object
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
+    static TSoftObjectPtr<UWorld> GetWorldSoftReference(UWorld* worldIn);
 
     // Return the associated level this actor exists in
     UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
 	static ULevel* GetActorLevel(const AActor* actorIn);
+
+	/** Get the name string of the world this actor is in. This is not the sub level name, use GetActorLevelName for that. */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
+	static FString GetActorWorldNameString(const AActor* actorIn);
 
     // Returns true if 'actorToCheck' is in the level 'levelToCheck'
     UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
