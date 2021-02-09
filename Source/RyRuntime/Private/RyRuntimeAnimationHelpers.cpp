@@ -297,4 +297,23 @@ float URyRuntimeAnimationHelpers::GetMontageSectionTimeLeftFromPos(class UAnimMo
     }
 }
 
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+UAnimMetaData* URyRuntimeAnimationHelpers::CreateAnimMetaDataInstance(TSubclassOf<UAnimMetaData> MetaDataClass)
+{
+    if(!MetaDataClass)
+    {
+        return nullptr;
+    }
+    
+    UAnimMetaData* MetaDataInstance = NewObject<UAnimMetaData>(GetTransientPackage(), MetaDataClass, NAME_None, RF_Transient);
+    if (!MetaDataInstance)
+    {
+        UE_LOG(LogRyRuntime, Warning, TEXT("Failed to create anim metadata instance for %s"), *MetaDataClass->GetName());
+    }
+
+    return MetaDataInstance;
+}
+
 #undef LOCTEXT_NAMESPACE

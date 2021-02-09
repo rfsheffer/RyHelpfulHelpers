@@ -67,4 +67,8 @@ public:
 
     UFUNCTION(BlueprintPure, Category = "RyRuntime|AnimationHelpers")
     static float GetMontageSectionTimeLeftFromPos(class UAnimMontage* MontageIn, const FName SectionName, const float Position);
+
+	// Create an animation meta data instance
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|AnimationHelpers")
+	static UAnimMetaData* CreateAnimMetaDataInstance(TSubclassOf<UAnimMetaData> MetaDataClass);
 };
