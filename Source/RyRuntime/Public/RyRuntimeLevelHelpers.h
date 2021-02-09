@@ -178,6 +178,22 @@ public:
     UFUNCTION(BlueprintPure, Category = "RyRuntime|WorldHelpers", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext))
 	static ERyWorldType GetWorldType(UObject* WorldContextObject);
 
+	/**
+	* Full implementation of the Actor TeleportTo call for Blueprints
+	* Used for adding actors to levels or teleporting them to a new location.
+	* The result of this function is independent of the actor's current location and rotation.
+	* If the actor doesn't fit exactly at the location specified, tries to slightly move it out of walls and such if bNoCheck is false.
+	*
+	* @param ActorToTeleport The actor to teleport
+	* @param DestLocation The target destination point
+	* @param DestRotation The target rotation at the destination
+	* @param IsATest is true if this is a test movement, which shouldn't cause any notifications (used by AI pathfinding, for example)
+	* @param NoCheck is true if we should skip checking for encroachment in the world or other actors
+	* @return true if the actor has been successfully moved, or false if it couldn't fit.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers")
+    static bool TeleportToAdvanced(AActor *ActorToTeleport, const FVector& DestLocation, const FRotator& DestRotation, bool IsATest=false, bool NoCheck=false);
+
 	/**  
 	* Stream in a level with a specific location and rotation.
 	* This is an advanced implementation with extended control of how the level is loaded.

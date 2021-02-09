@@ -332,6 +332,20 @@ ERyWorldType URyRuntimeLevelHelpers::GetWorldType(UObject* WorldContextObject)
     return ERyWorldType::None;
 }
 
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeLevelHelpers::TeleportToAdvanced(AActor* ActorToTeleport, const FVector& DestLocation,
+    const FRotator& DestRotation, bool IsATest, bool NoCheck)
+{
+    if(!ActorToTeleport)
+    {
+        return false;
+    }
+
+    return ActorToTeleport->TeleportTo(DestLocation, DestRotation, IsATest, NoCheck);
+}
+
 int32 URyRuntimeLevelHelpers::UniqueLevelInstanceId = 0;
 
 //---------------------------------------------------------------------------------------------------------------------
