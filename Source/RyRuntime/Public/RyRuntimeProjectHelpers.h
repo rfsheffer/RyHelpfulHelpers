@@ -47,6 +47,58 @@ public:
 	// Whether compiling for dedicated server or not. Define UE_SERVER is true?
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|ProjectHelpers")
     static bool IsBuildServer();
+
+	/** The name of the company (author, provider) that created the project. */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ProjectHelpers")
+	static FString GetProjectCompanyName();
+
+	/** The distinguished name of the company (author, provider) that created the project. */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ProjectHelpers")
+	static FString GetProjectCompanyDistinguishedName();
+
+	/** The project's copyright and/or trademark notices. */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ProjectHelpers")
+	static FString GetProjectCopyrightNotice();
+
+	/** The project's description text. */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ProjectHelpers")
+	static FString GetProjectDescription();
+
+	/** The project's homepage URL. */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ProjectHelpers")
+	static FString GetProjectHomepage();
+
+	/** The project's licensing terms. */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ProjectHelpers")
+	static FString GetProjectLicensingTerms();
+
+	/** The project's privacy policy. */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ProjectHelpers")
+	static FString GetProjectPrivacyPolicy();
+
+	/** The project's unique identifier. */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ProjectHelpers")
+	static FGuid GetProjectID();
+
+	/** The project's name. */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ProjectHelpers")
+	static FString GetProjectName();
+
+	/** The project's version number. */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ProjectHelpers")
+	static FString GetProjectVersion();
+
+	/** The project's support contact information. */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ProjectHelpers")
+	static FString GetProjectSupportContact();
+
+	/** The project's title as displayed on the window title bar (can include the tokens {GameName}, {PlatformArchitecture}, {BuildConfiguration} or {RHIName}, which will be replaced with the specified text) */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ProjectHelpers")
+	static FText GetProjectDisplayedTitle();
+
+	/** Additional data to be displayed on the window title bar in non-shipping configurations (can include the tokens {GameName}, {PlatformArchitecture}, {BuildConfiguration} or {RHIName}, which will be replaced with the specified text) */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ProjectHelpers")
+	static FText GetProjectDebugTitleInfo();
 };
 
 //---------------------------------------------------------------------------------------------------------------------

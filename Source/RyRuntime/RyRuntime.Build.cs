@@ -41,6 +41,7 @@ public class RyRuntime : ModuleRules
 				"UMG",
 				"ApplicationCore",
 				"Voice",
+				"EngineSettings",
             }
         );
         
