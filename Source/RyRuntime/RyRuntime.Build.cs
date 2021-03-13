@@ -14,7 +14,7 @@ public class RyRuntime : ModuleRules
 		// This blocks functions which access engine internals which only advanced engine users should consider.
 		PrivateDefinitions.Add("RY_INCLUDE_DANGEROUS_FUNCTIONS=1");
 		
-		OptimizeCode = CodeOptimization.Never;
+		//OptimizeCode = CodeOptimization.Never;
 
 		PrivateIncludePaths.AddRange(
             new string[]
