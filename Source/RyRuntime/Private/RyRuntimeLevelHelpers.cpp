@@ -12,6 +12,11 @@
 #include "Engine/LevelStreamingDynamic.h"
 #include "Engine/LevelScriptActor.h"
 
+// Ensure our blueprintable version of the enum is aligned with epics
+static_assert(ERyComponentCreationMethod::Native == static_cast<ERyComponentCreationMethod>(EComponentCreationMethod::Native) &&
+              ERyComponentCreationMethod::Instance == static_cast<ERyComponentCreationMethod>(EComponentCreationMethod::Instance),
+              "ERyComponentCreationMethod is not aligned to EComponentCreationMethod! Update ERyComponentCreationMethod to contain all elements of EComponentCreationMethod!");
+
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
@@ -290,11 +295,16 @@ void URyRuntimeLevelHelpers::FinishSpawningDeferredActor(AActor* actorToFinishSp
 /**
 */
 UActorComponent* URyRuntimeLevelHelpers::CreateComponentForActor(AActor *owner, TSubclassOf<UActorComponent> newComponentClass, 
-                                                                 USceneComponent *attachComponent /*= nullptr*/, const FName newName)
+                                                                 USceneComponent *attachComponent /*= nullptr*/, const FName newName,
+                                                                 const ERyComponentCreationMethod creationMethod)
 {
     UActorComponent* NewInstanceComponent = NewObject<UActorComponent>(owner, newComponentClass, newName);
     if(!NewInstanceComponent)
+    {
         return nullptr;
+    }
+
+    NewInstanceComponent->CreationMethod = static_cast<EComponentCreationMethod>(creationMethod);
 
     if(attachComponent)
     {
@@ -316,7 +326,8 @@ UActorComponent* URyRuntimeLevelHelpers::CreateComponentForActor(AActor *owner, 
     return NewInstanceComponent;
 }
 
-static_assert(ERyWorldType::Inactive == static_cast<ERyWorldType>(EWorldType::Inactive), "ERyWorldType is not aligned to EWorldType! Update ERyWorldType to contain all elements of EWorldType!");
+static_assert(ERyWorldType::None == static_cast<ERyWorldType>(EWorldType::None) &&
+              ERyWorldType::Inactive == static_cast<ERyWorldType>(EWorldType::Inactive), "ERyWorldType is not aligned to EWorldType! Update ERyWorldType to contain all elements of EWorldType!");
 
 //---------------------------------------------------------------------------------------------------------------------
 /**

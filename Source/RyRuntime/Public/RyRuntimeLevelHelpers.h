@@ -48,6 +48,19 @@ enum class ERyCurrentLevelStreamingState : uint8
     MakingInvisible
 };
 
+UENUM(BlueprintType)
+enum class ERyComponentCreationMethod : uint8
+{
+	/** A component that is part of a native class. */
+	Native,
+    /** A component that is created from a template defined in the Components section of the Blueprint. */
+    SimpleConstructionScript,
+    /**A dynamically created component, either from the UserConstructionScript or from a Add Component node in a Blueprint event graph. */
+    UserConstructionScript,
+    /** A component added to a single Actor instance via the Component section of the Actor's details panel. */
+    Instance,
+};
+
 //---------------------------------------------------------------------------------------------------------------------
 /**
   * Static Helper functions related to runtime levels
@@ -170,9 +183,10 @@ public:
 	static void FinishSpawningDeferredActor(AActor* actorToFinishSpawning, const FTransform& newTransform, bool useNewTransform = false);
 
     // A Helper function to create a component of a class type and attach it to the actor at runtime. This does not support presenting exposed variables.
-    UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers")
+    UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers", meta = (AdvancedDisplay = "3"))
     static class UActorComponent* CreateComponentForActor(AActor *owner, TSubclassOf<class UActorComponent> newComponentClass,
-                                                          class USceneComponent *attachComponent = nullptr, const FName newName = NAME_None);
+                                                          class USceneComponent *attachComponent = nullptr, const FName newName = NAME_None,
+                                                          const ERyComponentCreationMethod creationMethod = ERyComponentCreationMethod::Native);
 
     // Get the type of world the context object is in (editor, preview, game, PlayInEditor[PIE], etc)
     UFUNCTION(BlueprintPure, Category = "RyRuntime|WorldHelpers", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext))
