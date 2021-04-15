@@ -2,7 +2,6 @@
 // MIT License. See LICENSE for details.
 
 #include "RyRuntimeMathHelpers.h"
-#include "RyRuntimeModule.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/Engine.h"
@@ -38,36 +37,41 @@ float URyRuntimeMathHelpers::ShortestRotationPath(const float startRotation, con
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-void URyRuntimeMathHelpers::RotationInterpolate(const float inCurrent, const float inTarget, const float deltaTime, const float speed, float& newRotation, bool& atTarget, const float checkTolerance)
+void URyRuntimeMathHelpers::RotationInterpolate(const float inCurrentRotation, const float inDestinationRotation,
+												const float deltaTime, const float speed, float& newRotation,
+												bool& atTarget, const float checkTolerance)
 {
-	const float clampCurrent = FRotator::ClampAxis(inCurrent);
-	const float clampTarget = FRotator::ClampAxis(inTarget);
-	const float pathTo = ShortestRotationPath(clampCurrent, clampTarget);
-	
-	if(FMath::Abs(pathTo) <= checkTolerance)
+	const float increment = GetRotationIncrement(inCurrentRotation, inDestinationRotation, deltaTime, speed, checkTolerance);
+	if(increment == 0.0f)
 	{
-		// Already there!
 		atTarget = true;
-		newRotation = FRotator::ClampAxis(inTarget);
+		newRotation = FRotator::ClampAxis(inDestinationRotation);
 		return;
 	}
 
-	const float dirToTarget = pathTo < 0.0f ? -1.0f : 1.0f;
-	const float movement = (dirToTarget * speed * deltaTime);
-	if(FMath::Abs(movement) >= FMath::Abs(pathTo))
+	atTarget = false;
+	newRotation = FRotator::ClampAxis(inCurrentRotation + increment);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+float URyRuntimeMathHelpers::GetRotationIncrement(const float inCurrentRotation, const float inDestinationRotation,
+											      const float deltaTime, const float speed, const float checkTolerance)
+{
+	if(RotationsEqual(inCurrentRotation, inDestinationRotation, checkTolerance))
 	{
-		// movement was greater than path to target, we are there!
-		atTarget = true;
-		newRotation = clampTarget;
-		return;
+		return 0.0f;
 	}
 
-	newRotation = FRotator::ClampAxis(clampCurrent + movement);
-	atTarget = RotationsEqual(clampTarget, newRotation, checkTolerance);
-	if(atTarget)
+	const float increment = FMath::Abs(speed * deltaTime);
+	const float rotationPath = ShortestRotationPath(inCurrentRotation, inDestinationRotation);
+	if(FMath::Abs(rotationPath) > increment)
 	{
-		newRotation = clampTarget;
+		return increment * FMath::Sign(rotationPath);
 	}
+
+	return rotationPath;
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -75,7 +79,7 @@ void URyRuntimeMathHelpers::RotationInterpolate(const float inCurrent, const flo
 */
 void URyRuntimeMathHelpers::FindScreenEdgeLocationForWorldLocation(UObject* WorldContextObject, const FVector& InLocation, 
                                                                    const float EdgePercent, FVector2D& OutScreenPosition, 
-                                                                   float& OutRotationAngleDegrees, bool &bIsOnScreen)
+                                                                   float& OutRotationAngleDegrees, bool &bIsOnScreen, const int32 playerIndex)
 {
 	bIsOnScreen = false;
 	OutRotationAngleDegrees = 0.f;
@@ -95,7 +99,7 @@ void URyRuntimeMathHelpers::FindScreenEdgeLocationForWorldLocation(UObject* Worl
 		return;
 	}
 
-	APlayerController* PlayerController = (WorldContextObject ? UGameplayStatics::GetPlayerController(WorldContextObject, 0) : nullptr);
+	APlayerController* PlayerController = (WorldContextObject ? UGameplayStatics::GetPlayerController(WorldContextObject, playerIndex) : nullptr);
 	if (!PlayerController)
 	{
 		return;

@@ -113,8 +113,8 @@ public:
 	 * Rotate inCurrent towards inTarget at a rate of speed
 	 * NOTE: This clamps your rotation to be between [0, 360].
 	 *       If calculated newRotation distance to target is less than checkTolerance, newRotation is clamped to inTarget.
-	 * @param inCurrent - The current rotation
-	 * @param inTarget - The target rotation
+	 * @param inCurrentRotation - The current rotation
+	 * @param inDestinationRotation - The destination rotation
 	 * @param deltaTime - Time since last update (usually deltaSeconds)
 	 * @param speed - The speed to rotate towards
 	 * @param newRotation - The new rotation
@@ -122,7 +122,18 @@ public:
 	 * @param checkTolerance - When checking if inCurrent is equal to inTarget, the floating point tolerance to check against.
 	 */
 	UFUNCTION(BlueprintPure, Category = "Math|Rotations", meta=(AdvancedDisplay = "6"))
-	static void RotationInterpolate(const float inCurrent, const float inTarget, const float deltaTime, const float speed, float& newRotation, bool& atTarget, const float checkTolerance = 1.e-6f);
+	static void RotationInterpolate(const float inCurrentRotation, const float inDestinationRotation, const float deltaTime, const float speed, float& newRotation, bool& atTarget, const float checkTolerance = 1.e-6f);
+
+	/**
+	 * Get the next rotation increment from inCurrentRotation to inDestinationRotation
+	 * @param inCurrentRotation - The current rotation
+	 * @param inDestinationRotation - The destination
+	 * @param deltaTime - Time since last update (usually deltaSeconds)
+	 * @param speed - The speed to rotate towards the destination
+	 * @return The increment towards the destination. If Zero, the destination has been reached
+	 */
+	UFUNCTION(BlueprintPure, Category = "Math|Rotations", meta=(AdvancedDisplay = "4"))
+	static float GetRotationIncrement(const float inCurrentRotation, const float inDestinationRotation, const float deltaTime, const float speed, const float checkTolerance = 1.e-6f);
 
 	// Returns inFloat as a negative value, even if inFloat is already negative.
 	UFUNCTION(BlueprintPure, Category = "Math|Float", meta=(DisplayName = "Negate", CompactNodeTitle = "NEG"))
@@ -151,14 +162,18 @@ public:
 	* Converts a world location to screen position for HUD drawing. This differs from the results of FSceneView::WorldToScreen
 	* in that it returns a position along the edge of the screen for offscreen locations
 	*
-	* @param		InLocation	- The world space location to be converted to screen space
-	* @param		EdgePercent - How close to the edge of the screen, 1.0 = at edge, 0.0 = at center of screen. .9 or .95 is usually desirable
-	* @outparam	OutScreenPosition - the screen coordinates for HUD drawing
-	* @outparam	OutRotationAngleDegrees - The angle to rotate a hud element if you want it pointing toward the offscreen indicator, 0� if onscreen
-	* @outparam	bIsOnScreen - True if the specified location is in the camera view (may be obstructed)
+	* @param    WorldContextObject - World context
+	* @param    InLocation	- The world space location to be converted to screen space
+	* @param	EdgePercent - How close to the edge of the screen, 1.0 = at edge, 0.0 = at center of screen. .9 or .95 is usually desirable
+	* @param	OutScreenPosition - the screen coordinates for HUD drawing
+	* @param	OutRotationAngleDegrees - The angle to rotate a hud element if you want it pointing toward the offscreen indicator, 0� if onscreen
+	* @param	bIsOnScreen - True if the specified location is in the camera view (may be obstructed)
+	* @param    playerIndex - The index of the local player
 	*/
-	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext), Category = "RyRuntime|Math|HUD")
-	static void FindScreenEdgeLocationForWorldLocation(UObject* WorldContextObject, const FVector& InLocation, const float EdgePercent, FVector2D& OutScreenPosition, float& OutRotationAngleDegrees, bool &bIsOnScreen);
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AdvancedDisplay = "6"), Category = "RyRuntime|Math|HUD")
+	static void FindScreenEdgeLocationForWorldLocation(UObject* WorldContextObject, const FVector& InLocation,
+													   const float EdgePercent, FVector2D& OutScreenPosition,
+													   float& OutRotationAngleDegrees, bool &bIsOnScreen, const int32 playerIndex = 0);
 
 	// With TheSize of the surface ex (800 x 600) and TheAngle from the center of the surface, what is the point on TheSize where TheAngle would hit?
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|Math|HUD")
