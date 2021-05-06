@@ -35,6 +35,18 @@ void URyRuntimeNavigationHelpers::SetCanEverAffectNavigation(class UActorCompone
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
+bool URyRuntimeNavigationHelpers::GetCanEverAffectNavigation(UActorComponent* actorComponent)
+{
+    if(actorComponent)
+    {
+        return actorComponent->CanEverAffectNavigation();
+    }
+    return false;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
 FVector URyRuntimeNavigationHelpers::GetStartPoint(UNavLinkCustomComponent* smartLinkComponent)
 {
     if(smartLinkComponent)

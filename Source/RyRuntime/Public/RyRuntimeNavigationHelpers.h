@@ -35,6 +35,12 @@ public:
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|NavigationHelpers")
     static void SetCanEverAffectNavigation(class UActorComponent* actorComponent, const bool canEverAffectNavigation);
 
+	/**
+	 * Returns if the actor component can ever affect navigation.
+	 */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|NavigationHelpers")
+    static bool GetCanEverAffectNavigation(class UActorComponent* actorComponent);
+
     // Get the start point in world space of a smart link
     UFUNCTION(BlueprintPure, Category = "RyRuntime|NavLinkHelpers|SmartLink")
     static FVector GetStartPoint(class UNavLinkCustomComponent* smartLinkComponent);
