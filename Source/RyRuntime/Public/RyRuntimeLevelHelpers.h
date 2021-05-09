@@ -188,6 +188,10 @@ public:
                                                           class USceneComponent *attachComponent = nullptr, const FName newName = NAME_None,
                                                           const ERyComponentCreationMethod creationMethod = ERyComponentCreationMethod::Native);
 
+	// With an un-registered component, register it with an actor
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers")
+	static void RegisterComponentForActor(class UActorComponent* componentToRegister, AActor* actor, class USceneComponent *attachComponent = nullptr);
+
     // Get the type of world the context object is in (editor, preview, game, PlayInEditor[PIE], etc)
     UFUNCTION(BlueprintPure, Category = "RyRuntime|WorldHelpers", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext))
 	static ERyWorldType GetWorldType(UObject* WorldContextObject);

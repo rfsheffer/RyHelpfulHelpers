@@ -326,6 +326,40 @@ UActorComponent* URyRuntimeLevelHelpers::CreateComponentForActor(AActor *owner, 
     return NewInstanceComponent;
 }
 
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeLevelHelpers::RegisterComponentForActor(UActorComponent* componentToRegister, AActor* actor, USceneComponent* attachComponent)
+{
+    if(!actor || !componentToRegister)
+    {
+        return;
+    }
+
+    if(componentToRegister->IsRegistered())
+    {
+        return;
+    }
+
+    if(attachComponent)
+    {
+        USceneComponent* sceneComp = Cast<USceneComponent>(componentToRegister);
+        if(sceneComp)
+        {
+            sceneComp->AttachToComponent(attachComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+        }
+
+        if(!actor)
+        {
+            actor = attachComponent->GetOwner();
+        }
+    }
+    if(actor)
+    {
+        componentToRegister->RegisterComponent();
+    }
+}
+
 static_assert(ERyWorldType::None == static_cast<ERyWorldType>(EWorldType::None) &&
               ERyWorldType::Inactive == static_cast<ERyWorldType>(EWorldType::Inactive), "ERyWorldType is not aligned to EWorldType! Update ERyWorldType to contain all elements of EWorldType!");
 
