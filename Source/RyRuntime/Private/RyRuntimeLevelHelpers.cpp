@@ -197,7 +197,7 @@ void URyRuntimeLevelHelpers::GetActorsOfTypeInLevel(const ULevel* level, TSubcla
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-AActor* URyRuntimeLevelHelpers::SpawnActorOfClass(UObject* WorldContextObject,
+AActor* URyRuntimeLevelHelpers::SpawnActorAdvanced(UObject* WorldContextObject,
                                                   TSubclassOf<class AActor> actorClass,
                                                   const FTransform& transform,
                                                   const ESpawnActorCollisionHandlingMethod spawnHandling /*= ESpawnActorCollisionHandlingMethod::AlwaysSpawn*/,
@@ -206,12 +206,14 @@ AActor* URyRuntimeLevelHelpers::SpawnActorOfClass(UObject* WorldContextObject,
                                                   AActor* actorOwner /*= nullptr*/,
                                                   APawn* actorInstigator /*= nullptr*/,
                                                   ULevel* overrideLevel /*= nullptr*/,
-                                                  bool allowDuringConstructionScript)
+                                                  bool deferConstruction,
+                                                  bool allowDuringConstructionScript,
+                                                  bool absoluteTransform)
 {
     UWorld* world = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull);
     if(!world)
     {
-        UE_LOG(LogRyRuntime, Warning, TEXT("RyRuntimeLevelHelpers::SpawnActorOfClass error. Invalid World Context!"));
+        UE_LOG(LogRyRuntime, Warning, TEXT("RyRuntimeLevelHelpers::SpawnActorAdvanced error. Invalid World Context!"));
         return nullptr;
     }
 
@@ -223,9 +225,32 @@ AActor* URyRuntimeLevelHelpers::SpawnActorOfClass(UObject* WorldContextObject,
     params.OverrideLevel = overrideLevel;
     params.SpawnCollisionHandlingOverride = spawnHandling;
     params.bAllowDuringConstructionScript = allowDuringConstructionScript;
+    params.bDeferConstruction = deferConstruction;
     params.NameMode = FActorSpawnParameters::ESpawnActorNameMode::Requested;
-    
-    AActor* spawnedActor =  world->SpawnActor(actorClass, &transform, params);
+
+    // For a bit of extra security, ensure the template class overrides whatever the user puts in.
+    // This allows for the class field to be empty.
+    if(actorTemplate)
+    {
+        actorClass = actorTemplate->GetClass();
+    }
+
+    if(!actorClass)
+    {
+        UE_LOG(LogRyRuntime, Warning, TEXT("RyRuntimeLevelHelpers::SpawnActorAdvanced error. Invalid actor class!"));
+        return nullptr;
+    }
+
+    AActor* spawnedActor;
+    if(absoluteTransform)
+    {
+        spawnedActor = world->SpawnActorAbsolute(actorClass, transform, params);
+    }
+    else
+    {
+        spawnedActor = world->SpawnActor(actorClass, &transform, params);
+    }
+
 #if WITH_EDITOR
     if(spawnedActor)
     {
@@ -238,53 +263,11 @@ AActor* URyRuntimeLevelHelpers::SpawnActorOfClass(UObject* WorldContextObject,
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-AActor* URyRuntimeLevelHelpers::SpawnActorOfClassDeferred(UObject* WorldContextObject,
-                                                          TSubclassOf<class AActor> actorClass,
-                                                          const FTransform& transform,
-                                                          const ESpawnActorCollisionHandlingMethod spawnHandling /*= ESpawnActorCollisionHandlingMethod::AlwaysSpawn*/,
-                                                          const FName name /*= NAME_None*/,
-                                                          AActor* actorTemplate /*= nullptr*/,
-                                                          AActor* actorOwner /*= nullptr*/,
-                                                          APawn* actorInstigator /*= nullptr*/,
-                                                          ULevel* overrideLevel /*= nullptr*/,
-                                                          bool allowDuringConstructionScript)
-{
-    UWorld* world = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull);
-    if(!world)
-    {
-        UE_LOG(LogRyRuntime, Warning, TEXT("RyRuntimeLevelHelpers::SpawnActorOfClassDeferred error. Invalid World Context!"));
-        return nullptr;
-    }
-
-    FActorSpawnParameters params;
-    params.Name = name;
-    params.Template = actorTemplate;
-    params.Owner = actorOwner;
-    params.Instigator = actorInstigator;
-    params.OverrideLevel = overrideLevel;
-    params.SpawnCollisionHandlingOverride = spawnHandling;
-    params.bDeferConstruction = true;
-    params.bAllowDuringConstructionScript = allowDuringConstructionScript;
-    params.NameMode = FActorSpawnParameters::ESpawnActorNameMode::Requested;
-
-    AActor* spawnedActor =  world->SpawnActor(actorClass, &transform, params);
-#if WITH_EDITOR
-    if(spawnedActor)
-    {
-        spawnedActor->SetActorLabel(spawnedActor->GetName());
-    }
-#endif
-    return spawnedActor;
-}
-
-//---------------------------------------------------------------------------------------------------------------------
-/**
-*/
-void URyRuntimeLevelHelpers::FinishSpawningDeferredActor(AActor* actorToFinishSpawning, const FTransform& newTransform, bool useNewTransform /*= false*/)
+void URyRuntimeLevelHelpers::FinishSpawnActorAdvanced(AActor* actorToFinishSpawning, const FTransform& newTransform, bool useNewTransform /*= false*/)
 {
     if(!actorToFinishSpawning)
     {
-        UE_LOG(LogRyRuntime, Warning, TEXT("RyRuntimeLevelHelpers::FinishSpawningDeferredActor error. actorToFinishSpawning is invalid?!"));
+        UE_LOG(LogRyRuntime, Warning, TEXT("RyRuntimeLevelHelpers::FinishSpawnActorAdvanced error. actorToFinishSpawning is invalid?!"));
         return;
     }
 
