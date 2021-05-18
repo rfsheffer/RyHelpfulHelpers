@@ -81,13 +81,13 @@ public:
      The scaling factor may be thought of as the ratio between the horizontal tension on the cable and the weight 
      of the cable per unit length. A lowscaling factor will therefore result in a deeper curve.
     */
-    UFUNCTION(BlueprintPure, Category = "Math|Utility")
+    UFUNCTION(BlueprintPure, Category = "RyRuntime|Math|Utility")
     static float CalculateCatenary(float X, float scalingFactor);
 
 	/**
 	 * Convert a unit value to another unit value
 	 */
-	UFUNCTION(BlueprintPure, Category = "Math|Utility")
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|Math|Utility")
 	static float ConvertUnit(const float value, const ERyUnit from, const ERyUnit to);
 
 	/**
@@ -101,12 +101,12 @@ public:
 	 *
 	 * @return a new rotation component value
 	*/
-	UFUNCTION(BlueprintPure, Category = "Math|Rotations")
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|Math|Rotations")
 	static float ShortestRotationPath(const float startRotation, const float endRotation);
 
 	// Do two rotations equal?
 	// Clamps both rotations to consistent limits and compares them using an Error Tolerance
-	UFUNCTION(BlueprintPure, Category = "Math|Rotations")
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|Math|Rotations")
 	static bool RotationsEqual(const float rotation1, const float rotation2, const float ErrorTolerance = 1.e-6f);
 
 	/**
@@ -121,7 +121,7 @@ public:
 	 * @param atTarget - True if the target was reached
 	 * @param checkTolerance - When checking if inCurrent is equal to inTarget, the floating point tolerance to check against.
 	 */
-	UFUNCTION(BlueprintPure, Category = "Math|Rotations", meta=(AdvancedDisplay = "6"))
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|Math|Rotations", meta=(AdvancedDisplay = "6"))
 	static void RotationInterpolate(const float inCurrentRotation, const float inDestinationRotation, const float deltaTime, const float speed, float& newRotation, bool& atTarget, const float checkTolerance = 1.e-6f);
 
 	/**
@@ -132,30 +132,34 @@ public:
 	 * @param speed - The speed to rotate towards the destination
 	 * @return The increment towards the destination. If Zero, the destination has been reached
 	 */
-	UFUNCTION(BlueprintPure, Category = "Math|Rotations", meta=(AdvancedDisplay = "4"))
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|Math|Rotations", meta=(AdvancedDisplay = "4"))
 	static float GetRotationIncrement(const float inCurrentRotation, const float inDestinationRotation, const float deltaTime, const float speed, const float checkTolerance = 1.e-6f);
 
+	/** Convert to Quaternion representation of this Rotator. */
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "ToQuat (Rotator)", CompactNodeTitle = "->", ScriptMethod = "Quaternion", Keywords = "cast convert", BlueprintAutocast), Category = "RyRuntime|Math|Conversions")
+    static FQuat Rotator_Quat(const FRotator& R);
+
 	// Returns inFloat as a negative value, even if inFloat is already negative.
-	UFUNCTION(BlueprintPure, Category = "Math|Float", meta=(DisplayName = "Negate", CompactNodeTitle = "NEG"))
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|Math|Float", meta=(DisplayName = "Negate", CompactNodeTitle = "NEG"))
 	static float MakeNegative(const float inFloat);
 
 	// Makes inFloat as a negative value, even if inFloat is already negative.
-	UFUNCTION(BlueprintCallable, Category = "Math|Float", meta=(DisplayName = "NegateInline", CompactNodeTitle = "NEG"))
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|Math|Float", meta=(DisplayName = "NegateInline", CompactNodeTitle = "NEG"))
 	static void MakeNegativeInline(UPARAM(ref) float& inFloat);
 
 	// Same as Abs, returns a positive float value.
-	UFUNCTION(BlueprintPure, Category = "Math|Float", meta=(DisplayName = "Positive", CompactNodeTitle = "POS"))
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|Math|Float", meta=(DisplayName = "Positive", CompactNodeTitle = "POS"))
 	static float MakePositive(const float inFloat);
 
 	// Same as Abs, makes inFloat a positive float value.
-	UFUNCTION(BlueprintCallable, Category = "Math|Float", meta=(DisplayName = "PositiveInline", CompactNodeTitle = "POS"))
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|Math|Float", meta=(DisplayName = "PositiveInline", CompactNodeTitle = "POS"))
     static void MakePositiveInline(UPARAM(ref) float& inFloat);
 
 	// A constant used by the engine denoting an invalid index.
 	// Array Find operations return IndexNone if an element could not be found.
 	// Most returned indices are IndexNone if invalid.
 	// Sometimes IndexNone is passed into functions to show the user doesn't care what the index is.
-	UFUNCTION(BlueprintPure, Category = "Math|Index", meta=(DisplayName = "Index None", CompactNodeTitle = "INDEX_NONE"))
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|Math|Index", meta=(DisplayName = "Index None", CompactNodeTitle = "INDEX_NONE"))
 	static int32 IndexNone();
 
     /**
@@ -287,6 +291,15 @@ FORCEINLINE
 bool URyRuntimeMathHelpers::RotationsEqual(const float rotation1, const float rotation2, const float ErrorTolerance)
 {
 	return FMath::Abs(ShortestRotationPath(rotation1, rotation2)) <= ErrorTolerance;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+FQuat URyRuntimeMathHelpers::Rotator_Quat(const FRotator& R)
+{
+	return R.Quaternion();
 }
 
 //---------------------------------------------------------------------------------------------------------------------
