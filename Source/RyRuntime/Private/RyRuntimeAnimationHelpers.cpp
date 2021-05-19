@@ -30,8 +30,11 @@ UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageFromMontage(UAnimM
         return nullptr;
     }
 
+    // Create a unique name based on the montages name. This makes things easier to debug.
+    const FName duplicateName = MakeUniqueObjectName(GetTransientPackage(), UAnimMontage::StaticClass(), MontageIn->GetFName());
+
     // Create new montage
-    UAnimMontage* NewMontage = NewObject<UAnimMontage>(GetTransientPackage(), NAME_None, RF_Transient);
+    UAnimMontage* NewMontage = NewObject<UAnimMontage>(GetTransientPackage(), duplicateName, RF_Transient);
     NewMontage->SetSkeleton(AssetSkeleton);
 
     // Copy tracks and sections
@@ -45,9 +48,16 @@ UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageFromMontage(UAnimM
                                                          MakeUniqueObjectName(NewMontage, metaData->GetClass(), metaData->GetFName()), 
                                                          RF_Public, metaData));
     }
+
+    // Copy slot tracks and sections
     NewMontage->SlotAnimTracks = MontageIn->SlotAnimTracks;
     NewMontage->CompositeSections = MontageIn->CompositeSections;
 
+    // Copy anim notifies
+    NewMontage->AnimNotifyTracks = MontageIn->AnimNotifyTracks;
+    NewMontage->Notifies = MontageIn->Notifies;
+
+    // Other important stuff
     NewMontage->SequenceLength = MontageIn->SequenceLength;
     NewMontage->RateScale = MontageIn->RateScale;
 
