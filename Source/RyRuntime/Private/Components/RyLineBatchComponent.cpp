@@ -10,9 +10,9 @@
 */
 void URyLineBatchComponent::AddLine(const FVector& Start,
 											  const FVector& End,
-											  const FLinearColor& Color,
-											  const float Thickness,
+											  const FLinearColor Color,
 											  const float LifeTime,
+											  const float Thickness,
 											  const ERyLineBatchDepthPriority DepthPriority)
 {
 	DrawLine(Start, End, Color.ToFColor(true), static_cast<uint8>(DepthPriority), Thickness, SanitizeLifetime(LifeTime));
@@ -22,7 +22,7 @@ void URyLineBatchComponent::AddLine(const FVector& Start,
 /**
 */
 void URyLineBatchComponent::AddPoint(const FVector& Position,
-										       const FLinearColor& Color,
+										       const FLinearColor Color,
 										       const float PointSize,
 										       const float LifeTime,
 										       const ERyLineBatchDepthPriority DepthPriority)
@@ -35,7 +35,7 @@ void URyLineBatchComponent::AddPoint(const FVector& Position,
 */
 void URyLineBatchComponent::AddSolidBox(const FBox& Box,
 												  const FTransform& BoxToWorld,
-												  const FLinearColor& Color,
+												  const FLinearColor Color,
 												  const float LifeTime,
 												  const ERyLineBatchDepthPriority DepthPriority)
 {
@@ -47,7 +47,7 @@ void URyLineBatchComponent::AddSolidBox(const FBox& Box,
 */
 void URyLineBatchComponent::AddMesh(const TArray<FVector>& Verts,
 											  const TArray<int32>& Indices,
-											  const FLinearColor& Color,
+											  const FLinearColor Color,
 											  const float LifeTime,
 											  const ERyLineBatchDepthPriority DepthPriority)
 {
@@ -196,8 +196,8 @@ void URyLineBatchComponent::AddCone(const FVector Origin, const FVector Directio
 	const float SinSqX_2 = SinX_2 * SinX_2;
 	const float SinSqY_2 = SinY_2 * SinY_2;
 
-	const float TanX_2 = FMath::Tan(0.5f * Angle1);
-	const float TanY_2 = FMath::Tan(0.5f * Angle2);
+	//const float TanX_2 = FMath::Tan(0.5f * Angle1);
+	//const float TanY_2 = FMath::Tan(0.5f * Angle2);
 
 	TArray<FVector> ConeVerts;
 	ConeVerts.AddUninitialized(NumSides);

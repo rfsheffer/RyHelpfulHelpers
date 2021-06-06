@@ -35,9 +35,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="RyLineBatch")
 	void AddLine(const FVector& Start,
                            const FVector& End,
-                           const FLinearColor& Color,
-                           const float Thickness = 0.0f,
-                           const float LifeTime = 0.0f,
+                           const FLinearColor Color = FLinearColor::White,
+                           const float LifeTime = -1.0f,
+                           const float Thickness = 1.0f,
                            const ERyLineBatchDepthPriority DepthPriority = ERyLineBatchDepthPriority::World);
 
 	/**
@@ -46,9 +46,9 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="RyLineBatch")
 	void AddPoint(const FVector& Position,
-                            const FLinearColor& Color,
+                            const FLinearColor Color = FLinearColor::White,
                             const float PointSize = 20.0f,
-                            const float LifeTime = 0.0f,
+                            const float LifeTime = -1.0f,
                             const ERyLineBatchDepthPriority DepthPriority = ERyLineBatchDepthPriority::World);
 
 	/**
@@ -58,8 +58,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category="RyLineBatch")
 	void AddSolidBox(const FBox& Box,
 					           const FTransform& BoxToWorld,
-					           const FLinearColor& Color,
-					           const float LifeTime = 0.0f,
+					           const FLinearColor Color = FLinearColor::White,
+					           const float LifeTime = -1.0f,
 					           const ERyLineBatchDepthPriority DepthPriority = ERyLineBatchDepthPriority::World);
 	
 	/**
@@ -69,8 +69,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category="RyLineBatch")
 	void AddMesh(const TArray<FVector>& Verts,
 				           const TArray<int32>& Indices,
-				           const FLinearColor& Color,
-				           const float LifeTime = 0.0f,
+				           const FLinearColor Color = FLinearColor::White,
+				           const float LifeTime = -1.0f,
 				           const ERyLineBatchDepthPriority DepthPriority = ERyLineBatchDepthPriority::World);
 
 	/**
@@ -81,8 +81,8 @@ public:
     void AddCoordinateSystem(const FVector& AxisLoc,
     						 const FRotator& AxisRot,
     						 const float Scale=1.f,
-    						 const float LifeTime=0.f,
-    						 const float Thickness = 0.f,
+    						 const float LifeTime=-1.0f,
+    						 const float Thickness = 1.0f,
     						 const ERyLineBatchDepthPriority DepthPriority = ERyLineBatchDepthPriority::World);
 
 	
@@ -95,8 +95,8 @@ public:
 				   const float Radius=100.f,
 				   int32 Segments=12,
 				   const FLinearColor LineColor = FLinearColor::White,
-				   const float LifeTime=0.f,
-				   const float Thickness = 0.f,
+				   const float LifeTime=-1.0f,
+				   const float Thickness = 1.0f,
 				   const ERyLineBatchDepthPriority DepthPriority = ERyLineBatchDepthPriority::World);
 
 	/**
@@ -109,8 +109,8 @@ public:
 					 const float Radius=100.f,
 					 int32 Segments=12,
 					 const FLinearColor LineColor = FLinearColor::White,
-					 const float LifeTime=0.f,
-					 const float Thickness = 0.f,
+					 const float LifeTime=-1.0f,
+					 const float Thickness = 1.f,
                      const ERyLineBatchDepthPriority DepthPriority = ERyLineBatchDepthPriority::World);
 
 	/** 
@@ -126,8 +126,8 @@ public:
 					      const float AngleHeight=45.f,
 					      int32 NumSides = 12,
 					      const FLinearColor LineColor = FLinearColor::White,
-					      const float LifeTime=0.f,
-					      const float Thickness = 0.f,
+					      const float LifeTime=-1.0f,
+					      const float Thickness = 1.0f,
                           const ERyLineBatchDepthPriority DepthPriority = ERyLineBatchDepthPriority::World);
 
 	/**
@@ -140,8 +140,8 @@ public:
 					const float Radius,
 					const FRotator& Rotation,
 					const FLinearColor LineColor = FLinearColor::White,
-					const float LifeTime=0.f,
-					const float Thickness = 0.f,
+					const float LifeTime=-1.0f,
+					const float Thickness = 1.0f,
                     const ERyLineBatchDepthPriority DepthPriority = ERyLineBatchDepthPriority::World);
 
 	/**
@@ -153,7 +153,7 @@ public:
 			      const FVector Location,
 			      const float Size,
 			      const FLinearColor PlaneColor = FLinearColor::White,
-			      const float LifeTime=0.f,
+			      const float LifeTime=-1.0f,
                   const ERyLineBatchDepthPriority DepthPriority = ERyLineBatchDepthPriority::World);
 
 	/**
@@ -163,8 +163,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category="RyLineBatch")
 	void AddFrustum(const FTransform& FrustumTransform,
 				    const FLinearColor FrustumColor = FLinearColor::White,
-				    const float LifeTime=0.f,
-				    const float Thickness = 0.f,
+				    const float LifeTime=-1.0f,
+				    const float Thickness = 1.0f,
                     const ERyLineBatchDepthPriority DepthPriority = ERyLineBatchDepthPriority::World);
 
 	/**
@@ -174,7 +174,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category="RyLineBatch")
 	void AddCamera(const ACameraActor* CameraActor,
 				   const FLinearColor CameraColor = FLinearColor::White,
-				   const float LifeTime=0.f,
+				   const float LifeTime=-1.0f,
                    const ERyLineBatchDepthPriority DepthPriority = ERyLineBatchDepthPriority::World);
 
 	/**
@@ -184,10 +184,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category="RyLineBatch")
     void AddBox(const FVector& Center,
     			const FVector& Extent,
-    			const FLinearColor LineColor,
+    			const FLinearColor LineColor = FLinearColor::White,
     			const FRotator Rotation = FRotator::ZeroRotator,
-    			const float LifeTime=0.f,
-    			const float Thickness = 0.f,
+    			const float LifeTime=-1.0f,
+    			const float Thickness = 1.0f,
     			const ERyLineBatchDepthPriority DepthPriority = ERyLineBatchDepthPriority::World);
 
 	/**
@@ -198,9 +198,9 @@ public:
     void AddArrow(const FVector& LineStart,
     	          const FVector& LineEnd,
     	          const float ArrowSize,
-    	          const FLinearColor LineColor,
-    	          const float LifeTime=0.f,
-    	          const float Thickness = 0.f,
+    	          const FLinearColor LineColor = FLinearColor::White,
+    	          const float LifeTime=-1.0f,
+    	          const float Thickness = 1.0f,
     	          const ERyLineBatchDepthPriority DepthPriority = ERyLineBatchDepthPriority::World);
 	
 	/** Clear all batched lines, points and meshes */
