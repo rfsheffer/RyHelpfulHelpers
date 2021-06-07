@@ -246,6 +246,206 @@ public:
 	/** Rotate the world up vector by the given rotation, excluding the Z axis */
 	UFUNCTION(BlueprintPure, meta=(DisplayName = "Get Up Vector 2D", ScriptMethod = "GetUpVector2D", Keywords="rotation rotate"), Category="RyRuntime|Math|Vector")
     static FVector GetUpVector2D(FRotator InRot);
+
+	/** Create a box from points */
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box", meta=(Keywords="construct build"))
+	static void MakeBoxFromPoints(const TArray<FVector>& points, FBox& box);
+
+	/** Adds to this bounding box to include a given array of points. */
+	UFUNCTION(BlueprintCallable, Category="RyRuntime|Math|Box")
+	static void ExtendBoxByPoints(UPARAM(ref) FBox& box, const TArray<FVector>& points);
+
+	/** Make a box from origin and extent */
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box", meta=(Keywords="construct build"))
+	static void MakeBoxFromOriginExtend(UPARAM(ref) FBox& box, const FVector& origin, const FVector& extent);
+
+	/** Adds to this bounding box to include a new bounding volume. */
+	UFUNCTION(BlueprintCallable, Category="RyRuntime|Math|Box")
+	static void ExtendByBox(UPARAM(ref) FBox& box, const FBox& otherBox);
+
+	/** 
+	* Increases the box size.
+	*
+	* @param amount - The size to increase the volume by.
+	*/
+	UFUNCTION(BlueprintCallable, Category="RyRuntime|Math|Box")
+	static void ExpandBoxByAmount(UPARAM(ref) FBox& box, float amount);
+
+	/**
+	* Increases the box size.
+	*
+	* @param v - The size to increase the volume by.
+	*/
+	UFUNCTION(BlueprintCallable, Category="RyRuntime|Math|Box")
+	static void ExpandBoxByVec(UPARAM(ref) FBox& box, const FVector& v);
+
+	/**
+	* Increases the box size.
+	*
+	* @param negativeDir - The size to increase the volume by in the negative direction (positive values move the bounds outwards)
+	* @param positiveDir - The size to increase the volume by in the positive direction (positive values move the bounds outwards)
+	*/
+	UFUNCTION(BlueprintCallable, Category="RyRuntime|Math|Box")
+	static void ExpandBoxByVecDirs(UPARAM(ref) FBox& box, const FVector& negativeDir, const FVector& positiveDir);
+
+	/** 
+	* Shifts the bounding box position.
+	*
+	* @param offset - The vector to shift the box by.
+	*/
+	UFUNCTION(BlueprintCallable, Category="RyRuntime|Math|Box")
+	static void ShiftBoxBy(UPARAM(ref) FBox& box, const FVector& offset);
+
+	/** 
+	* Moves the center of bounding box to new destination.
+	*
+	* @param destination - The destination point to move center of box to.
+	* @return A new bounding box.
+	*/
+	UFUNCTION(BlueprintCallable, Category="RyRuntime|Math|Box")
+	static void MoveBoxTo(UPARAM(ref) FBox& box, const FVector& destination);
+
+	/**
+	* Gets the center point of this box.
+	*
+	* @return The center point.
+	*/
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box")
+	static FVector GetBoxCenter(const FBox& box);
+
+	/**
+	* Gets the center and extents of this box.
+	*
+	* @param center Will contain the box center point.
+	* @param extents Will contain the extent around the center.
+	*/
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box")
+	static void GetBoxCenterAndExtents(const FBox& box, FVector& center, FVector& extents);
+
+	/**
+	* Calculates the closest point on or inside the box to a given point in space.
+	*
+	* @param point - The point in space.
+	* @return The closest point on or inside the box.
+	*/
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box")
+	static FVector GetBoxClosestPointTo(const FBox& box, const FVector& point);
+
+	/**
+	* Gets the extents of this box.
+	*
+	* @return The box extents.
+	*/
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box")
+	static FVector GetBoxExtent(const FBox& box);
+
+	/**
+	* Gets the size of this box.
+	*
+	* @return The box size.
+	*/
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box")
+	static FVector GetBoxSize(const FBox& box);
+
+	/**
+	* Gets the volume of this box.
+	*
+	* @return The box volume.
+	*/
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box")
+	static float GetBoxVolume(const FBox& box);
+
+	/**
+	* Checks whether the given bounding box intersects another bounding box.
+	* @param box - The first bounding box
+	* @param otherBox - The second bounding box
+	* @return true if the boxes intersect, false otherwise.
+	*/
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box")
+	static bool BoxIntersects(const FBox& box, const FBox& otherBox);
+
+	/**
+	* Checks whether the given bounding box intersects this bounding box in the XY plane.
+	* @param box - The first bounding box
+	* @param otherBox - The second bounding box
+	* @return true if the boxes intersect in the XY Plane, false otherwise.
+	*/
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box")
+	static bool BoxIntersectsXY(const FBox& box, const FBox& otherBox);
+
+	/**
+	* Returns the overlap Box of two box
+	*
+	* @param boxA - The first bounding box
+	* @param boxB - The second bounding box
+	* @param boxOut - the overlap box. It can be 0 if they don't overlap
+	*/
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box")
+	static void GetOverlapBox(const FBox& boxA, const FBox& boxB, FBox& boxOut);
+
+	/**
+	* Gets a bounding volume transformed by a FTransform object.
+	*
+	* @param boxToTransform - The box to transform
+	* @param transform - The transformation object.
+	* @param transformedBox - The transformed box
+	* @see TransformProjectBy
+	*/
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box")
+	static void TransformBoxBy(const FBox& boxToTransform, const FTransform& transform, FBox& transformedBox);
+
+	/** 
+	* Checks whether the given location is inside this box.
+	* 
+	* @param in - The location to test for inside the bounding volume.
+	* @return true if location is inside this volume.
+	*/
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box")
+	static bool IsPositionInsideBox(const FVector& in, const FBox& box);
+
+	/** 
+	* Checks whether the given location is inside or on this box.
+	* 
+	* @param in - The location to test for inside the bounding volume.
+	* @return true if location is inside this volume.
+	*/
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box")
+	static bool IsPositionInsideOrOnBox(const FVector& in, const FBox& box);
+
+	/** 
+	* Checks whether a given box is fully encapsulated by this box.
+	* 
+	* @param other - The box to test for encapsulation within the bounding volume.
+	* @return true if box is inside this volume.
+	*/
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box")
+	static bool IsBoxInsideOtherBox(const FBox& box, const FBox& other);
+
+	/** 
+	* Checks whether the given location is inside this box in the XY plane.
+	* 
+	* @param in - The location to test for inside the bounding box.
+	* @return true if location is inside this box in the XY plane.
+	*/
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box")
+	static bool IsPositionInsideBoxXY(const FVector& in, const FBox& box);
+
+	/** 
+	* Checks whether the given box is fully encapsulated by this box in the XY plane.
+	* 
+	* @param other The box to test for encapsulation within the bounding box.
+	* @return true if box is inside this box in the XY plane.
+	*/
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box")
+	static bool IsBoxInsideOtherBoxXY(const FBox& box, const FBox& other);
+
+	/**
+	* Get a textual representation of a box.
+	*
+	* @return A string describing the box.
+	*/
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box")
+	static FString BoxToString(const FBox& box);
 };
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -492,4 +692,247 @@ FORCEINLINE
 FVector URyRuntimeMathHelpers::GetUpVector2D(FRotator InRot)
 {
 	return FRotationMatrix(InRot).GetScaledAxis(EAxis::Z).GetSafeNormal2D();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+void URyRuntimeMathHelpers::MakeBoxFromPoints(const TArray<FVector>& points, FBox& box)
+{
+	box.Init();
+	for (const FVector& point : points)
+	{
+		box += point;
+	}
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+void URyRuntimeMathHelpers::ExtendBoxByPoints(FBox& box, const TArray<FVector>& points)
+{
+	for (const FVector& point : points)
+	{
+		box += point;
+	}
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+void URyRuntimeMathHelpers::MakeBoxFromOriginExtend(FBox& box, const FVector& origin, const FVector& extent)
+{
+	box.Min = origin - extent;
+	box.Max = origin + extent;
+	box.IsValid = 1;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+void URyRuntimeMathHelpers::ExtendByBox(FBox& box, const FBox& otherBox)
+{
+	box += otherBox;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+void URyRuntimeMathHelpers::ExpandBoxByAmount(FBox& box, float amount)
+{
+	const FVector amnt(amount, amount, amount);
+	box.Min -= amnt;
+	box.Max += amnt;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+void URyRuntimeMathHelpers::ExpandBoxByVec(FBox& box, const FVector& v)
+{
+	box.Min -= v;
+	box.Max += v;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+void URyRuntimeMathHelpers::ExpandBoxByVecDirs(FBox& box, const FVector& negativeDir, const FVector& positiveDir)
+{
+	box.Min -= negativeDir;
+	box.Max += positiveDir;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+void URyRuntimeMathHelpers::ShiftBoxBy(FBox& box, const FVector& offset)
+{
+	box.Min += offset;
+	box.Max += offset;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+void URyRuntimeMathHelpers::MoveBoxTo(FBox& box, const FVector& destination)
+{
+	const FVector offset = destination - box.GetCenter();
+	box.Min += offset;
+	box.Max += offset;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+FVector URyRuntimeMathHelpers::GetBoxCenter(const FBox& box)
+{
+	return (box.Min + box.Max) * 0.5f;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+void URyRuntimeMathHelpers::GetBoxCenterAndExtents(const FBox& box, FVector& center, FVector& extents)
+{
+	extents = box.GetExtent();
+	center = box.Min + extents;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+FVector URyRuntimeMathHelpers::GetBoxClosestPointTo(const FBox& box, const FVector& point)
+{
+	return box.GetClosestPointTo(point);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+FVector URyRuntimeMathHelpers::GetBoxExtent(const FBox& box)
+{
+	return box.GetExtent();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+FVector URyRuntimeMathHelpers::GetBoxSize(const FBox& box)
+{
+	return box.Max - box.Min;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+float URyRuntimeMathHelpers::GetBoxVolume(const FBox& box)
+{
+	return box.GetVolume();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+bool URyRuntimeMathHelpers::BoxIntersects(const FBox& box, const FBox& otherBox)
+{
+	return box.Intersect(otherBox);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+bool URyRuntimeMathHelpers::BoxIntersectsXY(const FBox& box, const FBox& otherBox)
+{
+	return box.IntersectXY(otherBox);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+void URyRuntimeMathHelpers::GetOverlapBox(const FBox& boxA, const FBox& boxB, FBox& boxOut)
+{
+	boxOut = boxA.Overlap(boxB);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+void URyRuntimeMathHelpers::TransformBoxBy(const FBox& boxToTransform, const FTransform& transform,
+	FBox& transformedBox)
+{
+	transformedBox = boxToTransform.TransformBy(transform);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+bool URyRuntimeMathHelpers::IsPositionInsideBox(const FVector& in, const FBox& box)
+{
+	return box.IsInside(in);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+bool URyRuntimeMathHelpers::IsPositionInsideOrOnBox(const FVector& in, const FBox& box)
+{
+	return box.IsInsideOrOn(in);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+bool URyRuntimeMathHelpers::IsBoxInsideOtherBox(const FBox& box, const FBox& other)
+{
+	return box.IsInside(other);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+bool URyRuntimeMathHelpers::IsPositionInsideBoxXY(const FVector& in, const FBox& box)
+{
+	return box.IsInsideXY(in);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+bool URyRuntimeMathHelpers::IsBoxInsideOtherBoxXY(const FBox& box, const FBox& other)
+{
+	return box.IsInsideXY(other);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FORCEINLINE
+FString URyRuntimeMathHelpers::BoxToString(const FBox& box)
+{
+	return box.ToString();
 }
