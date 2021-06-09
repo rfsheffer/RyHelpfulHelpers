@@ -13,6 +13,8 @@ public class RyRuntime : ModuleRules
 		// Turn this off if you want to dis-include dangerous functions from blueprint.
 		// This blocks functions which access engine internals which only advanced engine users should consider.
 		PrivateDefinitions.Add("RY_INCLUDE_DANGEROUS_FUNCTIONS=1");
+
+		PrivateIncludePaths.Add("RyRuntime/ThirdParty/AHEasing");
 		
 		//OptimizeCode = CodeOptimization.Never;
 

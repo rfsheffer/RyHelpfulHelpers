@@ -14,6 +14,15 @@ static_assert(ERyUnit::Unspecified == static_cast<ERyUnit>(EUnit::Unspecified), 
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
+FVector URyRuntimeMathHelpers::VInterpNormalRotationTo(const FVector& current, const FVector& target,
+													   const float deltaTime, const float rotationSpeedDegrees)
+{
+	return FMath::VInterpNormalRotationTo(current, target, deltaTime, rotationSpeedDegrees);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
 float URyRuntimeMathHelpers::ShortestRotationPath(const float startRotation, const float endRotation)
 {
 	const float clampA = FRotator::ClampAxis(startRotation);

@@ -91,6 +91,12 @@ public:
 	static float ConvertUnit(const float value, const ERyUnit from, const ERyUnit to);
 
 	/**
+	 * Interpolate a normal vector Current to Target, by interpolating the angle between those vectors with constant step.
+	 */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|Math|Interpolation", DisplayName = "InterpNormalRotationTo")
+	static FVector VInterpNormalRotationTo(const FVector& current, const FVector& target, const float deltaTime, const float rotationSpeedDegrees);
+
+	/**
 	 * Takes a startRotation and finds the shortest path to endRotation.
 	 * Input rotations are clamped, and output rotation is clamped. [0-360]
 	 * Positive output means 'endRotation; is towards a increasing value of 'startRotation'
