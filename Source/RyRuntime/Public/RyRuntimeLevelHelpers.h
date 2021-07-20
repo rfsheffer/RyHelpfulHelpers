@@ -164,11 +164,20 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers", meta = (AdvancedDisplay = "1"))
 	static void FinishSpawnActorAdvanced(AActor* actorToFinishSpawning, const FTransform& newTransform, bool useNewTransform = false);
 
-    // A Helper function to create a component of a class type and attach it to the actor at runtime. This does not support presenting exposed variables.
+    /**
+     * A Helper function to create a component of a class type and attach it to the actor at runtime. This does not support presenting exposed variables.
+     * @param owner - The actor to assign this component to
+     * @param newComponentClass - The class of compoent to spawn
+     * @param attachComponent - The component to attach this component to (if this component is a scene component)
+     * @param newName - (Optional) new name
+     * @param creationMethod - Creation method. See enum values for details.
+     * @param allowAnyoneToDestroy - By default components can only be destroyed by thier owners. If this is true, this component can be destroyed by anything.
+     */
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers", meta = (AdvancedDisplay = "3"))
     static class UActorComponent* CreateComponentForActor(AActor *owner, TSubclassOf<class UActorComponent> newComponentClass,
                                                           class USceneComponent *attachComponent = nullptr, const FName newName = NAME_None,
-                                                          const ERyComponentCreationMethod creationMethod = ERyComponentCreationMethod::Native);
+                                                          const ERyComponentCreationMethod creationMethod = ERyComponentCreationMethod::Native,
+                                                          const bool allowAnyoneToDestroy = false);
 
 	// With an un-registered component, register it with an actor
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers")

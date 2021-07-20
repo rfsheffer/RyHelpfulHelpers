@@ -279,7 +279,8 @@ void URyRuntimeLevelHelpers::FinishSpawnActorAdvanced(AActor* actorToFinishSpawn
 */
 UActorComponent* URyRuntimeLevelHelpers::CreateComponentForActor(AActor *owner, TSubclassOf<UActorComponent> newComponentClass, 
                                                                  USceneComponent *attachComponent /*= nullptr*/, const FName newName,
-                                                                 const ERyComponentCreationMethod creationMethod)
+                                                                 const ERyComponentCreationMethod creationMethod,
+                                                                 const bool allowAnyoneToDestroy)
 {
     UActorComponent* NewInstanceComponent = NewObject<UActorComponent>(owner, newComponentClass, newName);
     if(!NewInstanceComponent)
@@ -287,6 +288,7 @@ UActorComponent* URyRuntimeLevelHelpers::CreateComponentForActor(AActor *owner, 
         return nullptr;
     }
 
+    NewInstanceComponent->bAllowAnyoneToDestroyMe = allowAnyoneToDestroy;
     NewInstanceComponent->CreationMethod = static_cast<EComponentCreationMethod>(creationMethod);
 
     if(attachComponent)
