@@ -208,7 +208,8 @@ AActor* URyRuntimeLevelHelpers::SpawnActorAdvanced(UObject* WorldContextObject,
                                                   ULevel* overrideLevel /*= nullptr*/,
                                                   bool deferConstruction,
                                                   bool allowDuringConstructionScript,
-                                                  bool absoluteTransform)
+                                                  bool absoluteTransform,
+                                                  bool useDefaultScale)
 {
     UWorld* world = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull);
     if(!world)
@@ -257,6 +258,16 @@ AActor* URyRuntimeLevelHelpers::SpawnActorAdvanced(UObject* WorldContextObject,
         spawnedActor->SetActorLabel(spawnedActor->GetName());
     }
 #endif
+
+    if(spawnedActor && useDefaultScale)
+    {
+        AActor* cdoActor = spawnedActor->GetClass()->GetDefaultObject<AActor>();
+        if(cdoActor)
+        {
+            spawnedActor->SetActorScale3D(cdoActor->GetActorScale3D());
+        }
+    }
+    
     return spawnedActor;
 }
 

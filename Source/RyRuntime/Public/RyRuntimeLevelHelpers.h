@@ -143,6 +143,7 @@ public:
 	//							  Caller is responsible for invoking construction manually by calling FinishSpawningActor.
 	// @param allowDuringConstructionScript - If true you can spawn actors during construction script. This is can be very useful for spawning helper actors but make sure you are cleaning up after yourself or bad things can happen!
 	// @param absoluteTransform - Use absolute transform (override root component transform) and SpawnParameters.
+	// @param useDefaultScale - When spawning should the actors original scale of the root transform be used instead of the transform passed in?
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers", meta = (WorldContext = "WorldContextObject", AdvancedDisplay = "3", CallableWithoutWorldContext))
 	static class AActor* SpawnActorAdvanced(UObject* WorldContextObject,
 										   TSubclassOf<class AActor> actorClass,
@@ -155,7 +156,8 @@ public:
 										   ULevel* overrideLevel = nullptr,
 										   bool deferConstruction = false,
 										   bool allowDuringConstructionScript = false,
-                                           bool absoluteTransform = true);
+                                           bool absoluteTransform = true,
+                                           bool useDefaultScale = false);
 
 	// Finish spawning an actor that was created via SpawnActorAdvanced with deferConstruction set to true.
 	// @param actorToFinishSpawning - The actor to finish spawning
