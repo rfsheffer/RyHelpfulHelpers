@@ -28,6 +28,8 @@ public class RyRuntime : ModuleRules
 			new string[]
 			{
 				"HeadMountedDisplay",
+				"SlateCore",
+				"InputCore",
 			}
 		);
         PrivateDependencyModuleNames.AddRange(
@@ -36,7 +38,6 @@ public class RyRuntime : ModuleRules
                 "Core",
                 "CoreUObject",
                 "Slate",
-                "SlateCore",
                 "Engine",
 				"NavigationSystem",
 				"AIModule",

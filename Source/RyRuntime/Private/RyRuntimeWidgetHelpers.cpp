@@ -4,26 +4,41 @@
 #include "RyRuntimeWidgetHelpers.h"
 #include "RyRuntimeModule.h"
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
+#include "UMG/Public/Components/Widget.h"
 
-#define LOCTEXT_NAMESPACE "UMG"
+#define LOCTEXT_NAMESPACE "WidgetHelpers"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
 void URyRuntimeWidgetHelpers::SetInputMode_GameOnly_NoMouseDownConsume(APlayerController* PlayerController)
 {
-	if (PlayerController != nullptr)
+	if (!PlayerController)
 	{
-		FInputModeGameOnly InputMode;
-		InputMode.SetConsumeCaptureMouseDown(false);
-		PlayerController->SetInputMode(InputMode);
+		UE_LOG(LogRyRuntime, Error, TEXT("Calling SetInputMode_GameOnly_NoMouseDownConsume with no valid player controller!"))
+		return;
 	}
-#if WITH_EDITOR 
-	else
+
+	FInputModeGameOnly InputMode;
+	InputMode.SetConsumeCaptureMouseDown(false);
+	PlayerController->SetInputMode(InputMode);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeWidgetHelpers::ForceOnMouseLeave(UWidget* widget, const FPointerEvent& mouseEvent)
+{
+	if(!widget)
 	{
-		FMessageLog("PIE").Error(LOCTEXT("UMG WidgetBlueprint Library: SetInputMode_GameOnly_NoConsumeMouse", "SetInputMode_GameOnly_NoConsumeMouse expects a valid player controller as 'PlayerController' target"));
+		return;
 	}
-#endif // WITH_EDITOR
+
+	TSharedPtr<SWidget> slateWidget = widget->GetCachedWidget();
+	if(slateWidget)
+	{
+		slateWidget->OnMouseLeave(mouseEvent);
+	}
 }
 
 #undef LOCTEXT_NAMESPACE
