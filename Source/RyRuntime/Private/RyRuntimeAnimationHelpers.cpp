@@ -54,7 +54,9 @@ UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageFromMontage(UAnimM
     NewMontage->CompositeSections = MontageIn->CompositeSections;
 
     // Copy anim notifies
+#if WITH_EDITORONLY_DATA
     NewMontage->AnimNotifyTracks = MontageIn->AnimNotifyTracks;
+#endif
     NewMontage->Notifies = MontageIn->Notifies;
 
     // Other important stuff
