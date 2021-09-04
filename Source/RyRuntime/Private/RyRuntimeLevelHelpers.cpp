@@ -70,12 +70,12 @@ ULevel* URyRuntimeLevelHelpers::GetActorLevel(const AActor* actorIn)
 */
 FString URyRuntimeLevelHelpers::GetActorWorldNameString(const AActor* actorIn)
 {
-    if(!actorIn || !actorIn->GetWorld())
+    if(!actorIn || !actorIn->GetWorld() || !actorIn->GetWorld()->PersistentLevel)
     {
         return TEXT("");
     }
-
-    return actorIn->GetWorld()->GetName();
+    
+    return GetLevelNameString(actorIn->GetWorld()->PersistentLevel);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
