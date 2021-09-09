@@ -4,7 +4,11 @@
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
+#if ENGINE_MINOR_VERSION >= 27
+#include "PhysicsCore/Public/BodySetupEnums.h"
+#else
 #include "PhysicsEngine/BodySetupEnums.h"
+#endif
 
 #include "RyEditorStaticMeshHelpers.generated.h"
 

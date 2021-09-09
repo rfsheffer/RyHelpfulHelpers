@@ -62,7 +62,7 @@ UBlueprint* URyEditorBlueprintHelpers::CreateBlueprint(const FString& packagePat
         return nullptr;
     }
 
-    package = CreatePackage(nullptr, *packageName);
+    package = CreatePackage(*packageName);
     UBlueprint* newBlueprint = nullptr;
     EObjectFlags flags = RF_Public | RF_Standalone | RF_Transactional;
 

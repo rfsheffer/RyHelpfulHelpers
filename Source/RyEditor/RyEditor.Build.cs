@@ -45,5 +45,14 @@ public class RyEditor : ModuleRules
 				"KismetCompiler",
 			}
 		);
-	}
+		
+#if UE_4_27_OR_LATER
+	    PublicDependencyModuleNames.AddRange(
+		    new string[]
+		    {
+			    "PhysicsCore",
+		    }
+	    );
+#endif
+    }
 }
