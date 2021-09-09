@@ -5,11 +5,11 @@
 
 #include "Editor.h"
 #include "Engine/StaticMesh.h"
-#include "StaticMeshResources.h"
-#include "BusyCursor.h"
+//#include "StaticMeshResources.h"
+//#include "BusyCursor.h"
 #include "Editor/UnrealEd/Private/GeomFitUtils.h"
-#include "EditorViewportCommands.h"
-#include "Editor/UnrealEd/Private/ConvexDecompTool.h"
+//#include "EditorViewportCommands.h"
+//#include "Editor/UnrealEd/Private/ConvexDecompTool.h"
 #include "PhysicsEngine/BodySetup.h"
 #include "Subsystems/AssetEditorSubsystem.h"
 
@@ -20,7 +20,11 @@
 
 void URyEditorStaticMeshHelpers::SetCollisionTraceFlag(class UStaticMesh* StaticMesh, TEnumAsByte<enum ECollisionTraceFlag> collisionTraceFlag)
 {
+#if ENGINE_MINOR_VERSION >= 27
+    if(StaticMesh && StaticMesh->GetBodySetup())
+#else
     if(StaticMesh && StaticMesh->BodySetup)
+#endif
     {
         UAssetEditorSubsystem* AssetEditorSubsystem = GEditor->GetEditorSubsystem<UAssetEditorSubsystem>();
         bool bStaticMeshIsEdited = false;
@@ -29,9 +33,14 @@ void URyEditorStaticMeshHelpers::SetCollisionTraceFlag(class UStaticMesh* Static
             AssetEditorSubsystem->CloseAllEditorsForAsset(StaticMesh);
             bStaticMeshIsEdited = true;
         }
-
+        
+#if ENGINE_MINOR_VERSION >= 27
+        StaticMesh->GetBodySetup()->CollisionTraceFlag = collisionTraceFlag;
+        StaticMesh->GetBodySetup()->Modify();
+#else
         StaticMesh->BodySetup->CollisionTraceFlag = collisionTraceFlag;
         StaticMesh->BodySetup->Modify();
+#endif
 
         // refresh collision change back to static mesh components
         RefreshCollisionChange(*StaticMesh);

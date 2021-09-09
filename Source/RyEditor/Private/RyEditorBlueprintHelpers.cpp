@@ -162,17 +162,23 @@ void URyEditorBlueprintHelpers::AddComponentsToBlueprint(UBlueprint* blueprint, 
     {
         return;
     }
-
-#if ENGINE_MINOR_VERSION < 25
-    FKismetEditorUtilities::AddComponentsToBlueprint(blueprint, Components, bHarvesting, nullptr, bKeepMobility);
-#else
+#if ENGINE_MINOR_VERSION >= 26
+    FKismetEditorUtilities::FAddComponentsToBlueprintParams Params;
+    Params.HarvestMode = (bHarvesting ? FKismetEditorUtilities::EAddComponentToBPHarvestMode::Harvest_UseComponentName : 
+                                        FKismetEditorUtilities::EAddComponentToBPHarvestMode::None);
+    Params.bKeepMobility = bKeepMobility;
+    FKismetEditorUtilities::AddComponentsToBlueprint(blueprint, Components, Params);
+#elif ENGINE_MINOR_VERSION >= 25
     FKismetEditorUtilities::AddComponentsToBlueprint(blueprint, 
                                                      Components, 
                                                      (bHarvesting ? FKismetEditorUtilities::EAddComponentToBPHarvestMode::Harvest_UseComponentName : 
                                                                     FKismetEditorUtilities::EAddComponentToBPHarvestMode::None), 
                                                      nullptr, 
                                                      bKeepMobility);
+#else
+    FKismetEditorUtilities::AddComponentsToBlueprint(blueprint, Components, bHarvesting, nullptr, bKeepMobility);
 #endif
+    
 }
 
 #undef LOCTEXT_NAMESPACE
