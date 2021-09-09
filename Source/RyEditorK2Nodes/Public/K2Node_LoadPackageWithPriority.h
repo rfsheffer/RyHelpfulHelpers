@@ -1,20 +1,25 @@
-// Copyright 2020-2021 Sheffer Online Services.
+﻿// Copyright 2020-2021 Sheffer Online Services.
 // MIT License. See LICENSE for details.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "K2Node.h"
-#include "K2Node_LoadAssetPriority.generated.h"
+#include "K2Node_LoadPackageWithPriority.generated.h"
 
 class FBlueprintActionDatabaseRegistrar;
 class UEdGraph;
 
 UCLASS(MinimalAPI)
-class UK2Node_LoadAssetPriority : public UK2Node
+class UK2Node_LoadPackageWithPriority : public UK2Node
 {
 	GENERATED_BODY()
 public:
+	UK2Node_LoadPackageWithPriority()
+		: RyAsyncLoadingResultEnum(nullptr)
+	{
+	}
+	
 	// UEdGraphNode interface
 	virtual void AllocateDefaultPins() override;
 	virtual FText GetTooltipText() const override;
@@ -30,17 +35,27 @@ public:
 	virtual FText GetMenuCategory() const override;
 	virtual bool NodeCausesStructuralBlueprintChange() const override { return true; }
 	virtual void ReallocatePinsDuringReconstruction(TArray<UEdGraphPin*>& OldPins) override;
-	virtual void ValidateNodeDuringCompilation(class FCompilerResultsLog& MessageLog) const override;
+	virtual void PreloadRequiredAssets() override;
 	// End of UK2Node interface
 
 protected:
+
+	UPROPERTY()
+	UEnum* RyAsyncLoadingResultEnum;
+
+	UEnum* GetRyAsyncLoadingResultEnum();
+	
 	virtual FName NativeFunctionName() const;
 
 	virtual const FName& GetInputCategory() const;
 	virtual const FName& GetInputPriorityCategory() const;
-	virtual const FName& GetOutputCategory() const;
+	virtual const FName& GetInputBlockOnLoadCategory() const;
+	virtual const FName& GetOutputPackageCategory() const;
+	virtual const FName& GetOutputResultCategory() const;
 
 	virtual const FName& GetInputPinName() const;
 	virtual const FName& GetInputPriorityPinName() const;
-	virtual const FName& GetOutputPinName() const;
+	virtual const FName& GetInputBlockOnLoadPinName() const;
+	virtual const FName& GetOutputPackagePinName() const;
+	virtual const FName& GetOutputResultPinName() const;
 };

@@ -5,13 +5,13 @@
 
 #include "CoreMinimal.h"
 #include "K2Node.h"
-#include "K2Node_LoadAssetPriority.generated.h"
+#include "K2Node_LoadAssetWithPriority.generated.h"
 
 class FBlueprintActionDatabaseRegistrar;
 class UEdGraph;
 
 UCLASS(MinimalAPI)
-class UK2Node_LoadAssetPriority : public UK2Node
+class UK2Node_LoadAssetWithPriority : public UK2Node
 {
 	GENERATED_BODY()
 public:
@@ -30,7 +30,6 @@ public:
 	virtual FText GetMenuCategory() const override;
 	virtual bool NodeCausesStructuralBlueprintChange() const override { return true; }
 	virtual void ReallocatePinsDuringReconstruction(TArray<UEdGraphPin*>& OldPins) override;
-	virtual void ValidateNodeDuringCompilation(class FCompilerResultsLog& MessageLog) const override;
 	// End of UK2Node interface
 
 protected:

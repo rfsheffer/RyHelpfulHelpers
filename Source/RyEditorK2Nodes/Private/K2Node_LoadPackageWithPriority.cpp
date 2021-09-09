@@ -1,7 +1,7 @@
 ﻿// Copyright 2020-2021 Sheffer Online Services.
 // MIT License. See LICENSE for details.
 
-#include "K2Nodes/K2Node_LoadPackagePriority.h"
+#include "K2Node_LoadPackageWithPriority.h"
 #include "UObject/UnrealType.h"
 #include "EdGraph/EdGraphPin.h"
 #include "RyRuntimeObjectHelpers.h"
@@ -15,9 +15,9 @@
 #include "BlueprintNodeSpawner.h"
 #include "BlueprintActionDatabaseRegistrar.h"
 
-#define LOCTEXT_NAMESPACE "K2Node_LoadPackage"
+#define LOCTEXT_NAMESPACE "K2Node_LoadPackageWithPriority"
 
-void UK2Node_LoadPackagePriority::AllocateDefaultPins()
+void UK2Node_LoadPackageWithPriority::AllocateDefaultPins()
 {
 	CreatePin(EGPD_Input, UEdGraphSchema_K2::PC_Exec, UEdGraphSchema_K2::PN_Execute);
 
@@ -31,10 +31,11 @@ void UK2Node_LoadPackagePriority::AllocateDefaultPins()
 	CreatePin(EGPD_Input, GetInputPriorityCategory(), GetInputPriorityPinName());
 	CreatePin(EGPD_Input, GetInputBlockOnLoadCategory(), GetInputBlockOnLoadPinName());
 	CreatePin(EGPD_Output, GetOutputPackageCategory(), UPackage::StaticClass(), GetOutputPackagePinName());
-	CreatePin(EGPD_Output, GetOutputResultCategory(), GetOutputResultPinName());
+	GetRyAsyncLoadingResultEnum()->ConditionalPostLoad();
+	CreatePin(EGPD_Output, GetOutputResultCategory(), GetRyAsyncLoadingResultEnum(), GetOutputResultPinName());
 }
 
-void UK2Node_LoadPackagePriority::ReallocatePinsDuringReconstruction(TArray<UEdGraphPin*>& OldPins)
+void UK2Node_LoadPackageWithPriority::ReallocatePinsDuringReconstruction(TArray<UEdGraphPin*>& OldPins)
 {
 	Super::ReallocatePinsDuringReconstruction(OldPins);
 
@@ -60,24 +61,20 @@ void UK2Node_LoadPackagePriority::ReallocatePinsDuringReconstruction(TArray<UEdG
 	}
 }
 
-void UK2Node_LoadPackagePriority::ValidateNodeDuringCompilation(FCompilerResultsLog& message_log) const
+void UK2Node_LoadPackageWithPriority::PreloadRequiredAssets()
 {
-	Super::ValidateNodeDuringCompilation(message_log);
-	message_log.Error(TEXT("LoadPackagePriority has been deprecated. Please use LoadPackageWithPriority instead."));
+	PreloadObject(GetRyAsyncLoadingResultEnum());
+	Super::PreloadRequiredAssets();
 }
 
-void UK2Node_LoadPackagePriority::ExpandNode(class FKismetCompilerContext& CompilerContext, UEdGraph* SourceGraph)
+void UK2Node_LoadPackageWithPriority::ExpandNode(class FKismetCompilerContext& CompilerContext, UEdGraph* SourceGraph)
 {
 	Super::ExpandNode(CompilerContext, SourceGraph);
 	const UEdGraphSchema_K2* Schema = CompilerContext.GetSchema();
 	check(Schema);
 	bool bIsErrorFree = true;
 
-	UEdGraphPin* InputExePin = GetExecPin();
-	UEdGraphPin* OutputThenPin = FindPin(UEdGraphSchema_K2::PN_Then);
-	bIsErrorFree &= InputExePin && OutputThenPin && Schema->TryCreateConnection(InputExePin, OutputThenPin);
-	
-	/*// Sequence node, defaults to two output pins
+	// Sequence node, defaults to two output pins
 	UK2Node_ExecutionSequence* SequenceNode = CompilerContext.SpawnIntermediateNode<UK2Node_ExecutionSequence>(this, SourceGraph);
 	SequenceNode->AllocateDefaultPins();
 
@@ -111,10 +108,11 @@ void UK2Node_LoadPackagePriority::ExpandNode(class FKismetCompilerContext& Compi
 	UK2Node_TemporaryVariable* TempVarPackageOutput = CompilerContext.SpawnInternalVariable(this,
 																					GetOutputPackageCategory(),
 																					NAME_None, 
-																					UObject::StaticClass());
+																					UPackage::StaticClass());
 	UK2Node_TemporaryVariable* TempVarResultOutput = CompilerContext.SpawnInternalVariable(this,
 																					GetOutputResultCategory(),
-																					NAME_None);
+																					NAME_None,
+																					GetRyAsyncLoadingResultEnum());
 
 	// Create assign package node
 	UK2Node_AssignmentStatement* AssignPackageNode = CompilerContext.SpawnIntermediateNode<UK2Node_AssignmentStatement>(this, SourceGraph);
@@ -149,7 +147,7 @@ void UK2Node_LoadPackagePriority::ExpandNode(class FKismetCompilerContext& Compi
 
 		// connect local variable to output
 		{
-			UEdGraphPin* OutputObjectPinPin = FindPin(GetOutputPackagePinName());
+			UEdGraphPin* OutputObjectPinPin = FindPin(GetOutputResultPinName());
 			bIsErrorFree &= ResultVariablePin && OutputObjectPinPin && CompilerContext.MovePinLinksToIntermediate(*OutputObjectPinPin, *ResultVariablePin).CanSafeConnect();
 		}
 	}
@@ -242,7 +240,7 @@ void UK2Node_LoadPackagePriority::ExpandNode(class FKismetCompilerContext& Compi
 			if (!Param->HasAnyPropertyFlags(CPF_OutParm) || Param->HasAnyPropertyFlags(CPF_ReferenceParm))
 			{
 				FEdGraphPinType PinType;
-				bIsErrorFree &= Schema->ConvertPropertyToPinType(Param, PinType);
+				bIsErrorFree &= Schema->ConvertPropertyToPinType(Param, /*out*/ PinType);
 				bIsErrorFree &= (nullptr != OnLoadEventNode->CreateUserDefinedPin(Param->GetFName(), PinType, EGPD_Output));
 			}
 		}
@@ -260,7 +258,7 @@ void UK2Node_LoadPackagePriority::ExpandNode(class FKismetCompilerContext& Compi
 	{
 		// connect loaded package from event to assign
 		{
-			UEdGraphPin* LoadedPackageEventPin = OnLoadEventNode->FindPin(TEXT("LoadedPackage"));
+			UEdGraphPin* LoadedPackageEventPin = OnLoadEventNode->FindPin(GetOutputPackagePinName());
 			ensure(LoadedPackageEventPin);
 			UEdGraphPin* AssignRHSPPin = AssignPackageNode->GetValuePin();
 			bIsErrorFree &= AssignRHSPPin && LoadedPackageEventPin && Schema->TryCreateConnection(LoadedPackageEventPin, AssignRHSPPin);
@@ -268,7 +266,7 @@ void UK2Node_LoadPackagePriority::ExpandNode(class FKismetCompilerContext& Compi
 	
 		// connect loaded result from event to assign
 		{
-			UEdGraphPin* ResultEventPin = OnLoadEventNode->FindPin(TEXT("Result"));
+			UEdGraphPin* ResultEventPin = OnLoadEventNode->FindPin(GetOutputResultPinName());
 			ensure(ResultEventPin);
 			UEdGraphPin* AssignRHSPPin = AssignResultNode->GetValuePin();
 			bIsErrorFree &= AssignRHSPPin && ResultEventPin && Schema->TryCreateConnection(ResultEventPin, AssignRHSPPin);
@@ -291,46 +289,44 @@ void UK2Node_LoadPackagePriority::ExpandNode(class FKismetCompilerContext& Compi
 		UEdGraphPin* OutputCompletedPin = FindPin(UEdGraphSchema_K2::PN_Completed);
 		UEdGraphPin* AssignOutputExePin = AssignResultNode->GetThenPin();
 		bIsErrorFree &= OutputCompletedPin && AssignOutputExePin && CompilerContext.MovePinLinksToIntermediate(*OutputCompletedPin, *AssignOutputExePin).CanSafeConnect();
-	}*/
+	}
 
 	if (!bIsErrorFree)
 	{
-		CompilerContext.MessageLog.Error(*LOCTEXT("InternalConnectionError", "K2Node_LoadPackagePriority: Internal connection error. @@").ToString(), this);
+		CompilerContext.MessageLog.Error(*LOCTEXT("InternalConnectionError", "K2Node_LoadPackageWithPriority: Internal connection error. @@").ToString(), this);
 	}
 
 	BreakAllNodeLinks();
 }
 
-FText UK2Node_LoadPackagePriority::GetTooltipText() const
+FText UK2Node_LoadPackageWithPriority::GetTooltipText() const
 {
-	return FText(LOCTEXT("UK2Node_LoadPackagePriorityGetTooltipText", "Asynchronously loads a package by path and returns the package object if the load succeeds."));
+	return FText(LOCTEXT("UK2Node_LoadPackageWithPriorityGetTooltipText", "Asynchronously loads a package by path and returns the package object if the load succeeds."));
 }
 
-FText UK2Node_LoadPackagePriority::GetNodeTitle(ENodeTitleType::Type TitleType) const
+FText UK2Node_LoadPackageWithPriority::GetNodeTitle(ENodeTitleType::Type TitleType) const
 {
-	return FText(LOCTEXT("UK2Node_LoadPackagePriorityGetNodeTitle", "(Deprecated) Async Load Package Priority"));
+	return FText(LOCTEXT("UK2Node_LoadPackageWithPriorityGetNodeTitle", "Async Load Package With Priority"));
 }
 
-bool UK2Node_LoadPackagePriority::IsCompatibleWithGraph(const UEdGraph* TargetGraph) const
+bool UK2Node_LoadPackageWithPriority::IsCompatibleWithGraph(const UEdGraph* TargetGraph) const
 {
-	return false;
-	
-	/*bool bIsCompatible = false;
+	bool bIsCompatible = false;
 	// Can only place events in ubergraphs and macros (other code will help prevent macros with latents from ending up in functions), and basicasync task creates an event node:
 	EGraphType GraphType = TargetGraph->GetSchema()->GetGraphType(TargetGraph);
 	if (GraphType == EGraphType::GT_Ubergraph || GraphType == EGraphType::GT_Macro)
 	{
 		bIsCompatible = true;
 	}
-	return bIsCompatible && Super::IsCompatibleWithGraph(TargetGraph);*/
+	return bIsCompatible && Super::IsCompatibleWithGraph(TargetGraph);
 }
 
-FName UK2Node_LoadPackagePriority::GetCornerIcon() const
+FName UK2Node_LoadPackageWithPriority::GetCornerIcon() const
 {
 	return TEXT("Graph.Latent.LatentIcon");
 }
 
-void UK2Node_LoadPackagePriority::GetMenuActions(FBlueprintActionDatabaseRegistrar& ActionRegistrar) const
+void UK2Node_LoadPackageWithPriority::GetMenuActions(FBlueprintActionDatabaseRegistrar& ActionRegistrar) const
 {
 	// actions get registered under specific object-keys; the idea is that 
 	// actions might have to be updated (or deleted) if their object-key is  
@@ -350,67 +346,79 @@ void UK2Node_LoadPackagePriority::GetMenuActions(FBlueprintActionDatabaseRegistr
 	}
 }
 
-FText UK2Node_LoadPackagePriority::GetMenuCategory() const
+FText UK2Node_LoadPackageWithPriority::GetMenuCategory() const
 {
-	return FText(LOCTEXT("UK2Node_LoadPackagePriorityGetMenuCategory", "Utilities"));
+	return FText(LOCTEXT("UK2Node_LoadPackageWithPriorityGetMenuCategory", "Utilities"));
 }
 
-const FName& UK2Node_LoadPackagePriority::GetInputCategory() const
+const FName& UK2Node_LoadPackageWithPriority::GetInputCategory() const
 {
 	return UEdGraphSchema_K2::PC_String;
 }
 
-const FName& UK2Node_LoadPackagePriority::GetInputPriorityCategory() const
+const FName& UK2Node_LoadPackageWithPriority::GetInputPriorityCategory() const
 {
 	return UEdGraphSchema_K2::PC_Int;
 }
 
-const FName& UK2Node_LoadPackagePriority::GetInputBlockOnLoadCategory() const
+const FName& UK2Node_LoadPackageWithPriority::GetInputBlockOnLoadCategory() const
 {
 	return UEdGraphSchema_K2::PC_Boolean;
 }
 
-const FName& UK2Node_LoadPackagePriority::GetOutputPackageCategory() const
+const FName& UK2Node_LoadPackageWithPriority::GetOutputPackageCategory() const
 {
 	return UEdGraphSchema_K2::PC_Object;
 }
 
-const FName& UK2Node_LoadPackagePriority::GetOutputResultCategory() const
+const FName& UK2Node_LoadPackageWithPriority::GetOutputResultCategory() const
 {
-	return UEdGraphSchema_K2::PC_Enum;
+	return UEdGraphSchema_K2::PC_Byte;
 }
 
-const FName& UK2Node_LoadPackagePriority::GetInputPinName() const
+const FName& UK2Node_LoadPackageWithPriority::GetInputPinName() const
 {
 	static const FName InputAssetPinName("PackagePath");
 	return InputAssetPinName;
 }
 
-const FName& UK2Node_LoadPackagePriority::GetInputPriorityPinName() const
+const FName& UK2Node_LoadPackageWithPriority::GetInputPriorityPinName() const
 {
 	static const FName InputAssetPriorityPinName("Priority");
 	return InputAssetPriorityPinName;
 }
 
-const FName& UK2Node_LoadPackagePriority::GetInputBlockOnLoadPinName() const
+const FName& UK2Node_LoadPackageWithPriority::GetInputBlockOnLoadPinName() const
 {
 	static const FName InputAssetBlockOnLoadPinName("BlockOnLoad");
 	return InputAssetBlockOnLoadPinName;
 }
 
-const FName& UK2Node_LoadPackagePriority::GetOutputPackagePinName() const
+const FName& UK2Node_LoadPackageWithPriority::GetOutputPackagePinName() const
 {
 	static const FName OutputObjectPinName("LoadedPackage");
 	return OutputObjectPinName;
 }
 
-const FName& UK2Node_LoadPackagePriority::GetOutputResultPinName() const
+const FName& UK2Node_LoadPackageWithPriority::GetOutputResultPinName() const
 {
 	static const FName OutputResultPinName("Result");
 	return OutputResultPinName;
 }
 
-FName UK2Node_LoadPackagePriority::NativeFunctionName() const
+UEnum* UK2Node_LoadPackageWithPriority::GetRyAsyncLoadingResultEnum()
+{
+	if(!RyAsyncLoadingResultEnum)
+	{
+		RyAsyncLoadingResultEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("ERyAsyncLoadingResult"), true);
+		check(RyAsyncLoadingResultEnum);
+		PreloadObject(RyAsyncLoadingResultEnum);
+	}
+
+	return RyAsyncLoadingResultEnum;
+}
+
+FName UK2Node_LoadPackageWithPriority::NativeFunctionName() const
 {
 	return GET_FUNCTION_NAME_CHECKED(URyRuntimeObjectHelpers, LoadPackagePriority);
 }

@@ -30,6 +30,7 @@ public:
 	virtual FText GetMenuCategory() const override;
 	virtual bool NodeCausesStructuralBlueprintChange() const override { return true; }
 	virtual void ReallocatePinsDuringReconstruction(TArray<UEdGraphPin*>& OldPins) override;
+	virtual void ValidateNodeDuringCompilation(class FCompilerResultsLog& MessageLog) const override;
 	// End of UK2Node interface
 
 	protected:

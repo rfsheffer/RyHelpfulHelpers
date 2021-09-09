@@ -230,14 +230,11 @@ struct FLoadPackagePriorityActionBase : FPendingLatentAction
         }
     }
 
-    virtual ~FLoadPackagePriorityActionBase()
-    {
-    }
-
     void OnPackageLoadCompleteCB(const FName& packagePath, UPackage* loadedPackage, EAsyncLoadingResult::Type result)
     {
         Result = result;
         LoadedPackage = loadedPackage;
+        LoadRequest = INDEX_NONE;
     }
 
     virtual void UpdateOperation(FLatentResponse& Response) override

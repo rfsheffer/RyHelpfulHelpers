@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Sheffer Online Services.
 // MIT License. See LICENSE for details.
 
-#include "K2Nodes/K2Node_LoadAssetPriority.h"
+#include "K2Node_LoadAssetWithPriority.h"
 #include "UObject/UnrealType.h"
 #include "EdGraph/EdGraphPin.h"
 #include "RyRuntimeObjectHelpers.h"
@@ -15,9 +15,9 @@
 #include "BlueprintNodeSpawner.h"
 #include "BlueprintActionDatabaseRegistrar.h"
 
-#define LOCTEXT_NAMESPACE "K2Node_LoadAsset"
+#define LOCTEXT_NAMESPACE "K2Node_LoadAssetWithPriority"
 
-void UK2Node_LoadAssetPriority::AllocateDefaultPins()
+void UK2Node_LoadAssetWithPriority::AllocateDefaultPins()
 {
 	CreatePin(EGPD_Input, UEdGraphSchema_K2::PC_Exec, UEdGraphSchema_K2::PN_Execute);
 
@@ -32,7 +32,7 @@ void UK2Node_LoadAssetPriority::AllocateDefaultPins()
 	CreatePin(EGPD_Output, GetOutputCategory(), UObject::StaticClass(), GetOutputPinName());
 }
 
-void UK2Node_LoadAssetPriority::ReallocatePinsDuringReconstruction(TArray<UEdGraphPin*>& OldPins)
+void UK2Node_LoadAssetWithPriority::ReallocatePinsDuringReconstruction(TArray<UEdGraphPin*>& OldPins)
 {
 	Super::ReallocatePinsDuringReconstruction(OldPins);
 
@@ -58,24 +58,14 @@ void UK2Node_LoadAssetPriority::ReallocatePinsDuringReconstruction(TArray<UEdGra
 	}
 }
 
-void UK2Node_LoadAssetPriority::ValidateNodeDuringCompilation(FCompilerResultsLog& message_log) const
-{
-	Super::ValidateNodeDuringCompilation(message_log);
-	message_log.Error(TEXT("LoadAssetPriority has been deprecated. Please use LoadAssetWithPriority instead."));
-}
-
-void UK2Node_LoadAssetPriority::ExpandNode(class FKismetCompilerContext& CompilerContext, UEdGraph* SourceGraph)
+void UK2Node_LoadAssetWithPriority::ExpandNode(class FKismetCompilerContext& CompilerContext, UEdGraph* SourceGraph)
 {
 	Super::ExpandNode(CompilerContext, SourceGraph);
 	const UEdGraphSchema_K2* Schema = CompilerContext.GetSchema();
 	check(Schema);
 	bool bIsErrorFree = true;
 
-	UEdGraphPin* InputExePin = GetExecPin();
-	UEdGraphPin* OutputThenPin = FindPin(UEdGraphSchema_K2::PN_Then);
-	bIsErrorFree &= InputExePin && OutputThenPin && Schema->TryCreateConnection(InputExePin, OutputThenPin);
-
-	/*// Sequence node, defaults to two output pins
+	// Sequence node, defaults to two output pins
 	UK2Node_ExecutionSequence* SequenceNode = CompilerContext.SpawnIntermediateNode<UK2Node_ExecutionSequence>(this, SourceGraph);
 	SequenceNode->AllocateDefaultPins();
 
@@ -191,7 +181,7 @@ void UK2Node_LoadAssetPriority::ExpandNode(class FKismetCompilerContext& Compile
 			if (!Param->HasAnyPropertyFlags(CPF_OutParm) || Param->HasAnyPropertyFlags(CPF_ReferenceParm))
 			{
 				FEdGraphPinType PinType;
-				bIsErrorFree &= Schema->ConvertPropertyToPinType(Param, PinType);
+				bIsErrorFree &= Schema->ConvertPropertyToPinType(Param, /*out*/ PinType);
 				bIsErrorFree &= (nullptr != OnLoadEventNode->CreateUserDefinedPin(Param->GetFName(), PinType, EGPD_Output));
 			}
 		}
@@ -225,30 +215,28 @@ void UK2Node_LoadAssetPriority::ExpandNode(class FKismetCompilerContext& Compile
 		UEdGraphPin* OutputCompletedPin = FindPin(UEdGraphSchema_K2::PN_Completed);
 		UEdGraphPin* AssignOutputExePin = AssignNode->GetThenPin();
 		bIsErrorFree &= OutputCompletedPin && AssignOutputExePin && CompilerContext.MovePinLinksToIntermediate(*OutputCompletedPin, *AssignOutputExePin).CanSafeConnect();
-	}*/
+	}
 
 	if (!bIsErrorFree)
 	{
-		CompilerContext.MessageLog.Error(*LOCTEXT("InternalConnectionError", "K2Node_LoadAssetPriority: Internal connection error. @@").ToString(), this);
+		CompilerContext.MessageLog.Error(*LOCTEXT("InternalConnectionError", "UK2Node_LoadAssetWithPriority: Internal connection error. @@").ToString(), this);
 	}
 
 	BreakAllNodeLinks();
 }
 
-FText UK2Node_LoadAssetPriority::GetTooltipText() const
+FText UK2Node_LoadAssetWithPriority::GetTooltipText() const
 {
-	return FText(LOCTEXT("UK2Node_LoadAssetPriorityGetTooltipText", "Asynchronously loads a Soft Object Reference and returns object of the correct type if the load succeeds"));
+	return FText(LOCTEXT("UK2Node_LoadAssetWithPriorityGetTooltipText", "Asynchronously loads a Soft Object Reference and returns object of the correct type if the load succeeds"));
 }
 
-FText UK2Node_LoadAssetPriority::GetNodeTitle(ENodeTitleType::Type TitleType) const
+FText UK2Node_LoadAssetWithPriority::GetNodeTitle(ENodeTitleType::Type TitleType) const
 {
-	return FText(LOCTEXT("UK2Node_LoadAssetPriorityGetNodeTitle", "(Deprecated) Async Load Asset Priority"));
+	return FText(LOCTEXT("UK2Node_LoadAssetWithPriorityGetNodeTitle", "Async Load Asset With Priority"));
 }
 
-bool UK2Node_LoadAssetPriority::IsCompatibleWithGraph(const UEdGraph* TargetGraph) const
+bool UK2Node_LoadAssetWithPriority::IsCompatibleWithGraph(const UEdGraph* TargetGraph) const
 {
-	return false;
-	
 	bool bIsCompatible = false;
 	// Can only place events in ubergraphs and macros (other code will help prevent macros with latents from ending up in functions), and basicasync task creates an event node:
 	EGraphType GraphType = TargetGraph->GetSchema()->GetGraphType(TargetGraph);
@@ -259,12 +247,12 @@ bool UK2Node_LoadAssetPriority::IsCompatibleWithGraph(const UEdGraph* TargetGrap
 	return bIsCompatible && Super::IsCompatibleWithGraph(TargetGraph);
 }
 
-FName UK2Node_LoadAssetPriority::GetCornerIcon() const
+FName UK2Node_LoadAssetWithPriority::GetCornerIcon() const
 {
 	return TEXT("Graph.Latent.LatentIcon");
 }
 
-void UK2Node_LoadAssetPriority::GetMenuActions(FBlueprintActionDatabaseRegistrar& ActionRegistrar) const
+void UK2Node_LoadAssetWithPriority::GetMenuActions(FBlueprintActionDatabaseRegistrar& ActionRegistrar) const
 {
 	// actions get registered under specific object-keys; the idea is that 
 	// actions might have to be updated (or deleted) if their object-key is  
@@ -284,45 +272,45 @@ void UK2Node_LoadAssetPriority::GetMenuActions(FBlueprintActionDatabaseRegistrar
 	}
 }
 
-FText UK2Node_LoadAssetPriority::GetMenuCategory() const
+FText UK2Node_LoadAssetWithPriority::GetMenuCategory() const
 {
-	return FText(LOCTEXT("UK2Node_LoadAssetPriorityGetMenuCategory", "Utilities"));
+	return FText(LOCTEXT("UK2Node_LoadAssetWithPriorityGetMenuCategory", "Utilities"));
 }
 
-const FName& UK2Node_LoadAssetPriority::GetInputCategory() const
+const FName& UK2Node_LoadAssetWithPriority::GetInputCategory() const
 {
 	return UEdGraphSchema_K2::PC_SoftObject;
 }
 
-const FName& UK2Node_LoadAssetPriority::GetInputPriorityCategory() const
+const FName& UK2Node_LoadAssetWithPriority::GetInputPriorityCategory() const
 {
 	return UEdGraphSchema_K2::PC_Int;
 }
 
-const FName& UK2Node_LoadAssetPriority::GetOutputCategory() const
+const FName& UK2Node_LoadAssetWithPriority::GetOutputCategory() const
 {
 	return UEdGraphSchema_K2::PC_Object;
 }
 
-const FName& UK2Node_LoadAssetPriority::GetInputPinName() const
+const FName& UK2Node_LoadAssetWithPriority::GetInputPinName() const
 {
 	static const FName InputAssetPinName("Asset");
 	return InputAssetPinName;
 }
 
-const FName& UK2Node_LoadAssetPriority::GetInputPriorityPinName() const
+const FName& UK2Node_LoadAssetWithPriority::GetInputPriorityPinName() const
 {
 	static const FName InputAssetPriorityPinName("Priority");
 	return InputAssetPriorityPinName;
 }
 
-const FName& UK2Node_LoadAssetPriority::GetOutputPinName() const
+const FName& UK2Node_LoadAssetWithPriority::GetOutputPinName() const
 {
 	static const FName OutputObjectPinName("Object");
 	return OutputObjectPinName;
 }
 
-FName UK2Node_LoadAssetPriority::NativeFunctionName() const
+FName UK2Node_LoadAssetWithPriority::NativeFunctionName() const
 {
 	return GET_FUNCTION_NAME_CHECKED(URyRuntimeObjectHelpers, LoadAssetPriority);
 }

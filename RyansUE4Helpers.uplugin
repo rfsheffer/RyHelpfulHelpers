@@ -15,12 +15,36 @@
 		{
 			"Name": "RyRuntime",
 			"Type": "Runtime",
-			"LoadingPhase": "PreDefault"
+			"LoadingPhase": "PreDefault",
+			"WhitelistPlatforms": [
+				"Android",
+				"Win64",
+				"Linux",
+				"Mac",
+				"IOS"
+			]
 		},
 		{
 			"Name": "RyEditor",
 			"Type": "Editor",
-			"LoadingPhase": "PreDefault"
+			"LoadingPhase": "PostEngineInit",
+			"WhitelistPlatforms": [
+				"Win64",
+				"Linux",
+				"Mac"
+			]
+		},
+		{
+			"Name": "RyEditorK2Nodes",
+			"Type": "UncookedOnly",
+			"LoadingPhase": "Default",
+			"WhitelistPlatforms": [
+				"Android",
+				"Win64",
+				"Linux",
+				"Mac",
+				"IOS"
+			]
 		}
 	]
 }
