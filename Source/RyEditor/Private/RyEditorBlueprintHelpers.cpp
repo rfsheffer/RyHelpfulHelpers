@@ -61,8 +61,12 @@ UBlueprint* URyEditorBlueprintHelpers::CreateBlueprint(const FString& packagePat
         UE_LOG(LogRyEditor, Error, TEXT("CreateBlueprint called with a parentClass which cannot have a blueprint created of it!"));
         return nullptr;
     }
-
+    
+#if ENGINE_MINOR_VERSION >= 26
     package = CreatePackage(*packageName);
+#else
+    package = CreatePackage(nullptr, *packageName);
+#endif
     UBlueprint* newBlueprint = nullptr;
     EObjectFlags flags = RF_Public | RF_Standalone | RF_Transactional;
 

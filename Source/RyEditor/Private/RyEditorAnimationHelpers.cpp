@@ -61,7 +61,11 @@ UAnimMontage* URyEditorAnimationHelpers::CreateMontageOfSequences(const TArray<U
     }
     else
     {
+#if ENGINE_MINOR_VERSION >= 26
         assetPackage = CreatePackage(*assetPackagePath);
+#else
+        assetPackage = CreatePackage(nullptr, *assetPackagePath);
+#endif
         if(!assetPackage)
         {
             FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Montage_NoCreatePackage", "Unable to create package for Montage asset!"));
