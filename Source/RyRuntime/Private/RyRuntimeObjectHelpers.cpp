@@ -427,3 +427,43 @@ bool URyRuntimeObjectHelpers::SetObjectPropertyValue(UObject* object, const FNam
 
     return false;
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeObjectHelpers::ObjectHasFlag_ArchetypeObject(UObject* object)
+{
+    return object && object->HasAnyFlags(RF_ArchetypeObject);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeObjectHelpers::ObjectHasFlag_ClassDefaultObject(UObject* object)
+{
+    return object && object->HasAnyFlags(RF_ClassDefaultObject);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeObjectHelpers::ObjectHasFlag_BeginDestroyed(UObject* object)
+{
+    return object && object->HasAnyFlags(RF_BeginDestroyed);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeObjectHelpers::ObjectHasFlag_FinishDestroyed(UObject* object)
+{
+    return object && object->HasAnyFlags(RF_FinishDestroyed);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeObjectHelpers::ObjectHasFlag_WasLoaded(UObject* object)
+{
+    return object && object->HasAnyFlags(RF_WasLoaded);
+}

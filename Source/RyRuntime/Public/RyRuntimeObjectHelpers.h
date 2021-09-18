@@ -19,7 +19,6 @@ enum class ERyAsyncLoadingResult : uint8
     Canceled
 };
 
-
 //---------------------------------------------------------------------------------------------------------------------
 /**
   * Static Helper functions related to runtime objects
@@ -29,7 +28,7 @@ class RYRUNTIME_API URyRuntimeObjectHelpers : public UBlueprintFunctionLibrary
 {
     GENERATED_BODY()
 public:
-
+	
     /** Returns true if the Soft Object Reference is not null AND not pending kill */
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers", meta = (BlueprintThreadSafe))
 	static bool IsLiveSoftObjectReference(const TSoftObjectPtr<UObject>& SoftObjectReference);
@@ -99,4 +98,26 @@ public:
     // NOTE: This function only works if RY_INCLUDE_DANGEROUS_FUNCTIONS define is enabled.
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers", meta=(AdvancedDisplay = "3"))
     static bool SetObjectPropertyValue(UObject* object, const FName PropertyName, const FString& Value, const bool PrintWarnings = true);
+
+	/// This object is a template for another object - treat like a class default object
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers|Flags")
+	static bool ObjectHasFlag_ArchetypeObject(UObject* object);
+
+	/// Object is a CDO or Class Default Object. It exists as a template for object that will be created and can be used
+	/// to get default values.
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers|Flags")
+	static bool ObjectHasFlag_ClassDefaultObject(UObject* object);
+
+	/// Object has begun being destroyed
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers|Flags")
+	static bool ObjectHasFlag_BeginDestroyed(UObject* object);
+
+	/// Object has finished being destroyed
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers|Flags")
+	static bool ObjectHasFlag_FinishDestroyed(UObject* object);
+
+	/// Objects flagged with WasLoaded can be expected to have been loaded from a package and was not dynamically created.
+	/// NOTE: Objects which were created for a package but not saved yet will not be set as "WasLoaded" until they are saved.
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers|Flags")
+	static bool ObjectHasFlag_WasLoaded(UObject* object);
 };
