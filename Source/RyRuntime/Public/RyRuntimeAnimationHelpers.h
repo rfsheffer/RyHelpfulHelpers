@@ -16,8 +16,8 @@ class RYRUNTIME_API URyRuntimeAnimationHelpers : public UBlueprintFunctionLibrar
     GENERATED_BODY()
 public:
 
-    // Creates a duplicate montage from another montage. This is useful for cases where you want to modify a montage asset at runtime.
-    // @param SlotOverride - The animation slot can be overridden setting this parameter. None means do nothing.
+    /// Creates a duplicate montage from another montage. This is useful for cases where you want to modify a montage asset at runtime.
+    /// @param SlotOverride - The animation slot can be overridden setting this parameter. None means do nothing.
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|AnimationHelpers", meta=(AdvancedDisplay = "1"))
     static class UAnimMontage* CreateDynamicMontageFromMontage(class UAnimMontage* MontageIn, 
                                                                const FName SlotOverride = NAME_None,
@@ -49,26 +49,27 @@ public:
                                                                const float BlendOutTriggerTime = -1.f,
                                                                const bool EnableAutoBlendOut = true);
 
-    // Get the names of sections in this montage
+    /// Get the names of sections in this montage
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|AnimationHelpers")
     static void GetMontageSectionNames(class UAnimMontage* MontageIn, TArray<FName>& NamesOut);
 
-    // Return true if a montage has a named section
+    /// Return true if a montage has a named section
     UFUNCTION(BlueprintPure, Category = "RyRuntime|AnimationHelpers")
     static bool MontageHasSection(class UAnimMontage* MontageIn, const FName SectionName);
 
-    // Return true if a montage has a named section
+    /// Return true if a montage has a named section
     UFUNCTION(BlueprintPure, Category = "RyRuntime|AnimationHelpers")
     static FName GetMontageSectionNameFromPosition(class UAnimMontage* MontageIn, const float Position);
 
-    // Return true if a montage has a named section
+    /// Get a montages section start and end time
     UFUNCTION(BlueprintPure, Category = "RyRuntime|AnimationHelpers")
     static void GetMontageSectionStartAndEndTime(class UAnimMontage* MontageIn, const FName SectionName, float& OutStartTime, float& OutEndTime);
 
+	/// Get the time left in a section from a specific position in the montage
     UFUNCTION(BlueprintPure, Category = "RyRuntime|AnimationHelpers")
     static float GetMontageSectionTimeLeftFromPos(class UAnimMontage* MontageIn, const FName SectionName, const float Position);
 
-	// Create an animation meta data instance
+	/// Create an animation meta data instance
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|AnimationHelpers")
 	static UAnimMetaData* CreateAnimMetaDataInstance(TSubclassOf<UAnimMetaData> MetaDataClass);
 };
