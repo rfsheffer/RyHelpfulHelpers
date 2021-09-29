@@ -65,18 +65,32 @@ public:
     UFUNCTION(BlueprintPure, Category = "RyRuntime|String")
     static void CharToBytes(const FString& sourceString, const int32 charIndex, uint8& byte1, uint8& byte2);
 
-    // Returns a string where the first character in every word is upper case. Like a header, or a title.
+    /// Returns a string where the first character in every word is upper case. Like a header, or a title.
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|String")
     static void ToTitleStringInline(UPARAM(ref) FString& inOutString);
 
-    // Returns a string where the first character in every word is upper case. Like a header, or a title.
+    /// Returns a string where the first character in every word is upper case. Like a header, or a title.
     UFUNCTION(BlueprintPure, Category = "RyRuntime|String")
     static FString ToTitleString(const FString& inString);
 
-    /// Same as MakeTextFromStringTable but instead of whining about a missing entry, sets isValid to false if no string exists or true if one does, and returns the text
+    /// Similar to MakeTextFromStringTable but instead of whining about a missing entry, sets isValid to false if no string exists or true if one does, and returns the text
     /// which is empty if there is no entry, or populated if there is.
-    /// NOTE: The table referencable via TableId should be previously loaded for best results. If it isn't, this function
-    ///       will try to load it non-async.
+    /// Also, takes in a string table asset instead of a table ID.
+    /// @param table     The table to look in
+    /// @param key       The key into the string table to find the text
+    /// @param isValid   True if the text was found and set to the return of the function
+    /// @return The text if it was found
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|Text", meta=(DisplayName="Get Text From String Table (Advanced)"))
-    static FText GetTextFromStringTable(FName TableId, const FString& Key, bool& isValid);
+    static FText GetTextFromStringTable(class UStringTable* table, const FString& key, bool& isValid);
+
+    /// Similar to MakeTextFromStringTable but instead of whining about a missing entry, sets isValid to false if no string exists or true if one does, and returns the text
+    /// which is empty if there is no entry, or populated if there is.
+    /// Try to use GetTextFromStringTable instead as it should help have the asset pre-loaded. If you call GetTextFromStringTableID
+    /// while the string table isn't loaded, it will try to syncronously load the string table asset.
+    /// @param tableID   The table to look up
+    /// @param key       The key into the string table to find the text
+    /// @param isValid   True if the text was found and set to the return of the function
+    /// @return The text if it was found
+    UFUNCTION(BlueprintCallable, Category = "RyRuntime|Text", meta=(DisplayName="Get Text From String Table ID (Advanced)"))
+    static FText GetTextFromStringTableID(FName tableID, const FString& key, bool& isValid);
 };

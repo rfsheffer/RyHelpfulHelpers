@@ -2,6 +2,8 @@
 // MIT License. See LICENSE for details.
 
 #include "RyRuntimeStringHelpers.h"
+
+#include "Internationalization/StringTable.h"
 #include "Internationalization/StringTableCore.h"
 #include "Internationalization/StringTableRegistry.h"
 
@@ -167,23 +169,36 @@ FString URyRuntimeStringHelpers::ToTitleString(const FString& inString)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-FText URyRuntimeStringHelpers::GetTextFromStringTable(FName TableId, const FString& Key, bool& isValid)
+FText URyRuntimeStringHelpers::GetTextFromStringTable(UStringTable* table, const FString& key, bool& isValid)
 {
     isValid = false;
-    FStringTableConstPtr StringTable = FStringTableRegistry::Get().FindStringTable(TableId);
+    if(!table)
+    {
+        return FText::GetEmpty();
+    }
+    
+    return GetTextFromStringTableID(table->GetStringTableId(), key, isValid);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FText URyRuntimeStringHelpers::GetTextFromStringTableID(FName tableID, const FString& key, bool& isValid)
+{
+    FStringTableConstPtr StringTable = FStringTableRegistry::Get().FindStringTable(tableID);
     if(!StringTable.IsValid())
     {
         // Try to load it
-        IStringTableEngineBridge::FullyLoadStringTableAsset(TableId);
-        StringTable = FStringTableRegistry::Get().FindStringTable(TableId);
+        IStringTableEngineBridge::FullyLoadStringTableAsset(tableID);
+        StringTable = FStringTableRegistry::Get().FindStringTable(tableID);
     }
     if(StringTable.IsValid())
     {
-        const FStringTableEntryConstPtr strTableEntry = StringTable->FindEntry(Key);
+        const FStringTableEntryConstPtr strTableEntry = StringTable->FindEntry(key);
         if(strTableEntry.IsValid())
         {
             isValid = true;
-            return FText::FromStringTable(TableId, Key);
+            return FText::FromStringTable(tableID, key);
         }
     }
 
