@@ -72,4 +72,11 @@ public:
     // Returns a string where the first character in every word is upper case. Like a header, or a title.
     UFUNCTION(BlueprintPure, Category = "RyRuntime|String")
     static FString ToTitleString(const FString& inString);
+
+    /// Same as MakeTextFromStringTable but instead of whining about a missing entry, sets isValid to false if no string exists or true if one does, and returns the text
+    /// which is empty if there is no entry, or populated if there is.
+    /// NOTE: The table referencable via TableId should be previously loaded for best results. If it isn't, this function
+    ///       will try to load it non-async.
+    UFUNCTION(BlueprintCallable, Category = "RyRuntime|Text", meta=(DisplayName="Get Text From String Table (Advanced)"))
+    static FText GetTextFromStringTable(FName TableId, const FString& Key, bool& isValid);
 };

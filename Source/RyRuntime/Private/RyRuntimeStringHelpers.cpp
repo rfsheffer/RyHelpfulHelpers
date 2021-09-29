@@ -2,6 +2,8 @@
 // MIT License. See LICENSE for details.
 
 #include "RyRuntimeStringHelpers.h"
+#include "Internationalization/StringTableCore.h"
+#include "Internationalization/StringTableRegistry.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
@@ -160,4 +162,30 @@ FString URyRuntimeStringHelpers::ToTitleString(const FString& inString)
     FString titleStrOut = inString;
     ToTitleStringInline(titleStrOut);
     return titleStrOut;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FText URyRuntimeStringHelpers::GetTextFromStringTable(FName TableId, const FString& Key, bool& isValid)
+{
+    isValid = false;
+    FStringTableConstPtr StringTable = FStringTableRegistry::Get().FindStringTable(TableId);
+    if(!StringTable.IsValid())
+    {
+        // Try to load it
+        IStringTableEngineBridge::FullyLoadStringTableAsset(TableId);
+        StringTable = FStringTableRegistry::Get().FindStringTable(TableId);
+    }
+    if(StringTable.IsValid())
+    {
+        const FStringTableEntryConstPtr strTableEntry = StringTable->FindEntry(Key);
+        if(strTableEntry.IsValid())
+        {
+            isValid = true;
+            return FText::FromStringTable(TableId, Key);
+        }
+    }
+
+    return FText::GetEmpty();
 }
