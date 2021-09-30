@@ -424,7 +424,7 @@ ULevelStreamingDynamic* URyRuntimeLevelHelpers::LoadLevelInstanceAdvanced(UObjec
         return nullptr;
     }
 
-    return LoadLevelInstance_Internal(World, LongPackageName, Location, Rotation, OutSuccess, LevelPrefix, ShouldBeLoaded, ShouldBeVisible, BlockOnLoad, Priority);
+    return LoadLevelInstance_Internal(World, LongPackageName, Location, Rotation, OutSuccess, prefixIn, ShouldBeLoaded, ShouldBeVisible, BlockOnLoad, Priority);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -460,7 +460,7 @@ ULevelStreamingDynamic* URyRuntimeLevelHelpers::LoadLevelInstanceBySoftObjectPtr
         return nullptr;
     }
 
-    return LoadLevelInstance_Internal(World, Level.GetLongPackageName(), Location, Rotation, OutSuccess, LevelPrefix, ShouldBeLoaded, ShouldBeVisible, BlockOnLoad, Priority);
+    return LoadLevelInstance_Internal(World, Level.GetLongPackageName(), Location, Rotation, OutSuccess, prefixIn, ShouldBeLoaded, ShouldBeVisible, BlockOnLoad, Priority);
 }
 
 static_assert(ERyCurrentLevelStreamingState::MakingInvisible ==
