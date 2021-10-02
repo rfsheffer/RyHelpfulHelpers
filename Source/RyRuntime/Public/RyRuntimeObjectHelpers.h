@@ -33,6 +33,34 @@ public:
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers", meta = (BlueprintThreadSafe))
 	static bool IsLiveSoftObjectReference(const TSoftObjectPtr<UObject>& SoftObjectReference);
 
+	/** Returns string representation of reference, in form /package/path.assetname */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers", meta = (BlueprintThreadSafe))
+	static FString SoftObjectToString(const TSoftObjectPtr<UObject>& SoftObjectReference);
+
+	/**  
+	* Test if this does not point to a live UObject, but may in the future
+	*
+	* @return true if this does not point to a real object, but could possibly
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers", meta = (BlueprintThreadSafe))
+	static bool IsSoftObjectPending(const TSoftObjectPtr<UObject>& SoftObjectReference);
+
+	/**  
+	* Test if this can never point to a live UObject
+	*
+	* @return true if this is explicitly pointing to no object
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers", meta = (BlueprintThreadSafe))
+	static bool IsSoftObjectNull(const TSoftObjectPtr<UObject>& SoftObjectReference);
+
+	/**  
+	* Test if this points to a live UObject
+	*
+	* @return true if Get() would return a valid non-null pointer
+	*/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers", meta = (BlueprintThreadSafe))
+	static bool IsSoftObjectValid(const TSoftObjectPtr<UObject>& SoftObjectReference);
+
     // A call to see if a package is currently loaded and load that. If not loaded, tries to load the package.
     // Package path is in this format: /Game/MyFolder/MyPackage
     // Where /Game/ is the mounting point.

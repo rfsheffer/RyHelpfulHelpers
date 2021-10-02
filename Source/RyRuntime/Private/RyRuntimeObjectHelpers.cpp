@@ -19,8 +19,40 @@ bool URyRuntimeObjectHelpers::IsLiveSoftObjectReference(const TSoftObjectPtr<UOb
     if(SoftObjectReference.IsNull())
         return false;
 
-    TPersistentObjectPtr<FSoftObjectPath> persistObjPtr(SoftObjectReference.ToSoftObjectPath());
+    const TPersistentObjectPtr<FSoftObjectPath> persistObjPtr(SoftObjectReference.ToSoftObjectPath());
     return persistObjPtr.Get(false) != nullptr;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FString URyRuntimeObjectHelpers::SoftObjectToString(const TSoftObjectPtr<UObject>& SoftObjectReference)
+{
+    return SoftObjectReference.ToString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeObjectHelpers::IsSoftObjectPending(const TSoftObjectPtr<UObject>& SoftObjectReference)
+{
+    return SoftObjectReference.IsPending();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeObjectHelpers::IsSoftObjectNull(const TSoftObjectPtr<UObject>& SoftObjectReference)
+{
+    return SoftObjectReference.IsNull();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeObjectHelpers::IsSoftObjectValid(const TSoftObjectPtr<>& SoftObjectReference)
+{
+    return SoftObjectReference.IsValid();
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -104,7 +136,7 @@ UObject* URyRuntimeObjectHelpers::LoadObject(const FString& fullObjectPath)
     }
 #endif
 
-    while(UObjectRedirector* Redirector = Cast<UObjectRedirector>(LoadedObject))
+    while(const UObjectRedirector* Redirector = Cast<UObjectRedirector>(LoadedObject))
     {
         LoadedObject = Redirector->DestinationObject;
     }
@@ -136,7 +168,7 @@ struct FLoadAssetPriorityActionBase : FPendingLatentAction
 		Handle = StreamableManager.RequestAsyncLoad(SoftObjectPath, FStreamableDelegate(), Priority);
 	}
 
-	virtual ~FLoadAssetPriorityActionBase()
+	virtual ~FLoadAssetPriorityActionBase() override
 	{
 		if (Handle.IsValid())
 		{

@@ -49,6 +49,27 @@ TSoftObjectPtr<UWorld> URyRuntimeLevelHelpers::GetWorldSoftReference(UWorld* wor
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
+FString URyRuntimeLevelHelpers::GetWorldSoftReferencePath(const TSoftObjectPtr<UWorld>& worldRef)
+{
+    FString worldRefPath = worldRef.ToString();
+    if (!worldRefPath.IsEmpty())
+    {
+        FString worldPath;
+        FString worldName;
+        worldRefPath.Split("/", &worldPath, &worldName, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
+        if (worldName.StartsWith("UEDPIE_"))
+        {
+            worldName = worldName.Right(worldName.Len() - 9);
+            worldRefPath = FString::Printf(TEXT("%s/%s"), *worldPath, *worldName);
+        }
+    }
+
+    return worldRefPath;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
 ULevel* URyRuntimeLevelHelpers::GetActorLevel(const AActor* actorIn)
 {
     if(!actorIn)
