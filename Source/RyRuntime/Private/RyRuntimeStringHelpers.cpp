@@ -204,3 +204,11 @@ FText URyRuntimeStringHelpers::GetTextFromStringTableID(FName tableID, const FSt
 
     return FText::GetEmpty();
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FString URyRuntimeStringHelpers::Conv_Int64ToString(int64 InInt64)
+{
+    return FString::Printf(TEXT("%lld"), InInt64);
+}

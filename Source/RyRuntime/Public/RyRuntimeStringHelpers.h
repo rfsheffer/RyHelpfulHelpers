@@ -93,4 +93,8 @@ public:
     /// @return The text if it was found
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|Text", meta=(DisplayName="Get Text From String Table ID (Advanced)"))
     static FText GetTextFromStringTableID(FName tableID, const FString& key, bool& isValid);
+
+    /** Converts a int64 value to a string */
+    UFUNCTION(BlueprintPure, meta=(DisplayName = "ToString (Int64)", CompactNodeTitle = "->", BlueprintAutocast), Category="RyRuntime|String")
+    static FString Conv_Int64ToString(int64 InInt64);
 };
