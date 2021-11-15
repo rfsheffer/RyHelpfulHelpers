@@ -45,6 +45,7 @@ public class RyRuntime : ModuleRules
 				"ApplicationCore",
 				"Voice",
 				"EngineSettings",
+				"RHI",
             }
         );
         
