@@ -474,6 +474,10 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
 	static bool FileExistsInPlatformPackage(const FString& RelativePath);
+
+	/// Does this platform require cooked data?
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
+	static bool PlatformRequiresCookedData();
 };
 
 //---------------------------------------------------------------------------------------------------------------------

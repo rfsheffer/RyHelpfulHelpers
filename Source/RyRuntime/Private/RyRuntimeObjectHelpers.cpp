@@ -120,6 +120,14 @@ void URyRuntimeObjectHelpers::GetObjectsInPackage(UPackage* package, TArray<UObj
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
+bool URyRuntimeObjectHelpers::TryConvertFilenameToLongPackageName(const FString& InFilename, FString& OutPackageName, FString& OutFailureReason)
+{
+    return FPackageName::TryConvertFilenameToLongPackageName(InFilename, OutPackageName, &OutFailureReason);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
 UObject* URyRuntimeObjectHelpers::LoadObject(const FString& fullObjectPath)
 {
     UObject* LoadedObject = StaticLoadObject(UObject::StaticClass(), nullptr, *fullObjectPath, nullptr, LOAD_None, nullptr, true, nullptr);
@@ -316,6 +324,38 @@ void URyRuntimeObjectHelpers::LoadPackagePriority(UObject* WorldContextObject, c
         FLoadPackageAction* NewAction = new FLoadPackageAction(PackagePath, Priority, BlockOnLoad, OnLoaded, LatentInfo);
         LatentManager.AddNewAction(LatentInfo.CallbackTarget, LatentInfo.UUID, NewAction);
     }
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeObjectHelpers::RegisterMountPoint(const FString& RootPath, const FString& ContentPath)
+{
+    FPackageName::RegisterMountPoint(RootPath, ContentPath);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeObjectHelpers::UnRegisterMountPoint(const FString& RootPath, const FString& ContentPath)
+{
+    FPackageName::UnRegisterMountPoint(RootPath, ContentPath);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeObjectHelpers::MountPointExists(const FString& RootPath)
+{
+    return FPackageName::MountPointExists(RootPath);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FName URyRuntimeObjectHelpers::GetPackageMountPoint(const FString& InPackagePath, bool InWithoutSlashes)
+{
+    return FPackageName::GetPackageMountPoint(InPackagePath, InWithoutSlashes);
 }
 
 //---------------------------------------------------------------------------------------------------------------------

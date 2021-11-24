@@ -189,3 +189,11 @@ void URyRuntimePlatformHelpers::ClipboardPaste(FString& Dest)
 {
     FGenericPlatformApplicationMisc::ClipboardPaste(Dest);
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimePlatformHelpers::PlatformRequiresCookedData()
+{
+    return FPlatformProperties::RequiresCookedData();
+}

@@ -84,13 +84,25 @@ public:
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
     static void GetObjectsInPackage(UPackage* package, TArray<UObject*>& ObjectsOut);
 
-    // A call to see if a package asset is currently loaded and load that. If not loaded, tries to load the package asset.
-    // Package path is in this format: /Game/MyFolder/MyPackage.MyAsset
-    // Where /Game/ is the mounting point.
-    // Common mount points are:
-    // /Game/* : This is your projects primary content folder
-    // /Plugin/* : If a plugin has content the mounting point will be the name of the plugin
-    // /Engine/* : Content found in the engine
+	/** 
+	 * Tries to convert the supplied relative or absolute filename to a long package name/path starting with a root like /game
+	 * This works on both package names and directories, and it does not validate that it actually exists on disk.
+	 * 
+	 * @param InFilename Filename to convert.
+	 * @param OutPackageName The resulting long package name if the conversion was successful.
+	 * @param OutFailureReason Description of an error if the conversion failed.
+	 * @return Returns true if the supplied filename properly maps to one of the long package roots.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
+	static bool TryConvertFilenameToLongPackageName(const FString& InFilename, FString& OutPackageName, FString& OutFailureReason);
+
+    /// A call to see if a package asset is currently loaded and load that. If not loaded, tries to load the package asset.
+    /// Package path is in this format: /Game/MyFolder/MyPackage.MyAsset
+    /// Where /Game/ is the mounting point.
+    /// Common mount points are:
+    /// /Game/* : This is your projects primary content folder
+    /// /Plugin/* : If a plugin has content the mounting point will be the name of the plugin
+    /// /Engine/* : Content found in the engine
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
     static UObject* LoadObject(const FString& fullObjectPath);
 
@@ -104,6 +116,42 @@ public:
 	UFUNCTION(BlueprintCallable, meta = (Latent, LatentInfo = "LatentInfo", WorldContext = "WorldContextObject", BlueprintInternalUseOnly = "true"), Category = "RyRuntime|ObjectHelpers")
     static void LoadPackagePriority(UObject* WorldContextObject, const FString& PackagePath, const int32 Priority, const bool BlockOnLoad, FOnPackageLoaded OnLoaded, FLatentActionInfo LatentInfo);
 
+	/**
+	 * This will insert a mount point at the head of the search chain (so it can overlap an existing mount point and win).
+	 * This function can be used to mount a path to a simple mounting point name. ex:
+	 * ../../../MyProject/Plugins/MyDLC/Content to /MyDLC/
+	 *
+	 * @param RootPath Logical Root Path. ex: /MyDLC/
+	 * @param ContentPath Content Path on disk. ex: ../../../MyProject/Plugins/MyDLC/Content
+	 */
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
+	static void RegisterMountPoint(const FString& RootPath, const FString& ContentPath);
+
+	/**
+	 * This will remove a previously inserted mount point.
+	 *
+	 * @param RootPath Logical Root Path.
+	 * @param ContentPath Content Path on disk.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
+	static void UnRegisterMountPoint(const FString& RootPath, const FString& ContentPath);
+
+	/**
+	 * Returns whether the specific logical root path is a valid mount point.
+	 */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers")
+	static bool MountPointExists(const FString& RootPath);
+
+	/**
+	 * Get the mount point for a given package path
+	 * 
+	 * @param InPackagePath The package path to get the mount point for
+	 * @param InWithoutSlashes Optional parameters that keeps the slashes around the mount point if false
+	 * @return FName corresponding to the mount point, or Empty if invalid
+	 */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers")
+	static FName GetPackageMountPoint(const FString& InPackagePath, bool InWithoutSlashes = true);
+	
     // Return the parent class of a class
     UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers")
     static UClass* GetParentClass(UClass* Class);
