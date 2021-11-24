@@ -66,7 +66,8 @@ UCLASS()
 class RYRUNTIME_API URyRuntimeRenderingHelpers : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
-
+	
+public:
 	/// Returns the current shader platform.
 	/// Could be useful for cases where your game uses a couple of shading platforms and things look a bit different
 	/// per platform and you can use this to switch out graphical scenarios to compensate.

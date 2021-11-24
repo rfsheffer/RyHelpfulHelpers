@@ -15,7 +15,7 @@ UCLASS()
 class RYRUNTIME_API URyRuntimeWidgetHelpers : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
-
+public:
 	/**
 	 * Setup an input mode that allows only player input / player controller to respond to user input.
 	 * This version does not consume the mouse down event, and instead it is passed to player input processing

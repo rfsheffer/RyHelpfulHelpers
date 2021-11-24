@@ -53,7 +53,7 @@ UCLASS(meta=(BlueprintThreadSafe))
 class RYRUNTIME_API URyMathEasing : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
-
+public:
 	/**
 	 * Determine the current easing value of alpha (See https://easings.net/ for visual output examples)
 	 * @param easing - The easing to use

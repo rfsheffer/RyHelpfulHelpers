@@ -17,7 +17,7 @@ UCLASS()
 class RYRUNTIME_API URyRuntimeComponentHelpers : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
-	public:
+public:
 
 	// Takes an array of points and applies them to the spline by distributing them evenly across the spline.
 	// The spline component should be pre-populated.

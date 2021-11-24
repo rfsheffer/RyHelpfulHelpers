@@ -14,7 +14,7 @@ UCLASS()
 class RYRUNTIME_API URyRuntimePakHelpers : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
-
+public:
 	/**
 	 * Get a list of all pak files which have been successfully mounted
 	 */

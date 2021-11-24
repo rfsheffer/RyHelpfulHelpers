@@ -21,7 +21,7 @@ UCLASS()
 class RYRUNTIME_API URyRuntimeTextureHelpers : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
-
+public:
 	// Tries to update a textures resource and returns a Success result of the resource was updated and valid.
 	// Try to pass texture objects in which are valid and could have a resource associated or this function will fail by timing out after 20 seconds.
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|TextureHelpers", meta = (WorldContext = "WorldContextObject", Latent, LatentInfo = "LatentInfo", ExpandEnumAsExecs = "Result"))
