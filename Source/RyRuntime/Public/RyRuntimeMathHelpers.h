@@ -58,6 +58,36 @@ enum class ERyUnit : uint8
     Unspecified  UMETA(Hidden)
 };
 
+UENUM(BlueprintType)
+enum class ERyScreenAnchor : uint8
+{
+	TOP_LEFT,
+	TOP_MIDDLE,
+	TOP_RIGHT,
+	MIDDLE_LEFT,
+	MIDDLE,
+	MIDDLE_RIGHT,
+	BOTTOM_LEFT,
+	BOTTOM_MIDDLE,
+	BOTTOM_RIGHT,
+};
+
+UENUM(BlueprintType)
+enum class ERyXScreenAnchor : uint8
+{
+	LEFT,
+	MIDDLE,
+	RIGHT,
+};
+
+UENUM(BlueprintType)
+enum class ERyYScreenAnchor : uint8
+{
+	TOP,
+	MIDDLE,
+	BOTTOM,
+};
+
 //---------------------------------------------------------------------------------------------------------------------
 /**
   * Static Helper functions for mathematics.
@@ -188,6 +218,35 @@ public:
 	// With TheSize of the surface ex (800 x 600) and TheAngle from the center of the surface, what is the point on TheSize where TheAngle would hit?
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|Math|HUD")
 	static FVector2D FindEdgeOf2DSquare(const FVector2D &TheSize, const float TheAngle);
+
+	/**
+	 * Sizes a box (boxSize) to fit on the screen (screenSize) within constraint (fracOfScreen)
+	 * maintaining the boxes aspect ratio.
+	 * @param boxSize The size of the box to fit
+	 * @param screenSize The size of the screen to fit to
+	 * @param fracOfScreen The fraction of the screen the box can fit into (betweeen 0 and 1 on X and Y)
+	 * @return The new box size which fits within screenSizeFrac on screenSize and follows the size policy
+	 */
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|Math|HUD")
+	static FVector2D ResizeBoxToFitInScreenSpace(const FVector2D boxSize, const FVector2D screenSize, const FVector2D fracOfScreen);
+
+	/**
+	 * Positions a box to fit within a screen space and anchor to the area within the screen space
+	 * @param boxSize The size of the box to fit
+	 * @param screenSize The size of the screen to fit into
+	 * @param fracPosOnScreen The fractional location of the position on screen to fit within ([0, 0] == top left, [1, 1] == bottom right)
+	 * @param fracSizeOnScreen The fractional size of the box to allow the boxSize to fit into
+	 * @param anchorX How to anchor the box within the fracSizeOnScreen at fracPosOnScreen on the X
+	 * @param anchorY How to anchor the box within the fracSizeOnScreen at fracPosOnScreen on the Y
+	 * @param boxAnchorFrac When anchoring this is the fractional position in the box to anchor from. [0,0] == top left, [1, 1] == bottom right
+	 * @param boxPosOut The box position out
+	 * @param boxSizeOut The size of the box out
+	 */
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|Math|HUD")
+	static void PositionAndScaleBoxIntoScreenSpace(const FVector2D boxSize, const FVector2D screenSize,
+									  const FVector2D fracPosOnScreen, const FVector2D fracSizeOnScreen,
+									  const ERyXScreenAnchor anchorX, const ERyYScreenAnchor anchorY, const FVector2D boxAnchorFrac,
+									  FVector2D &boxPosOut, FVector2D &boxSizeOut);
 
     /** Bitwise AND (A & B) */
 	UFUNCTION(BlueprintPure, meta=(DisplayName = "Bitwise AND", CompactNodeTitle = "&", Keywords = "& and", CommutativeAssociativeBinaryOperator = "true"), Category="RyRuntime|Math|Byte")

@@ -243,3 +243,72 @@ FVector2D URyRuntimeMathHelpers::FindEdgeOf2DSquare(const FVector2D &TheSize, co
     // Return
     return (TheSize / 2.0f) + LocalPointRelativeToCenter;
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FVector2D URyRuntimeMathHelpers::ResizeBoxToFitInScreenSpace(const FVector2D boxSize, const FVector2D screenSize, const FVector2D fracOfScreen)
+{
+	FVector2D boxOut;
+	const FVector2D maxSize(screenSize.X * fracOfScreen.X, screenSize.Y * fracOfScreen.Y);
+	
+	// Constraint to X, scaling Y if needed
+	if(maxSize.X < boxSize.X)
+	{
+		boxOut.X = maxSize.X;
+		boxOut.Y = boxSize.Y * (maxSize.X / boxSize.X);
+	}
+	else
+	{
+		boxOut = boxSize;
+	}
+
+	// Constraint to Y, scaling X if needed
+	if(maxSize.Y < boxOut.Y)
+	{
+		boxOut.X *= maxSize.Y / boxOut.Y;
+		boxOut.Y = maxSize.Y;
+	}
+
+	return boxOut;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeMathHelpers::PositionAndScaleBoxIntoScreenSpace(const FVector2D boxSize, const FVector2D screenSize,
+															   const FVector2D fracPosOnScreen, const FVector2D fracSizeOnScreen,
+															   const ERyXScreenAnchor anchorX, const ERyYScreenAnchor anchorY, const FVector2D boxAnchorFrac,
+															   FVector2D& boxPosOut, FVector2D& boxSizeOut)
+{
+	boxSizeOut = ResizeBoxToFitInScreenSpace(boxSize, screenSize, fracSizeOnScreen);
+
+	const FVector2D areaOrigin(screenSize.X * fracPosOnScreen.X, screenSize.Y * fracPosOnScreen.Y);
+	const FVector2D areaSize(screenSize.X * fracSizeOnScreen.X, screenSize.Y * fracSizeOnScreen.Y);
+	
+	if(anchorX == ERyXScreenAnchor::LEFT)
+	{
+		boxPosOut.X = areaOrigin.X - boxSizeOut.X * boxAnchorFrac.X;
+	}
+	else if(anchorX == ERyXScreenAnchor::MIDDLE)
+	{
+		boxPosOut.X = areaOrigin.X + (areaSize.X / 2.0f - boxSizeOut.X * boxAnchorFrac.X);
+	}
+	else if(anchorX == ERyXScreenAnchor::RIGHT)
+	{
+		boxPosOut.X = areaOrigin.X + (areaSize.X - boxSizeOut.X * boxAnchorFrac.X);
+	}
+	
+	if(anchorY == ERyYScreenAnchor::TOP)
+	{
+		boxPosOut.Y = areaOrigin.Y - boxSizeOut.Y * boxAnchorFrac.Y;
+	}
+	else if(anchorY == ERyYScreenAnchor::MIDDLE)
+	{
+		boxPosOut.Y = areaOrigin.Y + (areaSize.Y / 2.0f - boxSizeOut.Y * boxAnchorFrac.Y);
+	}
+	else if(anchorY == ERyYScreenAnchor::BOTTOM)
+	{
+		boxPosOut.Y = areaOrigin.Y + (areaSize.Y - boxSizeOut.Y * boxAnchorFrac.Y);
+	}
+}
