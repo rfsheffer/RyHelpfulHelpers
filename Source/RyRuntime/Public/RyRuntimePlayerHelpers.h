@@ -4,7 +4,8 @@
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "Runtime/Engine/Classes/Camera/PlayerCameraManager.h"
+#include "Camera/PlayerCameraManager.h"
+#include "GameFramework/PlayerController.h"
 
 #include "RyRuntimePlayerHelpers.generated.h"
 

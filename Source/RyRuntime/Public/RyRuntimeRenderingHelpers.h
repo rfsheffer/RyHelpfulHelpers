@@ -58,6 +58,17 @@ enum class ERyShadingPath : uint8
 	Deferred,
 };
 
+UENUM()
+enum class ERyScreenShotMode : uint8
+{
+	/// Game window
+	Game,
+	/// Editor Active Window (Editor Only)
+	EditorActiveWindow,
+	/// Editor level viewport (Editor Only)
+	EditorLevelViewport,
+};
+
 //---------------------------------------------------------------------------------------------------------------------
 /**
   * Static Helper functions for rendering.
@@ -81,4 +92,12 @@ public:
 	/// Returns the current shading path
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|RenderingHelpers", meta = (WorldContext = "WorldContextObject"))
 	static ERyShadingPath GetShadingPath(UObject* WorldContextObject);
+
+	/// Takes a screenshot
+	/// @param requestedPathOut A file path (ex: D:\something\myimage.png) which will try to be used as the screenshots destination.
+	///						    If this path cannot be used an alternative will be chosen using alternative naming and put in pathOut.
+	/// @param screenshotMode What type of screenshot to take. 'Game' is the only mode which works for non-editor builds.
+	/// @param pathOut The chosen path to output to the screenshot to
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|RenderingHelpers")
+	static bool TakeScreenshot(const FString& requestedPathOut, const ERyScreenShotMode screenshotMode, FString& pathOut);
 };

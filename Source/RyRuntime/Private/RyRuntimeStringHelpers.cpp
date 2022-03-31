@@ -212,3 +212,11 @@ FString URyRuntimeStringHelpers::Conv_Int64ToString(int64 InInt64)
 {
     return FString::Printf(TEXT("%lld"), InInt64);
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FString URyRuntimeStringHelpers::CombineFilePaths(FString A, FString B)
+{
+    return FPaths::Combine(A, B);
+}

@@ -49,6 +49,11 @@ public class RyRuntime : ModuleRules
             }
         );
         
+        if (Target.Type == TargetRules.TargetType.Editor)
+        {
+	        PrivateDependencyModuleNames.Add("UnrealEd");
+        }
+        
         /* Add to plugins section for messing with getting some extra HMD info
         	"Plugins": [
 		{

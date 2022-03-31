@@ -97,4 +97,8 @@ public:
     /** Converts a int64 value to a string */
     UFUNCTION(BlueprintPure, meta=(DisplayName = "ToString (Int64)", CompactNodeTitle = "->", BlueprintAutocast), Category="RyRuntime|String")
     static FString Conv_Int64ToString(int64 InInt64);
+
+    /** Combines file paths */
+    UFUNCTION(BlueprintPure, meta=(CommutativeAssociativeBinaryOperator = "true"), Category="RyRuntime|String|FilePaths")
+    static FString CombineFilePaths(FString A, FString B);
 };

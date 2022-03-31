@@ -346,7 +346,7 @@ public:
 	static FString GetOSVersion();
 
 	/** Retrieves information about the total number of bytes and number of free bytes for the specified disk path. */
-	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers", DisplayName = "Get OS Version")
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
 	static bool GetDiskTotalAndFreeSpace(const FString& InPath, int64& TotalNumberOfBytes, int64& NumberOfFreeBytes);
 
 	/**
@@ -410,7 +410,7 @@ public:
 	*
 	* @return the battery level between 0 and 100.
 	*/
-	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers", DisplayName = "Get Time Zone ID")
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
 	static int32 GetBatteryLevel();
 
 	// Is the device is low power mode?
