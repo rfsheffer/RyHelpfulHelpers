@@ -92,12 +92,13 @@ public:
 	/// Returns the current shading path
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|RenderingHelpers", meta = (WorldContext = "WorldContextObject"))
 	static ERyShadingPath GetShadingPath(UObject* WorldContextObject);
-
-	/// Takes a screenshot
+	
+	/// Takes a screenshot and continues when finished (check outSuccess to know if a screenshot was taken)
 	/// @param requestedPathOut A file path (ex: D:\something\myimage.png) which will try to be used as the screenshots destination.
 	///						    If this path cannot be used an alternative will be chosen using alternative naming and put in pathOut.
 	/// @param screenshotMode What type of screenshot to take. 'Game' is the only mode which works for non-editor builds.
-	/// @param pathOut The chosen path to output to the screenshot to
-	UFUNCTION(BlueprintCallable, Category = "RyRuntime|RenderingHelpers")
-	static bool TakeScreenshot(const FString& requestedPathOut, const ERyScreenShotMode screenshotMode, FString& pathOut);
+	/// @param pathOut The path to the screenshot. Could be different than requestedPathOut if there was a pathing conflict.
+	/// @param outSuccess True if a screenshot was produced.
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|RenderingHelpers", meta = (Latent, LatentInfo = "LatentInfo", WorldContext = "WorldContextObject"))
+	static void TakeScreenshot(UObject* WorldContextObject, FLatentActionInfo LatentInfo, const FString& requestedPathOut, const ERyScreenShotMode screenshotMode, FString& pathOut, bool &outSuccess);
 };

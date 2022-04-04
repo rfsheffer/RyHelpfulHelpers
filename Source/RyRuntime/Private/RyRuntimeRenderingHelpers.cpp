@@ -2,7 +2,10 @@
 // MIT License. See LICENSE for details.
 
 #include "RyRuntimeRenderingHelpers.h"
+#include "RyRuntimeModule.h"
 #include "Core/Public/Misc/FileHelper.h"
+#include "HeadMountedDisplayFunctionLibrary.h"
+#include "HighResScreenshot.h"
 
 #if WITH_EDITOR
 	#include "Editor/EditorEngine.h"
@@ -136,88 +139,206 @@ ERyShadingPath URyRuntimeRenderingHelpers::GetShadingPath(UObject* WorldContextO
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-bool URyRuntimeRenderingHelpers::TakeScreenshot(const FString& requestedPathOut, const ERyScreenShotMode screenshotMode, FString& pathOut)
+struct FTakeScreenshotAction : FPendingLatentAction
 {
-	FString path;
-	FString fileName;
-	FString ext;
-	FPaths::Split(requestedPathOut, path, fileName, ext);
-	if(!IFileManager::Get().MakeDirectory(*path, true))
-	{
-		return false;
-	}
+	FName ExecutionFunction;
+	int32 OutputLink;
+	FWeakObjectPtr CallbackTarget;
+	bool InProgress;
+	bool &OutSuccess;
+	FString& PathOut;
+	float StartTime;
+	UWorld* World;
+	uint32 PreviousScreenshotX;
+	uint32 PreviousScreenshotY;
 
-	const FString filePathToTest = FPaths::Combine(path, fileName);
-	if(FPaths::FileExists(filePathToTest + TEXT(".png")))
+	FTakeScreenshotAction(const FString& requestedPathOut, const ERyScreenShotMode screenshotMode, FString& pathOut, bool &outSuccess, UWorld* world, const FLatentActionInfo& InLatentInfo)
+		: ExecutionFunction(InLatentInfo.ExecutionFunction)
+		, OutputLink(InLatentInfo.Linkage)
+		, CallbackTarget(InLatentInfo.CallbackTarget)
+		, OutSuccess(outSuccess)
+		, PathOut(pathOut)
+		, World(world)
 	{
-		FFileHelper::GenerateNextBitmapFilename(filePathToTest, TEXT("png"), pathOut);
-	}
-	else
-	{
-		pathOut = filePathToTest + TEXT(".png");
-	}
-	
-	switch (screenshotMode)
-	{
-	case ERyScreenShotMode::Game:
+		InProgress = false;
+		OutSuccess = false;
+		check(World);
+
+		PreviousScreenshotX = GScreenshotResolutionX;
+		PreviousScreenshotY = GScreenshotResolutionX;
+
+		StartTime = World->GetTimeSeconds();
+		
+		FString path;
+		FString fileName;
+		FString ext;
+		FPaths::Split(requestedPathOut, path, fileName, ext);
+		if(!IFileManager::Get().MakeDirectory(*path, true))
 		{
-			FScreenshotRequest::RequestScreenshot(pathOut, false, false);
-			GScreenshotResolutionX = 0;
-			GScreenshotResolutionY = 0;
-
-#if WITH_EDITOR
-			FLevelEditorModule& LevelEditorModule = FModuleManager::GetModuleChecked<FLevelEditorModule>(TEXT("LevelEditor"));
-			const TSharedPtr<IAssetViewport> ActiveAssetViewport = LevelEditorModule.GetFirstActiveViewport();
-			if (ActiveAssetViewport.IsValid() && FSlateApplication::Get().FindWidgetWindow(ActiveAssetViewport->AsWidget()).IsValid())
-			{
-				GScreenshotResolutionX = ActiveAssetViewport->GetSharedActiveViewport()->GetSizeXY().X;
-				GScreenshotResolutionY = ActiveAssetViewport->GetSharedActiveViewport()->GetSizeXY().Y;
-			}
-#endif
+			return;
 		}
-		return true;
-	case ERyScreenShotMode::EditorActiveWindow:
-#if WITH_EDITOR
+
+		const FString filePathToTest = FPaths::Combine(path, fileName);
+		if(FPaths::FileExists(filePathToTest + TEXT(".png")))
 		{
-			const TSharedRef<SWidget> WindowRef = FSlateApplication::Get().GetActiveTopLevelWindow().ToSharedRef();
-
-			TArray<FColor> ImageData;
-			FIntVector ImageSize;
-
-			if (FSlateApplication::Get().TakeScreenshot(WindowRef, ImageData, ImageSize))
+			FFileHelper::GenerateNextBitmapFilename(filePathToTest, TEXT("png"), PathOut);
+		}
+		else
+		{
+			PathOut = filePathToTest + TEXT(".png");
+		}
+		
+		switch (screenshotMode)
+		{
+		case ERyScreenShotMode::Game:
 			{
-				if (IFileManager::Get().MakeDirectory(*FPaths::ScreenShotDir(), true))
+				if(UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled() && UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayConnected())
 				{
-					TArray<uint8> CompressedBitmap;
-					FImageUtils::CompressImageArray(ImageSize.X, ImageSize.Y, ImageData, CompressedBitmap);
-					if (FFileHelper::SaveArrayToFile(CompressedBitmap, *pathOut))
+					// In VR RequestScreenshot doesn't produce a proper image (either cropped or desaturated).
+					// We use the highresscreenshot version to get around this.
+					UGameViewportClient* GameViewportClient = GEngine->GameViewport;
+					if(GameViewportClient && GameViewportClient->Viewport)
 					{
-						return true;
+						FHighResScreenshotConfig& screenShot = GetHighResScreenshotConfig();
+						screenShot.SetFilename(PathOut);
+
+						// Set to 0 which internally means "choose the best resolution"
+						GScreenshotResolutionX = 0;
+						GScreenshotResolutionY = 0;
+						
+						GameViewportClient->Viewport->TakeHighResScreenShot();
+					}
+					else
+					{
+						return;
+					}
+				}
+				else
+				{
+					FScreenshotRequest::RequestScreenshot(PathOut, false, false);
+					// Set to 0 which internally means "choose the best resolution"
+					GScreenshotResolutionX = 0;
+					GScreenshotResolutionY = 0;
+#if WITH_EDITOR
+					FLevelEditorModule& LevelEditorModule = FModuleManager::GetModuleChecked<FLevelEditorModule>(TEXT("LevelEditor"));
+					const TSharedPtr<IAssetViewport> ActiveAssetViewport = LevelEditorModule.GetFirstActiveViewport();
+					if (ActiveAssetViewport.IsValid() && FSlateApplication::Get().FindWidgetWindow(ActiveAssetViewport->AsWidget()).IsValid())
+					{
+						GScreenshotResolutionX = ActiveAssetViewport->GetSharedActiveViewport()->GetSizeXY().X;
+						GScreenshotResolutionY = ActiveAssetViewport->GetSharedActiveViewport()->GetSizeXY().Y;
+					}
+#endif
+				}
+			}
+			InProgress = true;
+			return;
+		case ERyScreenShotMode::EditorActiveWindow:
+#if WITH_EDITOR
+			{
+				const TSharedRef<SWidget> WindowRef = FSlateApplication::Get().GetActiveTopLevelWindow().ToSharedRef();
+
+				TArray<FColor> ImageData;
+				FIntVector ImageSize;
+
+				if (FSlateApplication::Get().TakeScreenshot(WindowRef, ImageData, ImageSize))
+				{
+					if (IFileManager::Get().MakeDirectory(*FPaths::ScreenShotDir(), true))
+					{
+						TArray<uint8> CompressedBitmap;
+						FImageUtils::CompressImageArray(ImageSize.X, ImageSize.Y, ImageData, CompressedBitmap);
+						if (FFileHelper::SaveArrayToFile(CompressedBitmap, *PathOut))
+						{
+							InProgress = true;
+							return;
+						}
 					}
 				}
 			}
-		}
-		return true;
+			InProgress = true;
+			return;
 #else
-		break;
+			break;
 #endif
-	case ERyScreenShotMode::EditorLevelViewport:
+		case ERyScreenShotMode::EditorLevelViewport:
 #if WITH_EDITOR
-		{
-			FScreenshotRequest::RequestScreenshot(pathOut, true, false);
-			GScreenshotResolutionX = 0;
-			GScreenshotResolutionY = 0;
-
-			if (GEditor != nullptr)
 			{
-				GEditor->RedrawLevelEditingViewports();
+				FScreenshotRequest::RequestScreenshot(PathOut, true, false);
+				// Set to 0 which internally means "choose the best resolution"
+				GScreenshotResolutionX = 0;
+				GScreenshotResolutionY = 0;
+
+				if (GEditor != nullptr)
+				{
+					GEditor->RedrawLevelEditingViewports();
+				}
 			}
-		}
-		return true;
+			InProgress = true;
+			return;
 #else
-		break;
+			break;
 #endif
+		}
 	}
 
-	return false;
+	virtual ~FTakeScreenshotAction() override
+	{
+		
+	}
+
+	virtual void UpdateOperation(FLatentResponse& Response) override
+	{
+		bool bFinished = !InProgress;
+		if(InProgress)
+		{
+			bFinished = FPaths::FileExists(PathOut);
+			if(!bFinished)
+			{
+				// Timeout
+				check(World);
+				if(StartTime + 2.0f <= World->GetTimeSeconds())
+				{
+					bFinished = true;
+				}
+			}
+			else
+			{
+				OutSuccess = true;
+			}
+		}
+		if(bFinished)
+		{
+			GScreenshotResolutionX = PreviousScreenshotX;
+			GScreenshotResolutionX = PreviousScreenshotY;
+		}
+		Response.FinishAndTriggerIf(bFinished, ExecutionFunction, OutputLink, CallbackTarget);
+	}
+
+#if WITH_EDITOR
+	virtual FString GetDescription() const override
+	{
+		return FString::Printf(TEXT("Pending screenshot to: %s"), *PathOut);
+	}
+#endif
+};
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeRenderingHelpers::TakeScreenshot(UObject* WorldContextObject, FLatentActionInfo LatentInfo, const FString& requestedPathOut, const ERyScreenShotMode screenshotMode, FString& pathOut, bool &outSuccess)
+{
+
+	if (UWorld* world = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		FLatentActionManager& latentManager = world->GetLatentActionManager();
+		if (latentManager.FindExistingAction<FTakeScreenshotAction>(LatentInfo.CallbackTarget, LatentInfo.UUID) == nullptr)
+		{
+			// We always spawn a new load even if this node already queued one, the outside node handles this case
+			FTakeScreenshotAction* newAction = new FTakeScreenshotAction(requestedPathOut, screenshotMode, pathOut, outSuccess, world, LatentInfo);
+			latentManager.AddNewAction(LatentInfo.CallbackTarget, LatentInfo.UUID, newAction);
+		}
+		else
+		{
+			UE_LOG(LogRyRuntime, Warning, TEXT("TakeScreenshot not executed. The previous action hasn't finished yet."));
+		}
+	}
 }
