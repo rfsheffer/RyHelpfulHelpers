@@ -2,6 +2,7 @@
 // MIT License. See LICENSE for details.
 
 #include "RyRuntimeLogHelpers.h"
+#include "RyRuntimeModule.h"
 
 // Logging Includes
 #include "Logging/LogMacros.h"
@@ -11,6 +12,8 @@
 #include "Engine/LocalPlayer.h"
 #include "Engine/Console.h"
 #include "Misc/ConfigCacheIni.h"
+#include "Misc/FileHelper.h"
+#include "GenericPlatform/GenericPlatformOutputDevices.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
@@ -68,8 +71,51 @@ void URyRuntimeLogHelpers::PrintLogString(UObject* WorldContextObject, const FSt
         }
         else
         {
-            UE_LOG(LogBlueprint, VeryVerbose, TEXT("Screen messages disabled (!GAreScreenMessagesEnabled).  Cannot print to screen."));
+            UE_LOG(LogRyRuntime, VeryVerbose, TEXT("Screen messages disabled (!GAreScreenMessagesEnabled).  Cannot print to screen."));
         }
     }
 #endif // !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeLogHelpers::CopyCurrentLogFile(const FString& destLogFileName, FString& outLogFileName)
+{
+    if(FGenericPlatformOutputDevices::GetLog()->IsMemoryOnly())
+    {
+        UE_LOG(LogRyRuntime, Warning, TEXT("CopyCurrentLogFile: Failed because this platform is memory only logging!"));
+        return false;
+    }
+    FString path;
+    FString fileName;
+    FString ext;
+    FPaths::Split(destLogFileName, path, fileName, ext);
+    if(!IFileManager::Get().MakeDirectory(*path, true))
+    {
+        UE_LOG(LogRyRuntime, Warning, TEXT("CopyCurrentLogFile: Unable to create directory for path '%s'"), *path);
+        return false;
+    }
+
+    if(ext.IsEmpty())
+    {
+        ext = TEXT("log");
+    }
+
+    const FString filePathToTest = FPaths::Combine(path, fileName);
+    outLogFileName = FString::Printf(TEXT("%s.%s"), *filePathToTest, *ext);
+    if(FPaths::FileExists(outLogFileName))
+    {
+        FFileHelper::GenerateNextBitmapFilename(filePathToTest, ext, outLogFileName);
+    }
+    
+    const FString logSrcAbsolute = FGenericPlatformOutputDevices::GetAbsoluteLogFilename();
+
+    // Flush out the log
+    GLog->Flush();
+
+    // Copy log
+    return IFileManager::Get().Copy(*outLogFileName, *logSrcAbsolute,
+                                    true, false, false, nullptr,
+                                    FILEREAD_AllowWrite, FILEWRITE_AllowRead) == COPY_OK;
 }

@@ -56,8 +56,14 @@ class RYRUNTIME_API URyRuntimeLogHelpers : public UBlueprintFunctionLibrary
     GENERATED_BODY()
 public:
 
-    // Prints a log string to the console and screen depending on request
+    /// Prints a log string to the console and screen depending on request
     UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContextObject", CallableWithoutWorldContext, Keywords = "log print", AdvancedDisplay = "4", DevelopmentOnly), Category = "RyRuntime|LogHelpers")
 	static void PrintLogString(UObject* WorldContextObject, const FString& InString, const FString& CategoryName, ERyRuntimeLogVerbosity verbosity = ERyRuntimeLogVerbosity::Log, 
                                bool PrintToScreen = false, bool PrintToLog = true, FLinearColor TextColor = FLinearColor(0.0, 0.66, 1.0), const float Duration = 0.0f);
+
+	/// Copies the current log to a destination file
+	/// If the destLogFileName is unusable because of conflict, a better choice will try to be determined.
+	/// If the copy is successful, the function will return true and outLogFileName will contain the path to your output log.
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|LogHelpers")
+	static bool CopyCurrentLogFile(const FString& destLogFileName, FString& outLogFileName);
 };
