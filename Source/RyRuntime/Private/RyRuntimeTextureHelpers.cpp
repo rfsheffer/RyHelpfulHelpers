@@ -1,4 +1,4 @@
-﻿// Copyright 2020-2021 Sheffer Online Services.
+﻿// Copyright 2020-2022 Sheffer Online Services.
 // MIT License. See LICENSE for details.
 
 #include "RyRuntimeTextureHelpers.h"
@@ -20,7 +20,11 @@ public:
         , Result(&Mode)
 		, TextureIn(Texture)
 	{
+#if ENGINE_MAJOR_VERSION >= 5
+		if(Texture && Texture->GetResource())
+#else
 		if(Texture && Texture->Resource)
+#endif
 		{
 			Texture->UpdateResource();
 		}
@@ -28,13 +32,21 @@ public:
 
 	virtual void UpdateOperation(FLatentResponse& Response) override
 	{
+#if ENGINE_MAJOR_VERSION >= 5
+		if(Response.ElapsedTime() > 20.0f || !TextureIn.IsValid(false) || !TextureIn->GetResource())
+#else
 		if(Response.ElapsedTime() > 20.0f || !TextureIn.IsValid(false) || !TextureIn->Resource)
+#endif
 		{
 			*Result = ERyTextureResourceResult::Failure;
 			Response.FinishAndTriggerIf(true, ExecutionFunction, OutputLink, CallbackTarget);
 			return;
 		}
+#if ENGINE_MAJOR_VERSION >= 5
+		if (TextureIn->GetResource() && TextureIn->GetResource()->TextureRHI)
+#else
 		if (TextureIn->Resource && TextureIn->Resource->TextureRHI)
+#endif
 		{
 			*Result = ERyTextureResourceResult::Success;
 			Response.FinishAndTriggerIf(true, ExecutionFunction, OutputLink, CallbackTarget);

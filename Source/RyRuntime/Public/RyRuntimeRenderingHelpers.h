@@ -1,4 +1,4 @@
-﻿// Copyright 2020-2021 Sheffer Online Services.
+﻿// Copyright 2020-2022 Sheffer Online Services.
 // MIT License. See LICENSE for details.
 
 #pragma once
@@ -17,17 +17,25 @@ enum class ERyShaderPlatform : uint8
 	SP_OPENGL_PCES3_1,
 	SP_METAL_SM5,
 	SP_VULKAN_PCES3_1,
+#if ENGINE_MAJOR_VERSION < 5
 	SP_METAL_SM5_NOTESS,
+#endif
 	SP_VULKAN_SM5,
 	SP_VULKAN_ES3_1_ANDROID,
 	SP_METAL_MACES3_1,
 	SP_OPENGL_ES3_1_ANDROID,
 	SP_METAL_MRT_MAC,
+#if ENGINE_MAJOR_VERSION < 5
 	SP_VULKAN_SM5_LUMIN,
 	SP_VULKAN_ES3_1_LUMIN,
+#endif
 	SP_METAL_TVOS,
 	SP_METAL_MRT_TVOS,
 	SP_VULKAN_SM5_ANDROID,
+#if ENGINE_MAJOR_VERSION >= 5
+	SP_PCD3D_SM6,
+	SP_D3D_ES3_1_HOLOLENS,
+#endif
 };
 
 UENUM(Blueprintable)

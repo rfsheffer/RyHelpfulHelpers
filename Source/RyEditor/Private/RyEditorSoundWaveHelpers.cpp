@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Sheffer Online Services.
+// Copyright 2020-2022 Sheffer Online Services.
 // MIT License. See LICENSE for details.
 
 #include "RyEditorSoundWaveHelpers.h"
@@ -9,10 +9,14 @@
 */
 FString URyEditorSoundWaveHelpers::GetSpokenText(USoundWave* soundWave)
 {
+#if ENGINE_MAJOR_VERSION < 5
     if(!soundWave)
         return TEXT("");
 
     return soundWave->SpokenText;
+#else
+    return TEXT("");
+#endif
 }
 
 //---------------------------------------------------------------------------------------------------------------------

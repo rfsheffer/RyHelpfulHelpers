@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Sheffer Online Services.
+// Copyright 2020-2022 Sheffer Online Services.
 // MIT License. See LICENSE for details.
 
 #include "RyEditorStaticMeshHelpers.h"
@@ -20,7 +20,7 @@
 
 void URyEditorStaticMeshHelpers::SetCollisionTraceFlag(class UStaticMesh* StaticMesh, TEnumAsByte<enum ECollisionTraceFlag> collisionTraceFlag)
 {
-#if ENGINE_MINOR_VERSION >= 27
+#if ENGINE_MAJOR_VERSION == 5 || ENGINE_MINOR_VERSION >= 27
     if(StaticMesh && StaticMesh->GetBodySetup())
 #else
     if(StaticMesh && StaticMesh->BodySetup)
@@ -34,7 +34,7 @@ void URyEditorStaticMeshHelpers::SetCollisionTraceFlag(class UStaticMesh* Static
             bStaticMeshIsEdited = true;
         }
         
-#if ENGINE_MINOR_VERSION >= 27
+#if ENGINE_MAJOR_VERSION == 5 || ENGINE_MINOR_VERSION >= 27
         StaticMesh->GetBodySetup()->CollisionTraceFlag = collisionTraceFlag;
         StaticMesh->GetBodySetup()->Modify();
 #else

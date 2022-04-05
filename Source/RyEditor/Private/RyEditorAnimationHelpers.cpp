@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Sheffer Online Services.
+// Copyright 2020-2022 Sheffer Online Services.
 // MIT License. See LICENSE for details.
 
 #include "RyEditorAnimationHelpers.h"
@@ -49,8 +49,8 @@ UAnimMontage* URyEditorAnimationHelpers::CreateMontageOfSequences(const TArray<U
     if(!skel || basePackagePath.IsEmpty())
         return nullptr;
 
-    FString assetName = MontageName.ToString() + TEXT("_Montage");
-    FString assetPackagePath = FString::Printf(TEXT("%s/%s"), *basePackagePath, *assetName);
+    const FString assetName = MontageName.ToString() + TEXT("_Montage");
+    const FString assetPackagePath = FString::Printf(TEXT("%s/%s"), *basePackagePath, *assetName);
 
     UPackage* assetPackage = URyRuntimeObjectHelpers::FindOrLoadPackage(*assetPackagePath);
     UAnimMontage* montage = nullptr;
@@ -61,7 +61,7 @@ UAnimMontage* URyEditorAnimationHelpers::CreateMontageOfSequences(const TArray<U
     }
     else
     {
-#if ENGINE_MINOR_VERSION >= 26
+#if ENGINE_MAJOR_VERSION == 5 || ENGINE_MINOR_VERSION >= 26
         assetPackage = CreatePackage(*assetPackagePath);
 #else
         assetPackage = CreatePackage(nullptr, *assetPackagePath);
@@ -99,19 +99,29 @@ UAnimMontage* URyEditorAnimationHelpers::CreateMontageOfSequences(const TArray<U
         newSegment.AnimReference = sequence;
         newSegment.StartPos = curTime;
         newSegment.AnimStartTime = 0.0f;
+#if ENGINE_MAJOR_VERSION >= 5
+        newSegment.AnimEndTime = sequence->GetPlayLength();
+#else
         newSegment.AnimEndTime = sequence->SequenceLength;
+#endif
         newSegment.AnimPlayRate = 1.0f;
         newSegment.LoopingCount = 1;
         montage->SlotAnimTracks[0].AnimTrack.AnimSegments.Add(newSegment);
 
         // Add the section
-        int32 sectionIndex = montage->AddAnimCompositeSection(sequence->GetFName(), curTime);
+        const int32 sectionIndex = montage->AddAnimCompositeSection(sequence->GetFName(), curTime);
         montage->CompositeSections[sectionIndex].ChangeLinkMethod(EAnimLinkMethod::Relative);
 
+#if ENGINE_MAJOR_VERSION >= 5
+        curTime += sequence->GetPlayLength();
+#else
         curTime += sequence->SequenceLength;
+#endif
     }
-
+    
+PRAGMA_DISABLE_DEPRECATION_WARNINGS
     montage->SequenceLength = curTime;
+PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
     montage->SetSkeleton(skel);
 
@@ -140,9 +150,13 @@ void URyEditorAnimationHelpers::CreateMontageSectionsFromSegments(UAnimMontage* 
         FAnimSegment& segment = MontageIn->SlotAnimTracks[0].AnimTrack.AnimSegments[segIndex];
         if(segment.AnimReference)
         {
-            int32 sectionIndex = MontageIn->AddAnimCompositeSection(segment.AnimReference->GetFName(), curTime);
+            const int32 sectionIndex = MontageIn->AddAnimCompositeSection(segment.AnimReference->GetFName(), curTime);
             MontageIn->CompositeSections[sectionIndex].ChangeLinkMethod(EAnimLinkMethod::Relative);
+#if ENGINE_MAJOR_VERSION >= 5
+            curTime += segment.AnimReference->GetPlayLength();
+#else
             curTime += segment.AnimReference->SequenceLength;
+#endif
         }
     }
 

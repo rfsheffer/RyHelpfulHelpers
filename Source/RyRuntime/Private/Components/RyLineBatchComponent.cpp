@@ -1,4 +1,4 @@
-﻿// Copyright 2020-2021 Sheffer Online Services.
+﻿// Copyright 2020-2022 Sheffer Online Services.
 // MIT License. See LICENSE for details.
 
 #include "Components/RyLineBatchComponent.h"
@@ -358,8 +358,15 @@ void URyLineBatchComponent::AddPlane(const FPlane& PlaneCoordinates, const FVect
 	Indices[0] = 0; Indices[1] = 2; Indices[2] = 1;
 	Indices[3] = 1; Indices[4] = 2; Indices[5] = 3;
 
+	FColor colorIn;
+#if ENGINE_MAJOR_VERSION >= 5
+	colorIn = PlaneColor.QuantizeRound();
+#else
+	colorIn = PlaneColor.Quantize();
+#endif
+	
 	// plane quad
-	DrawMesh(Verts, Indices, PlaneColor.Quantize(), static_cast<uint8>(DepthPriority), SanitizeLifetime(LifeTime));
+	DrawMesh(Verts, Indices, colorIn, static_cast<uint8>(DepthPriority), SanitizeLifetime(LifeTime));
 
 	// arrow indicating normal
 	RyDrawDebugDirectionalArrow(ClosestPtOnPlane, ClosestPtOnPlane + PlaneCoordinates * 16.f, 8.f, FColor::White, SanitizeLifetime(LifeTime), static_cast<uint8>(DepthPriority), 0.0f);

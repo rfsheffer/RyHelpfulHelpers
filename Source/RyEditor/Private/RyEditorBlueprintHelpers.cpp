@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Sheffer Online Services.
+// Copyright 2020-2022 Sheffer Online Services.
 // MIT License. See LICENSE for details.
 
 #include "RyEditorBlueprintHelpers.h"
@@ -62,7 +62,7 @@ UBlueprint* URyEditorBlueprintHelpers::CreateBlueprint(const FString& packagePat
         return nullptr;
     }
     
-#if ENGINE_MINOR_VERSION >= 26
+#if ENGINE_MAJOR_VERSION == 5 || ENGINE_MINOR_VERSION >= 26
     package = CreatePackage(*packageName);
 #else
     package = CreatePackage(nullptr, *packageName);
@@ -166,7 +166,7 @@ void URyEditorBlueprintHelpers::AddComponentsToBlueprint(UBlueprint* blueprint, 
     {
         return;
     }
-#if ENGINE_MINOR_VERSION >= 26
+#if ENGINE_MAJOR_VERSION == 5 || ENGINE_MINOR_VERSION >= 26
     FKismetEditorUtilities::FAddComponentsToBlueprintParams Params;
     Params.HarvestMode = (bHarvesting ? FKismetEditorUtilities::EAddComponentToBPHarvestMode::Harvest_UseComponentName : 
                                         FKismetEditorUtilities::EAddComponentToBPHarvestMode::None);

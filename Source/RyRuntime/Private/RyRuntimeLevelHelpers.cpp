@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Sheffer Online Services.
+// Copyright 2020-2022 Sheffer Online Services.
 // MIT License. See LICENSE for details.
 
 #include "RyRuntimeLevelHelpers.h"
@@ -77,7 +77,13 @@ ULevel* URyRuntimeLevelHelpers::GetActorLevel(const AActor* actorIn)
         UE_LOG(LogRyRuntime, Warning, TEXT("URyRuntimeLevelHelpers::GetActorLevel called with invalid actorIn!"));
         return nullptr;
     }
-    if(!actorIn->IsValidLowLevelFast(true) || actorIn->IsPendingKill())
+    
+    if(!actorIn->IsValidLowLevelFast(true) ||
+#if ENGINE_MAJOR_VERSION >= 5
+        !IsValid(actorIn))
+#else
+        actorIn->IsPendingKill())
+#endif
     {
         UE_LOG(LogRyRuntime, Warning, TEXT("URyRuntimeLevelHelpers::GetActorLevel called with actorIn that is pending kill!"));
         return nullptr;

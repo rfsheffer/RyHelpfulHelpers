@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Sheffer Online Services.
+// Copyright 2020-2022 Sheffer Online Services.
 // MIT License. See LICENSE for details.
 
 #pragma once
@@ -35,9 +35,10 @@ class RYEDITOR_API URyEditorSoundWaveHelpers : public UBlueprintFunctionLibrary
 {
     GENERATED_BODY()
 public:
-
+    
     /** A localized version of the text that is actually spoken phonetically in the audio. */
-    UFUNCTION(BlueprintPure, CallInEditor, Category = "RyEditor|SoundWaveHelpers")
+    UE_DEPRECATED(5.0, "SpokenText has been removed in UE5.")
+    UFUNCTION(BlueprintPure, CallInEditor, Category = "RyEditor|SoundWaveHelpers", meta = (DeprecatedFunction, DeprecationMessage = "SpokenText has been removed in UE5."))
     static FString GetSpokenText(class USoundWave* soundWave);
 
     /** Override the current subtitles in a SoundWave asset */

@@ -1,4 +1,4 @@
-﻿// Copyright 2020-2021 Sheffer Online Services.
+﻿// Copyright 2020-2022 Sheffer Online Services.
 // MIT License. See LICENSE for details.
 
 #include "RyRuntimeRenderingHelpers.h"
@@ -50,8 +50,10 @@ ERyShaderPlatform URyRuntimeRenderingHelpers::GetShaderPlatform(UObject* WorldCo
 		return ERyShaderPlatform::SP_METAL_SM5;
 	case SP_VULKAN_PCES3_1:
 		return ERyShaderPlatform::SP_VULKAN_PCES3_1;
+#if ENGINE_MAJOR_VERSION < 5
 	case SP_METAL_SM5_NOTESS:
 		return ERyShaderPlatform::SP_METAL_SM5_NOTESS;
+#endif
 	case SP_VULKAN_SM5:
 		return ERyShaderPlatform::SP_VULKAN_SM5;
 	case SP_VULKAN_ES3_1_ANDROID:
@@ -62,16 +64,24 @@ ERyShaderPlatform URyRuntimeRenderingHelpers::GetShaderPlatform(UObject* WorldCo
 		return ERyShaderPlatform::SP_OPENGL_ES3_1_ANDROID;
 	case SP_METAL_MRT_MAC:
 		return ERyShaderPlatform::SP_METAL_MRT_MAC;
+#if ENGINE_MAJOR_VERSION < 5
 	case SP_VULKAN_SM5_LUMIN:
 		return ERyShaderPlatform::SP_VULKAN_SM5_LUMIN;
 	case SP_VULKAN_ES3_1_LUMIN:
 		return ERyShaderPlatform::SP_VULKAN_ES3_1_LUMIN;
+#endif
 	case SP_METAL_TVOS:
 		return ERyShaderPlatform::SP_METAL_TVOS;
 	case SP_METAL_MRT_TVOS:
 		return ERyShaderPlatform::SP_METAL_MRT_TVOS;
 	case SP_VULKAN_SM5_ANDROID:
 		return ERyShaderPlatform::SP_VULKAN_SM5_ANDROID;
+#if ENGINE_MAJOR_VERSION >= 5
+	case SP_PCD3D_SM6:
+		return ERyShaderPlatform::SP_PCD3D_SM6;
+	case SP_D3D_ES3_1_HOLOLENS:
+		return ERyShaderPlatform::SP_D3D_ES3_1_HOLOLENS;
+#endif
 	default: ;
 	}
 

@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Sheffer Online Services.
+// Copyright 2020-2022 Sheffer Online Services.
 // MIT License. See LICENSE for details.
 
 #include "RyRuntimeAnimationHelpers.h"
@@ -60,7 +60,9 @@ UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageFromMontage(UAnimM
     NewMontage->Notifies = MontageIn->Notifies;
 
     // Other important stuff
+PRAGMA_DISABLE_DEPRECATION_WARNINGS
     NewMontage->SequenceLength = MontageIn->SequenceLength;
+PRAGMA_ENABLE_DEPRECATION_WARNINGS
     NewMontage->RateScale = MontageIn->RateScale;
 
     if(OverrideBlendIn != -1.0f)
@@ -201,7 +203,11 @@ UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageOfSequences(const 
         animSegment.AnimReference = sequence;
         animSegment.StartPos = curTime;
         animSegment.AnimStartTime = 0.0f;
+#if ENGINE_MAJOR_VERSION >= 5
+        animSegment.AnimEndTime = sequence->GetPlayLength();
+#else
         animSegment.AnimEndTime = sequence->SequenceLength;
+#endif
         animSegment.AnimPlayRate = 1.0f;
         if(LoopTimes.IsValidIndex(sequenceIndex))
         {
@@ -221,7 +227,11 @@ UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageOfSequences(const 
             NewMontage->CompositeSections[sectionIndex].ChangeLinkMethod(EAnimLinkMethod::Relative);
         }
 
+#if ENGINE_MAJOR_VERSION >= 5
+        curTime += sequence->GetPlayLength() * animSegment.LoopingCount;
+#else
         curTime += sequence->SequenceLength * animSegment.LoopingCount;
+#endif
     }
 
     NewMontage->BlendIn.SetBlendTime(BlendIn);
@@ -229,7 +239,9 @@ UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageOfSequences(const 
     NewMontage->BlendOutTriggerTime = BlendOutTriggerTime;
     NewMontage->bEnableAutoBlendOut = EnableAutoBlendOut;
 
+PRAGMA_DISABLE_DEPRECATION_WARNINGS
     NewMontage->SequenceLength = curTime;
+PRAGMA_ENABLE_DEPRECATION_WARNINGS
     NewMontage->RateScale = 1.0f;
 
     return NewMontage;
@@ -268,7 +280,7 @@ FName URyRuntimeAnimationHelpers::GetMontageSectionNameFromPosition(class UAnimM
     if(!MontageIn)
         return NAME_None;
 
-    int32 SectionID = MontageIn->GetSectionIndexFromPosition(Position);
+    const int32 SectionID = MontageIn->GetSectionIndexFromPosition(Position);
     if(SectionID == INDEX_NONE)
         return NAME_None;
 
@@ -283,7 +295,7 @@ void URyRuntimeAnimationHelpers::GetMontageSectionStartAndEndTime(class UAnimMon
     if(!MontageIn)
         return;
 
-    int32 SectionID = MontageIn->GetSectionIndex(SectionName);
+    const int32 SectionID = MontageIn->GetSectionIndex(SectionName);
     if(SectionID == INDEX_NONE)
         return;
 
@@ -295,7 +307,7 @@ float URyRuntimeAnimationHelpers::GetMontageSectionTimeLeftFromPos(class UAnimMo
     if(!MontageIn)
         return 0.0f;
 
-    int32 SectionID = MontageIn->GetSectionIndex(SectionName);
+    const int32 SectionID = MontageIn->GetSectionIndex(SectionName);
     if(SectionID == INDEX_NONE)
         return 0.0f;
 
@@ -303,10 +315,11 @@ float URyRuntimeAnimationHelpers::GetMontageSectionTimeLeftFromPos(class UAnimMo
     {
         return FMath::Max(0.0f, MontageIn->GetAnimCompositeSection(SectionID + 1).GetTime() - Position);
     }
-    else
-    {
-        return FMath::Max(0.0f, MontageIn->SequenceLength - Position);
-    }
+#if ENGINE_MAJOR_VERSION >= 5
+    return FMath::Max(0.0f, MontageIn->GetPlayLength() - Position);
+#else
+    return FMath::Max(0.0f, MontageIn->SequenceLength - Position);
+#endif
 }
 
 //---------------------------------------------------------------------------------------------------------------------

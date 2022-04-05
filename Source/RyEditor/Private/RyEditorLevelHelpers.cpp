@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Sheffer Online Services.
+// Copyright 2020-2022 Sheffer Online Services.
 // MIT License. See LICENSE for details.
 
 #include "RyEditorLevelHelpers.h"
@@ -84,7 +84,13 @@ UActorComponent* URyEditorLevelHelpers::CreateComponentForActor(AActor *owner, T
     owner->GetComponents(PostInstanceComponents);
     for(UActorComponent* ActorComponent : PostInstanceComponents)
     {
-        if(!ActorComponent->IsRegistered() && ActorComponent->bAutoRegister && !ActorComponent->IsPendingKill() && !PreInstanceComponents.Contains(ActorComponent))
+        if(!ActorComponent->IsRegistered() && ActorComponent->bAutoRegister &&
+#if ENGINE_MAJOR_VERSION >= 5
+            IsValid(ActorComponent) &&
+#else
+            !ActorComponent->IsPendingKill() &&
+#endif
+            !PreInstanceComponents.Contains(ActorComponent))
         {
             ActorComponent->RegisterComponent();
         }

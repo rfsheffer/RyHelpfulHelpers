@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Sheffer Online Services.
+// Copyright 2020-2022 Sheffer Online Services.
 // MIT License. See LICENSE for details.
 
 #include "RyRuntimeObjectHelpers.h"
@@ -260,7 +260,19 @@ struct FLoadPackagePriorityActionBase : FPendingLatentAction
         , LoadedPackage(nullptr)
     {
         LoadCB.BindRaw(this, &FLoadPackagePriorityActionBase::OnPackageLoadCompleteCB);
+#if ENGINE_MAJOR_VERSION >= 5
+        FPackagePath packagePathStruct;
+        if(FPackagePath::TryFromPackageName(*PackagePath, packagePathStruct))
+        {
+            LoadRequest = LoadPackageAsync(packagePathStruct, NAME_None, LoadCB, PKG_None, INDEX_NONE, priority);
+        }
+        else
+        {
+            LoadRequest = INDEX_NONE;
+        }
+#else
         LoadRequest = LoadPackageAsync(PackagePath, nullptr, nullptr, LoadCB, PKG_None, INDEX_NONE, priority);
+#endif
         if(LoadRequest != INDEX_NONE)
         {
             if(blockOnLoad)
@@ -414,7 +426,7 @@ bool URyRuntimeObjectHelpers::SetObjectPropertyValue(UObject* object, const FNam
         return false;
     }
 
-#if ENGINE_MINOR_VERSION < 25
+#if ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION < 25
     UProperty *FoundProperty = object->GetClass()->FindPropertyByName(PropertyName);
 #else
     FProperty *FoundProperty = object->GetClass()->FindPropertyByName(PropertyName);
@@ -423,7 +435,7 @@ bool URyRuntimeObjectHelpers::SetObjectPropertyValue(UObject* object, const FNam
     {
         void *PropertyPtr = FoundProperty->ContainerPtrToValuePtr<void>(object);
         check(PropertyPtr);
-#if ENGINE_MINOR_VERSION < 25
+#if ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION < 25
         if(UNumericProperty *pIntProp = Cast<UNumericProperty>(FoundProperty))
 #else
         if(FNumericProperty *pIntProp = CastField<FNumericProperty>(FoundProperty))
@@ -443,7 +455,7 @@ bool URyRuntimeObjectHelpers::SetObjectPropertyValue(UObject* object, const FNam
                 return false;
             }
         }
-#if ENGINE_MINOR_VERSION < 25
+#if ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION < 25
         else if(UBoolProperty *pBoolProp = Cast<UBoolProperty>(FoundProperty))
 #else
         else if(FBoolProperty *pBoolProp = CastField<FBoolProperty>(FoundProperty))
@@ -452,7 +464,7 @@ bool URyRuntimeObjectHelpers::SetObjectPropertyValue(UObject* object, const FNam
             pBoolProp->SetPropertyValue(PropertyPtr, FCString::ToBool(*Value));
             return true;
         }
-#if ENGINE_MINOR_VERSION < 25
+#if ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION < 25
         else if(UStructProperty* StructProperty = Cast<UStructProperty>(FoundProperty))
 #else
         else if(FStructProperty* StructProperty = CastField<FStructProperty>(FoundProperty))

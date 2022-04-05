@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Sheffer Online Services.
+// Copyright 2020-2022 Sheffer Online Services.
 // MIT License. See LICENSE for details.
 
 #pragma once
@@ -19,6 +19,11 @@ enum class ERyUnit : uint8
 
     /** Angular units */
     Degrees, Radians,
+
+#if ENGINE_MAJOR_VERSION >= 5
+	/** Speed units */
+	CentimetersPerSecond,
+#endif
 
     /** Speed units */
     MetersPerSecond, KilometersPerHour, MilesPerHour,

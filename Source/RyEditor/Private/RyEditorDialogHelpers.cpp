@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Sheffer Online Services.
+// Copyright 2020-2022 Sheffer Online Services.
 // MIT License. See LICENSE for details.
 
 #include "RyEditorDialogHelpers.h"
@@ -179,7 +179,7 @@ public:
 
         DetailView->SetIsPropertyVisibleDelegate(FIsPropertyVisible::CreateLambda([](const FPropertyAndParent& PropertyAndParent, bool bHaveTemplate) -> bool
         {
-#if ENGINE_MINOR_VERSION < 25
+#if ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION < 25
             const UProperty& Property = PropertyAndParent.Property;
 #else
             const FProperty& Property = PropertyAndParent.Property;
@@ -187,7 +187,7 @@ public:
 
             if(bHaveTemplate)
             {
-#if ENGINE_MINOR_VERSION < 25
+#if ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION < 25
                 const UClass* PropertyOwnerClass = Cast<const UClass>(Property.GetOuter());
 #else
                 const UClass* PropertyOwnerClass = Property.GetOwnerClass();
