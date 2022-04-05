@@ -3,7 +3,7 @@
 	"Version": 1,
 	"VersionName": "1.0.0",
 	"FriendlyName": "Ryans UE4 Helpers",
-	"Description": "A free MIT licensed native and blueprint helper function library for solving common problems during Unreal Engine 4 project development.",
+	"Description": "A free MIT licensed native and blueprint helper function library for solving common problems during Unreal Engine 4/5 project development.",
 	"Category": "Utilities",
 	"CreatedBy": "Ryan Sheffer",
 	"CreatedByURL": "https://github.com/rfsheffer",
