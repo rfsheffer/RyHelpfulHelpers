@@ -128,3 +128,14 @@ void URyRuntimeComponentHelpers::CopyMaterials(UPrimitiveComponent* sourceMesh, 
 		destMesh->SetMaterial(matIndex, sourceMesh->GetMaterial(matIndex));
 	}
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeComponentHelpers::InvalidateLightingCacheDetailed(UActorComponent* component, bool invalidateBuildEnqueuedLighting, bool translationOnly)
+{
+	if(component)
+	{
+		component->InvalidateLightingCacheDetailed(invalidateBuildEnqueuedLighting, translationOnly);
+	}
+}

@@ -38,4 +38,7 @@ public:
 	// This iterates source meshes materials and assigns them to dest mesh.
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ComponentHelpers|Primitives")
 	static void CopyMaterials(class UPrimitiveComponent* sourceMesh, class UPrimitiveComponent* destMesh);
+
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ComponentHelpers|Primitives")
+	static void InvalidateLightingCacheDetailed(UActorComponent* component, bool invalidateBuildEnqueuedLighting, bool translationOnly);
 };
