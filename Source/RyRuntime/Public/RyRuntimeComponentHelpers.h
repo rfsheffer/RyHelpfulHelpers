@@ -41,4 +41,14 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ComponentHelpers|Primitives")
 	static void InvalidateLightingCacheDetailed(UActorComponent* component, bool invalidateBuildEnqueuedLighting, bool translationOnly);
+
+	/**
+	 * Query the world and get all components of a specific class
+	 * WARNING: This is slow!
+	 * @param world The world to query
+	 * @param componentClass The specific class to look for, use None for "all"
+	 * @param componentsOut The found components
+	 */
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ComponentHelpers|Query")
+	static void GetWorldComponentsByClass(UWorld* world, TSubclassOf<UActorComponent> componentClass, TArray<UActorComponent*>& componentsOut);
 };

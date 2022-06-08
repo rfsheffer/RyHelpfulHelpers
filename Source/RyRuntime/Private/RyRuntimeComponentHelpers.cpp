@@ -139,3 +139,30 @@ void URyRuntimeComponentHelpers::InvalidateLightingCacheDetailed(UActorComponent
 		component->InvalidateLightingCacheDetailed(invalidateBuildEnqueuedLighting, translationOnly);
 	}
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeComponentHelpers::GetWorldComponentsByClass(UWorld* world, TSubclassOf<UActorComponent> componentClass, TArray<UActorComponent*>& componentsOut)
+{
+	componentsOut.Reset();
+	
+	if(!world)
+	{
+		return;
+	}
+
+	if(!componentClass)
+	{
+		componentClass = UActorComponent::StaticClass();
+	}
+	
+	for (TObjectIterator<UActorComponent> objIt(RF_ClassDefaultObject, true, EInternalObjectFlags::PendingKill); objIt; ++objIt)
+	{
+		UActorComponent* obj = *objIt;
+		if (obj && obj->GetWorld() == world && obj->IsA(componentClass))
+		{
+			componentsOut.Add(obj);
+		}
+	}
+}
