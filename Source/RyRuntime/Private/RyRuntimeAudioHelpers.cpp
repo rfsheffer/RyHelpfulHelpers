@@ -1,9 +1,10 @@
-﻿// Copyright 2020-2022 Sheffer Online Services.
-// MIT License. See LICENSE for details.
+﻿// Copyright 2020-2022 Solar Storm Interactive
+
 
 #include "RyRuntimeAudioHelpers.h"
 #include "RyRuntimeModule.h"
 #include "Runtime/Engine/Public/AudioDevice.h"
+#include "AudioCaptureCore/Public/AudioCaptureCore.h"
 
 #if PLATFORM_WINDOWS
 #include "Runtime/Online/Voice/Private/VoicePrivate.h"
@@ -21,55 +22,39 @@ void URyRuntimeAudioHelpers::GetAudioDeviceList(TArray<FString>& OutAudioDeviceN
 	}
 }
 
-#if PLATFORM_WINDOWS
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-/** Callback to access all the voice capture devices on the platform */
-BOOL CALLBACK RyCaptureDeviceCallback(
-    LPGUID lpGuid,
-    LPCSTR lpcstrDescription,
-    LPCSTR lpcstrModule,
-    LPVOID lpContext
-    )
+void URyRuntimeAudioHelpers::GetAudioCaptureDeviceList(TArray<FRyCaptureDeviceInfo>& OutAudioCaptureDevices)
 {
-	if (lpGuid != nullptr)
+	OutAudioCaptureDevices.Reset();
+	URyRuntimeAudioHelpers* audioHelpersCOD = StaticClass()->GetDefaultObject<URyRuntimeAudioHelpers>();
+	if(audioHelpersCOD)
 	{
-		// Save the enumerated device information for later use
-		const FString DeviceDescription((LPCWSTR)lpcstrDescription);
-		URyRuntimeAudioHelpers* defaultObj = GetMutableDefault<URyRuntimeAudioHelpers>();
-		if(defaultObj)
+		if(!audioHelpersCOD->AudioCaptureStream)
 		{
-			defaultObj->CachedCaptureDeviceList.Add(DeviceDescription);
+			TArray<Audio::IAudioCaptureFactory*> AudioCaptureStreamFactories =
+				IModularFeatures::Get().GetModularFeatureImplementations<Audio::IAudioCaptureFactory>(Audio::IAudioCaptureFactory::GetModularFeatureName());
+
+			// For now, just return the first audio capture stream implemented. We can make this configurable at a later point.
+			if (AudioCaptureStreamFactories.Num() > 0 && AudioCaptureStreamFactories[0] != nullptr)
+			{
+				audioHelpersCOD->AudioCaptureStream = AudioCaptureStreamFactories[0]->CreateNewAudioCaptureStream();
+			}
+		}
+
+		if(audioHelpersCOD->AudioCaptureStream)
+		{
+			TArray<Audio::FCaptureDeviceInfo> OutDevices;
+			audioHelpersCOD->AudioCaptureStream->GetInputDevicesAvailable(OutDevices);
+			for(const Audio::FCaptureDeviceInfo& deviceInfo : OutDevices)
+			{
+				OutAudioCaptureDevices.Emplace(deviceInfo.DeviceName, deviceInfo.DeviceId, deviceInfo.InputChannels, deviceInfo.PreferredSampleRate, deviceInfo.bSupportsHardwareAEC);
+			}
+		}
+		else
+		{
+			UE_LOG(LogRyRuntime, Display, TEXT("GetAudioCaptureDeviceList: No Audio Capture implementations found for this platform!"));
 		}
 	}
-	
-	return true;
-}
-#endif
-
-//---------------------------------------------------------------------------------------------------------------------
-/**
-*/
-void URyRuntimeAudioHelpers::GetAudioCaptureDeviceList(TArray<FString>& OutAudioCaptureDeviceNames)
-{
-#if PLATFORM_WINDOWS
-	URyRuntimeAudioHelpers* defaultObj = GetMutableDefault<URyRuntimeAudioHelpers>();
-	if(!defaultObj)
-	{
-		return;
-	}
-
-	defaultObj->CachedCaptureDeviceList.Empty();
-
-	HRESULT hr = DirectSoundCaptureEnumerate((LPDSENUMCALLBACK)RyCaptureDeviceCallback, nullptr);
-	if (FAILED(hr))
-	{
-		UE_LOG(LogRyRuntime, Warning, TEXT("Failed to enumerate capture devices %d"), hr);
-		return;
-	}
-
-	OutAudioCaptureDeviceNames = defaultObj->CachedCaptureDeviceList;
-	
-#endif
 }

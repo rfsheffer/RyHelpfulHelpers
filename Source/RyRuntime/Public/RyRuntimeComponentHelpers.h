@@ -1,5 +1,4 @@
-﻿// Copyright 2020-2022 Sheffer Online Services.
-// MIT License. See LICENSE for details.
+﻿// Copyright 2020-2022 Solar Storm Interactive
 
 #pragma once
 
@@ -44,7 +43,7 @@ public:
 
 	/**
 	 * Query the world and get all components of a specific class
-	 * WARNING: This is slow!
+	 * WARNING: This is slow! Don't use this in a tick unless you account for the expense overall.
 	 * @param world The world to query
 	 * @param componentClass The specific class to look for, use None for "all"
 	 * @param componentsOut The found components

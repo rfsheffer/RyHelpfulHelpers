@@ -1,9 +1,9 @@
-﻿// Copyright 2020-2022 Sheffer Online Services.
-// MIT License. See LICENSE for details.
+﻿// Copyright 2020-2022 Solar Storm Interactive
 
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Runtime/Launch/Resources/Version.h"
 #include "RyRuntimeRenderingHelpers.generated.h"
 
 UENUM(Blueprintable)
@@ -107,6 +107,6 @@ public:
 	/// @param screenshotMode What type of screenshot to take. 'Game' is the only mode which works for non-editor builds.
 	/// @param pathOut The path to the screenshot. Could be different than requestedPathOut if there was a pathing conflict.
 	/// @param outSuccess True if a screenshot was produced.
-	UFUNCTION(BlueprintCallable, Category = "RyRuntime|RenderingHelpers", meta = (Latent, LatentInfo = "LatentInfo", WorldContext = "WorldContextObject"))
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|RenderingHelpers", meta = (Latent = "", LatentInfo = "LatentInfo", WorldContext = "WorldContextObject"))
 	static void TakeScreenshot(UObject* WorldContextObject, FLatentActionInfo LatentInfo, const FString& requestedPathOut, const ERyScreenShotMode screenshotMode, FString& pathOut, bool &outSuccess);
 };

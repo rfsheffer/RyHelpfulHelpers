@@ -1,11 +1,10 @@
-// Copyright 2020-2022 Sheffer Online Services.
-// MIT License. See LICENSE for details.
+// Copyright 2020-2022 Solar Storm Interactive
 
 #include "RyEditorLevelHelpers.h"
 #include "Kismet2/ComponentEditorUtils.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "Kismet2/KismetEditorUtilities.h"
-#include "RyEditorModule.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**

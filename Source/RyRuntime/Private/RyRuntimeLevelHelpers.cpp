@@ -1,5 +1,4 @@
-// Copyright 2020-2022 Sheffer Online Services.
-// MIT License. See LICENSE for details.
+// Copyright 2020-2022 Solar Storm Interactive
 
 #include "RyRuntimeLevelHelpers.h"
 #include "RyRuntimeModule.h"
@@ -11,6 +10,7 @@
 #include "Engine/LevelStreaming.h"
 #include "Engine/LevelStreamingDynamic.h"
 #include "Engine/LevelScriptActor.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 // Ensure our blueprintable version of the enum is aligned with epics
 static_assert(ERyComponentCreationMethod::Native == static_cast<ERyComponentCreationMethod>(EComponentCreationMethod::Native) &&

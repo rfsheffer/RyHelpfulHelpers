@@ -1,9 +1,9 @@
-// Copyright 2020-2022 Sheffer Online Services.
-// MIT License. See LICENSE for details.
+// Copyright 2020-2022 Solar Storm Interactive
 
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
+
 #include "RyRuntimePlatformHelpers.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(bool, FRyFileFilter, const FString&, PathString);
@@ -110,12 +110,7 @@ public:
 	 * @return The file time stamp of file at FilePath
 	 */
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers|FileSystem")
-	static FORCEINLINE FDateTime GetFileTimeStamp(const FString& filePath, bool& isValid)
-	{
-    	IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
-		isValid = FileExists(filePath);
-		return isValid ? platformFile.GetTimeStamp(*filePath) : FDateTime(0);
-	}
+	static FDateTime GetFileTimeStamp(const FString& filePath, bool& isValid);
 
 	/**
 	 * Return the text representing a files time stamp
@@ -125,34 +120,14 @@ public:
 	 * @return The text representing a files time stamp
 	 */
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers|FileSystem")
-	static FORCEINLINE FText GetFileTimeStampText(const FString& filePath, bool& isValid, const bool longName = false)
-	{
-    	IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
-		isValid = FileExists(filePath);
-		if(!isValid)
-		{
-			return FText::FromString(TEXT("INVALID"));
-		}
-		FDateTime FileTimeStamp = platformFile.GetTimeStamp(*filePath);
-		const FTimespan UTCOffset = FDateTime::Now() - FDateTime::UtcNow();
-		FileTimeStamp += UTCOffset;
-		if(longName)
-		{
-			return FText::AsDateTime(FileTimeStamp, EDateTimeStyle::Long, EDateTimeStyle::Medium, FText::GetInvariantTimeZone());
-		} 
-		return FText::AsDateTime(FileTimeStamp, EDateTimeStyle::Short, EDateTimeStyle::Short,FText::GetInvariantTimeZone());
-	}
+	static FText GetFileTimeStampText(const FString& filePath, bool& isValid, const bool longName = false);
 
 	/**
 	 * Delete a file at FilePath
 	 * @return True if file delete request was successful
 	 */
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|PlatformHelpers|FileSystem")
-	static FORCEINLINE bool DeleteFile(const FString& filePath)
-	{
-    	IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
-		return platformFile.DeleteFile(*filePath);
-	}
+	static bool DeleteFile(const FString& filePath);
 
 	/**
 	* Delete a directory at directoryPath
@@ -161,25 +136,13 @@ public:
 	* @return True if directory delete request was successful
 	*/
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|PlatformHelpers|FileSystem")
-    static FORCEINLINE bool DeleteDirectory(const FString& directoryPath, const bool recursive = false)
-	{
-		IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
-		if(recursive)
-		{
-			return platformFile.DeleteDirectoryRecursively(*directoryPath);
-		}
-		return platformFile.DeleteDirectory(*directoryPath);
-	}
+    static bool DeleteDirectory(const FString& directoryPath, const bool recursive = false);
 
 	/**
 	 * Create a directory, including any parent directories and return true if the directory was created or already existed.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|PlatformHelpers|FileSystem")
-    static FORCEINLINE bool CreateDirectoryTree(const FString& directoryTreePath)
-	{
-		IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
-		return platformFile.CreateDirectoryTree(*directoryTreePath);
-	}
+    static bool CreateDirectoryTree(const FString& directoryTreePath);
 
 	/**
 	* Copy a file from SourcePath to DestinationPath
@@ -189,16 +152,7 @@ public:
 	* @return True if file copy request was successful
 	*/
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|PlatformHelpers|FileSystem", meta=(AdvancedDisplay = "2"))
-	static FORCEINLINE bool CopyFile(const FString& sourcePath, const FString& destinationPath, const bool updateTimeStamp = false)
-	{
-    	IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
-		const bool fileCopied = platformFile.CopyFile(*destinationPath,*sourcePath);
-		if(fileCopied && updateTimeStamp)
-		{
-			platformFile.SetTimeStamp(*destinationPath, FDateTime::Now());
-		}
-		return fileCopied;
-	}
+	static bool CopyFile(const FString& sourcePath, const FString& destinationPath, const bool updateTimeStamp = false);
 
 	/**
 	* Move a file from SourcePath to DestinationPath
@@ -208,38 +162,21 @@ public:
 	* @return True if file move request was successful
 	*/
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|PlatformHelpers|FileSystem", meta=(AdvancedDisplay = "2"))
-	static FORCEINLINE bool MoveFile(const FString& sourcePath, const FString& destinationPath, const bool updateTimeStamp = false)
-	{
-    	IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
-		const bool fileMoved = platformFile.MoveFile(*destinationPath, *sourcePath);
-		if(fileMoved && updateTimeStamp)
-		{
-			platformFile.SetTimeStamp(*destinationPath, FDateTime::Now());
-		}
-		return fileMoved;
-	}
+	static bool MoveFile(const FString& sourcePath, const FString& destinationPath, const bool updateTimeStamp = false);
 
 	/**
 	 * Does a file at FilePath exist?
 	 * @return True if a file exists at FilePath
 	 */
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers|FileSystem")
-    static FORCEINLINE bool FileExists(const FString& filePath)
-	{
-		IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
-		return platformFile.FileExists(*filePath);
-	}
+    static bool FileExists(const FString& filePath);
 
 	/**
 	 * Does a folder exist at DirectoryPath?
 	 * @return True if a folder exists at FilePath
 	 */
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers|FileSystem")
-    static FORCEINLINE bool FolderExists(const FString& directoryPath)
-	{
-		IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
-		return platformFile.DirectoryExists(*directoryPath);
-	}
+    static bool FolderExists(const FString& directoryPath);
 
 	/**
 	 * Get information about a file system path (This wraps the native call GetStatData)
@@ -479,31 +416,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
 	static bool PlatformRequiresCookedData();
 };
-
-//---------------------------------------------------------------------------------------------------------------------
-/**
-*/
-FORCEINLINE void URyRuntimePlatformHelpers::PathInfo(const FString& fileSystemPath,
-                                                     bool& exists,
-                                                     bool& isFile,
-                                                     bool& isDirectory,
-                                                     bool& isReadOnly,
-                                                     FDateTime& creationTime,
-                                                     FDateTime& accessTime,
-                                                     FDateTime& modificationTime,
-                                                     int64& fileSize)
-{
-	IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
-	const FFileStatData statData = platformFile.GetStatData(*fileSystemPath);
-	exists = statData.bIsValid;
-	isFile = !statData.bIsDirectory;
-	isDirectory = statData.bIsDirectory;
-	isReadOnly = statData.bIsReadOnly;
-	creationTime = statData.CreationTime;
-	accessTime = statData.AccessTime;
-	modificationTime = statData.ModificationTime;
-	fileSize = statData.FileSize;
-}
 
 //---------------------------------------------------------------------------------------------------------------------
 /**

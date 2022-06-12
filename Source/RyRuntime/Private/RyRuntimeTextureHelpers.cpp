@@ -1,8 +1,8 @@
-﻿// Copyright 2020-2022 Sheffer Online Services.
-// MIT License. See LICENSE for details.
+﻿// Copyright 2020-2022 Solar Storm Interactive
 
 #include "RyRuntimeTextureHelpers.h"
-#include "Runtime/Engine/Public/LatentActions.h"
+#include "LatentActions.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 class FRyEnsureTextureResourceLatentAction : public FPendingLatentAction
 {

@@ -1,9 +1,8 @@
-// Copyright 2020-2022 Sheffer Online Services.
-// MIT License. See LICENSE for details.
+// Copyright 2020-2022 Solar Storm Interactive
 
 #include "RyRuntimePlatformHelpers.h"
+#include "HAL/PlatformFileManager.h"
 #include "GenericPlatform/GenericPlatformFile.h"
-#include "HAL/PlatformFilemanager.h"
 #include "GenericPlatform/GenericPlatformApplicationMisc.h"
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -172,6 +171,139 @@ bool URyRuntimePlatformHelpers::IterateDirectory(const FString& DirectoryName, c
 {
     RyNativePlatformFileFunctor nativeVisitor(Visitor, Filter, OutType);
     return DoIterateDirectory(DirectoryName, IterateSubFolders, OutType, PathsOut, nativeVisitor);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FDateTime URyRuntimePlatformHelpers::GetFileTimeStamp(const FString& filePath, bool& isValid)
+{
+    IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
+    isValid = FileExists(filePath);
+    return isValid ? platformFile.GetTimeStamp(*filePath) : FDateTime(0);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FText URyRuntimePlatformHelpers::GetFileTimeStampText(const FString& filePath, bool& isValid, const bool longName)
+{
+    IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
+    isValid = FileExists(filePath);
+    if(!isValid)
+    {
+        return FText::FromString(TEXT("INVALID"));
+    }
+    FDateTime FileTimeStamp = platformFile.GetTimeStamp(*filePath);
+    const FTimespan UTCOffset = FDateTime::Now() - FDateTime::UtcNow();
+    FileTimeStamp += UTCOffset;
+    if(longName)
+    {
+        return FText::AsDateTime(FileTimeStamp, EDateTimeStyle::Long, EDateTimeStyle::Medium, FText::GetInvariantTimeZone());
+    } 
+    return FText::AsDateTime(FileTimeStamp, EDateTimeStyle::Short, EDateTimeStyle::Short,FText::GetInvariantTimeZone());
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimePlatformHelpers::DeleteFile(const FString& filePath)
+{
+    IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
+    return platformFile.DeleteFile(*filePath);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimePlatformHelpers::DeleteDirectory(const FString& directoryPath, const bool recursive)
+{
+    IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
+    if(recursive)
+    {
+        return platformFile.DeleteDirectoryRecursively(*directoryPath);
+    }
+    return platformFile.DeleteDirectory(*directoryPath);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimePlatformHelpers::CreateDirectoryTree(const FString& directoryTreePath)
+{
+    IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
+    return platformFile.CreateDirectoryTree(*directoryTreePath);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimePlatformHelpers::CopyFile(const FString& sourcePath, const FString& destinationPath, const bool updateTimeStamp)
+{
+    IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
+    const bool fileCopied = platformFile.CopyFile(*destinationPath,*sourcePath);
+    if(fileCopied && updateTimeStamp)
+    {
+        platformFile.SetTimeStamp(*destinationPath, FDateTime::Now());
+    }
+    return fileCopied;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimePlatformHelpers::MoveFile(const FString& sourcePath, const FString& destinationPath, const bool updateTimeStamp)
+{
+    IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
+    const bool fileMoved = platformFile.MoveFile(*destinationPath, *sourcePath);
+    if(fileMoved && updateTimeStamp)
+    {
+        platformFile.SetTimeStamp(*destinationPath, FDateTime::Now());
+    }
+    return fileMoved;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimePlatformHelpers::FileExists(const FString& filePath)
+{
+    IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
+    return platformFile.FileExists(*filePath);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimePlatformHelpers::FolderExists(const FString& directoryPath)
+{
+    IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
+    return platformFile.DirectoryExists(*directoryPath);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimePlatformHelpers::PathInfo(const FString& fileSystemPath,
+                         bool& exists,
+                         bool& isFile,
+                         bool& isDirectory,
+                         bool& isReadOnly,
+                         FDateTime& creationTime,
+                         FDateTime& accessTime,
+                         FDateTime& modificationTime,
+                         int64& fileSize)
+{
+    IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
+    const FFileStatData statData = platformFile.GetStatData(*fileSystemPath);
+    exists = statData.bIsValid;
+    isFile = !statData.bIsDirectory;
+    isDirectory = statData.bIsDirectory;
+    isReadOnly = statData.bIsReadOnly;
+    creationTime = statData.CreationTime;
+    accessTime = statData.AccessTime;
+    modificationTime = statData.ModificationTime;
+    fileSize = statData.FileSize;
 }
 
 //---------------------------------------------------------------------------------------------------------------------

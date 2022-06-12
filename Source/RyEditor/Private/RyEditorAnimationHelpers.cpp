@@ -1,9 +1,7 @@
-// Copyright 2020-2022 Sheffer Online Services.
-// MIT License. See LICENSE for details.
+// Copyright 2020-2022 Solar Storm Interactive
 
 #include "RyEditorAnimationHelpers.h"
 #include "RyRuntimeObjectHelpers.h"
-#include "RyEditorModule.h"
 
 #include "Animation/AnimSequence.h"
 #include "Animation/AnimMontage.h"
@@ -12,6 +10,7 @@
 #include "Misc/MessageDialog.h"
 
 #include "AssetRegistryModule.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 #define LOCTEXT_NAMESPACE "RyEditor"
 

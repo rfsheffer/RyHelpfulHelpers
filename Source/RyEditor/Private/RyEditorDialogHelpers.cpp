@@ -1,5 +1,4 @@
-// Copyright 2020-2022 Sheffer Online Services.
-// MIT License. See LICENSE for details.
+// Copyright 2020-2022 Solar Storm Interactive
 
 #include "RyEditorDialogHelpers.h"
 
@@ -14,6 +13,7 @@
 #include "Framework/Application/SlateApplication.h"
 
 #include "Misc/MessageDialog.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 //--------------------------------------------------------------------------------------------------------------------
 /**

@@ -1,11 +1,11 @@
-﻿// Copyright 2020-2022 Sheffer Online Services.
-// MIT License. See LICENSE for details.
+﻿// Copyright 2020-2022 Solar Storm Interactive
 
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Camera/PlayerCameraManager.h"
 #include "GameFramework/PlayerController.h"
+#include "GameFramework/Pawn.h"
 
 #include "RyRuntimePlayerHelpers.generated.h"
 

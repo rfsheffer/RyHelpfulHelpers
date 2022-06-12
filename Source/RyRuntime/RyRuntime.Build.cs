@@ -1,5 +1,5 @@
-// Copyright 2020-2022 Sheffer Online Services.
-// MIT License. See LICENSE for details.
+// Copyright 2020-2022 Solar Storm Interactive
+
 
 using UnrealBuildTool;
 using System.IO;
@@ -10,13 +10,7 @@ public class RyRuntime : ModuleRules
     {
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		// Turn this off if you want to dis-include dangerous functions from blueprint.
-		// This blocks functions which access engine internals which only advanced engine users should consider.
-		PrivateDefinitions.Add("RY_INCLUDE_DANGEROUS_FUNCTIONS=1");
-
 		PrivateIncludePaths.Add("RyRuntime/ThirdParty/AHEasing");
-		
-		//OptimizeCode = CodeOptimization.Never;
 
 		PrivateIncludePaths.AddRange(
             new string[]
@@ -30,6 +24,7 @@ public class RyRuntime : ModuleRules
 				"HeadMountedDisplay",
 				"SlateCore",
 				"InputCore",
+				"AudioCaptureCore",
 			}
 		);
         PrivateDependencyModuleNames.AddRange(
@@ -53,40 +48,10 @@ public class RyRuntime : ModuleRules
         {
 	        PrivateDependencyModuleNames.Add("UnrealEd");
         }
-        
-        /* Add to plugins section for messing with getting some extra HMD info
-        	"Plugins": [
-		{
-			"Name": "SteamVR",
-			"Enabled": true,
-			"Optional": true,
-			"WhitelistPlatforms": [
-				"Win32", "Win64", "Linux", "Mac"
-			]
-		},
-		{
-			"Name": "OculusVR",
-			"Enabled": true,
-			"Optional": true,
-			"WhitelistPlatforms": [
-				"Win32", "Win64", "Android"
-			]
-		}
-	]
-         */
 
         if (Target.Platform.IsInGroup(UnrealPlatformGroup.Windows))
         {
-	        /*PrivateDependencyModuleNames.AddRange(
-		        new string[]
-		        {
-			        "SteamVR",
-			        "OculusHMD",
-		        }
-	        );*/
 	        AddEngineThirdPartyPrivateStaticDependencies(Target, "DirectSound");
-	        //AddEngineThirdPartyPrivateStaticDependencies(Target, "OpenVR");
-	        
 	        PrivateIncludePaths.AddRange(
 		        new string[]
 		        {
@@ -94,15 +59,5 @@ public class RyRuntime : ModuleRules
 		        }
 	        );
         }
-
-        // if (Target.Platform.IsInGroup(UnrealPlatformGroup.Android))
-        // {
-	       //  PrivateDependencyModuleNames.AddRange(
-		      //   new string[]
-		      //   {
-			     //    "OculusHMD",
-		      //   }
-	       //  );
-        // }
     }
 }

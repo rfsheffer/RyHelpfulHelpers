@@ -1,5 +1,4 @@
-﻿// Copyright 2020-2022 Sheffer Online Services.
-// MIT License. See LICENSE for details.
+﻿// Copyright 2020-2022 Solar Storm Interactive
 
 #include "Math/RyMathEasing.h"
 #include "AHEasing/easing.h"
@@ -18,152 +17,152 @@ float URyMathEasing::EaseFloat(const ERyMathEasingType easing, float alpha)
 		}
 		case ERyMathEasingType::QuadraticEaseIn:
 		{
-			alpha = QuadraticEaseIn(alpha);
+			alpha = AH::QuadraticEaseIn(alpha);
 			break;
 		}
 		case ERyMathEasingType::QuadraticEaseOut:
 		{
-			alpha = QuadraticEaseOut(alpha);
+			alpha = AH::QuadraticEaseOut(alpha);
 			break;
 		}
 		case ERyMathEasingType::QuadraticEaseInOut:
 		{
-			alpha = QuadraticEaseInOut(alpha);
+			alpha = AH::QuadraticEaseInOut(alpha);
 			break;
 		}
 		case ERyMathEasingType::CubicEaseIn:
 		{
-			alpha = CubicEaseIn(alpha);
+			alpha = AH::CubicEaseIn(alpha);
 			break;
 		}
 		case ERyMathEasingType::CubicEaseOut:
 		{
-			alpha = CubicEaseOut(alpha);
+			alpha = AH::CubicEaseOut(alpha);
 			break;
 		}
 		case ERyMathEasingType::CubicEaseInOut:
 		{
-			alpha = CubicEaseInOut(alpha);
+			alpha = AH::CubicEaseInOut(alpha);
 			break;
 		}
 		case ERyMathEasingType::QuarticEaseIn:
 		{
-			alpha = QuarticEaseIn(alpha);
+			alpha = AH::QuarticEaseIn(alpha);
 			break;
 		}
 		case ERyMathEasingType::QuarticEaseOut:
 		{
-			alpha = QuarticEaseOut(alpha);
+			alpha = AH::QuarticEaseOut(alpha);
 			break;
 		}
 		case ERyMathEasingType::QuarticEaseInOut:
 		{
-			alpha = QuarticEaseInOut(alpha);
+			alpha = AH::QuarticEaseInOut(alpha);
 			break;
 		}
 		case ERyMathEasingType::QuinticEaseIn:
 		{
-			alpha = QuinticEaseIn(alpha);
+			alpha = AH::QuinticEaseIn(alpha);
 			break;
 		}
 		case ERyMathEasingType::QuinticEaseOut:
 		{
-			alpha = QuinticEaseOut(alpha);
+			alpha = AH::QuinticEaseOut(alpha);
 			break;
 		}
 		case ERyMathEasingType::QuinticEaseInOut:
 		{
-			alpha = QuinticEaseInOut(alpha);
+			alpha = AH::QuinticEaseInOut(alpha);
 			break;
 		}
 		case ERyMathEasingType::SineEaseIn:
 		{
-			alpha = SineEaseIn(alpha);
+			alpha = AH::SineEaseIn(alpha);
 			break;
 		}
 		case ERyMathEasingType::SineEaseOut:
 		{
-			alpha = SineEaseOut(alpha);
+			alpha = AH::SineEaseOut(alpha);
 			break;
 		}
 		case ERyMathEasingType::SineEaseInOut:
 		{
-			alpha = SineEaseInOut(alpha);
+			alpha = AH::SineEaseInOut(alpha);
 			break;
 		}
 		case ERyMathEasingType::CircularEaseIn:
 		{
-			alpha = CircularEaseIn(alpha);
+			alpha = AH::CircularEaseIn(alpha);
 			break;
 		}
 		case ERyMathEasingType::CircularEaseOut:
 		{
-			alpha = CircularEaseOut(alpha);
+			alpha = AH::CircularEaseOut(alpha);
 			break;
 		}
 		case ERyMathEasingType::CircularEaseInOut:
 		{
-			alpha = CircularEaseInOut(alpha);
+			alpha = AH::CircularEaseInOut(alpha);
 			break;
 		}
 		case ERyMathEasingType::ExponentialEaseIn:
 		{
-			alpha = ExponentialEaseIn(alpha);
+			alpha = AH::ExponentialEaseIn(alpha);
 			break;
 		}
 		case ERyMathEasingType::ExponentialEaseOut:
 		{
-			alpha = ExponentialEaseOut(alpha);
+			alpha = AH::ExponentialEaseOut(alpha);
 			break;
 		}
 		case ERyMathEasingType::ExponentialEaseInOut:
 		{
-			alpha = ExponentialEaseInOut(alpha);
+			alpha = AH::ExponentialEaseInOut(alpha);
 			break;
 		}
 		case ERyMathEasingType::ElasticEaseIn:
 		{
-			alpha = ElasticEaseIn(alpha);
+			alpha = AH::ElasticEaseIn(alpha);
 			break;
 		}
 		case ERyMathEasingType::ElasticEaseOut:
 		{
-			alpha = ElasticEaseOut(alpha);
+			alpha = AH::ElasticEaseOut(alpha);
 			break;
 		}
 		case ERyMathEasingType::ElasticEaseInOut:
 		{
-			alpha = ElasticEaseInOut(alpha);
+			alpha = AH::ElasticEaseInOut(alpha);
 			break;
 		}
 		case ERyMathEasingType::BackEaseIn:
 		{
-			alpha = BackEaseIn(alpha);
+			alpha = AH::BackEaseIn(alpha);
 			break;
 		}
 		case ERyMathEasingType::BackEaseOut:
 		{
-			alpha = BackEaseOut(alpha);
+			alpha = AH::BackEaseOut(alpha);
 			break;
 		}
 		case ERyMathEasingType::BackEaseInOut:
 		{
-			alpha = BackEaseInOut(alpha);
+			alpha = AH::BackEaseInOut(alpha);
 			break;
 		}
 		case ERyMathEasingType::BounceEaseIn:
 		{
-			alpha = BounceEaseIn(alpha);
+			alpha = AH::BounceEaseIn(alpha);
 			break;
 		}
 		case ERyMathEasingType::BounceEaseOut:
 		{
-			alpha = BounceEaseOut(alpha);
+			alpha = AH::BounceEaseOut(alpha);
 			break;
 		}
 		case ERyMathEasingType::BounceEaseInOut:
 		{
-			alpha = BounceEaseInOut(alpha);
+			alpha = AH::BounceEaseInOut(alpha);
 			break;
 		}
 	}

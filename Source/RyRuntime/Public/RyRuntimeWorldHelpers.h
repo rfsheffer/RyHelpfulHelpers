@@ -1,9 +1,10 @@
-﻿// Copyright 2020-2022 Sheffer Online Services.
-// MIT License. See LICENSE for details.
+﻿// Copyright 2020-2022 Solar Storm Interactive
 
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Engine/LatentActionManager.h"
+
 #include "RyRuntimeWorldHelpers.generated.h"
 
 UENUM(BlueprintType)
@@ -36,6 +37,6 @@ class RYRUNTIME_API URyRuntimeWorldHelpers : public UBlueprintFunctionLibrary
 	* @param OutExecs				Output (Stopped or Tick)
 	* @param LatentInfo				The persistent latent info
 	*/
-	UFUNCTION(BlueprintCallable, Category="RyRuntime|WorldHelpers|FlowControl", meta=(Latent, WorldContext="WorldContextObject", LatentInfo="LatentInfo", ExpandEnumAsExecs="InExecs,OutExecs"))
+	UFUNCTION(BlueprintCallable, Category="RyRuntime|WorldHelpers|FlowControl", meta=(Latent = "", WorldContext="WorldContextObject", LatentInfo="LatentInfo", ExpandEnumAsExecs="InExecs,OutExecs"))
 	static void TickUntilStop(const UObject* WorldContextObject, const ERyTickUntilStopInExecs& InExecs, ERyTickUntilStopOutExecs& OutExecs, FLatentActionInfo LatentInfo);
 };

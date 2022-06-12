@@ -1,10 +1,10 @@
-// Copyright 2020-2022 Sheffer Online Services.
-// MIT License. See LICENSE for details.
+// Copyright 2020-2022 Solar Storm Interactive
 
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Math/UnitConversion.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 #include "RyRuntimeMathHelpers.generated.h"
 
@@ -177,7 +177,7 @@ public:
 	static float GetRotationIncrement(const float inCurrentRotation, const float inDestinationRotation, const float deltaTime, const float speed, const float checkTolerance = 1.e-6f);
 
 	/** Convert to Quaternion representation of this Rotator. */
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "ToQuat (Rotator)", CompactNodeTitle = "->", ScriptMethod = "Quaternion", Keywords = "cast convert", BlueprintAutocast), Category = "RyRuntime|Math|Conversions")
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "ToQuat (Rotator)", CompactNodeTitle = "->", ScriptMethod = "QuaternionToRotator", Keywords = "cast convert", BlueprintAutocast), Category = "RyRuntime|Math|Conversions")
     static FQuat Rotator_Quat(const FRotator& R);
 
 	// Returns inFloat as a negative value, even if inFloat is already negative.

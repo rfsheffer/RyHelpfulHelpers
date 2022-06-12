@@ -1,15 +1,15 @@
-// Copyright 2020-2022 Sheffer Online Services.
-// MIT License. See LICENSE for details.
+// Copyright 2020-2022 Solar Storm Interactive
 
 #include "RyRuntimeObjectHelpers.h"
 #include "UObject/ObjectRedirector.h"
 #include "RyRuntimeModule.h"
 #include "UObject/Package.h"
 #include "UObject/UObjectIterator.h"
+#include "LatentActions.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 // Async asset loading extension
 #include "Engine/StreamableManager.h"
-#include "LatentActions.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
@@ -205,7 +205,7 @@ struct FLoadAssetPriorityActionBase : FPendingLatentAction
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-void URyRuntimeObjectHelpers::LoadAssetPriority(UObject* WorldContextObject, TSoftObjectPtr<UObject> Asset, const int32 Priority,
+void URyRuntimeObjectHelpers::LoadAssetPriority(UObject* WorldContextObject, const TSoftObjectPtr<UObject> Asset, const int32 Priority,
                                                 FOnAssetLoaded OnLoaded, FLatentActionInfo LatentInfo)
 {
 	struct FLoadAssetAction : FLoadAssetPriorityActionBase
@@ -401,18 +401,14 @@ void URyRuntimeObjectHelpers::GetClassHierarchy(UClass* Class, TArray<UClass*>& 
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-UObject* URyRuntimeObjectHelpers::GetClassDefaultObject(TSubclassOf<UObject> theClass)
+const UObject* URyRuntimeObjectHelpers::GetClassDefaultObject(TSubclassOf<UObject> theClass)
 {
-#if RY_INCLUDE_DANGEROUS_FUNCTIONS
     if(!theClass)
     {
         return nullptr;
     }
 
     return theClass->GetDefaultObject();
-#else
-    return nullptr;
-#endif
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -420,7 +416,6 @@ UObject* URyRuntimeObjectHelpers::GetClassDefaultObject(TSubclassOf<UObject> the
 */
 bool URyRuntimeObjectHelpers::SetObjectPropertyValue(UObject* object, const FName PropertyName, const FString& Value, const bool PrintWarnings)
 {
-#if RY_INCLUDE_DANGEROUS_FUNCTIONS
     if(!object)
     {
         return false;
@@ -507,7 +502,6 @@ bool URyRuntimeObjectHelpers::SetObjectPropertyValue(UObject* object, const FNam
     {
         UE_LOG(LogRyRuntime, Warning, TEXT("SetObjectPropertyValue: Unable to find property in object named '%s'"), *PropertyName.ToString());
     }
-#endif // RY_INCLUDE_DANGEROUS_FUNCTIONS
 
     return false;
 }

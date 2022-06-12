@@ -1,10 +1,44 @@
-﻿// Copyright 2020-2022 Sheffer Online Services.
-// MIT License. See LICENSE for details.
+﻿// Copyright 2020-2022 Solar Storm Interactive
 
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "AudioCaptureCore/Public/AudioCaptureDeviceInterface.h"
+
 #include "RyRuntimeAudioHelpers.generated.h"
+
+/// A structure inline with Audio::FCaptureDeviceInfo from AudioCaptureCore
+USTRUCT(BlueprintType)
+struct FRyCaptureDeviceInfo
+{
+	GENERATED_BODY()
+	
+	FRyCaptureDeviceInfo() = default;
+
+	FRyCaptureDeviceInfo(const FString& inDeviceName, const FString& inDeviceId, int32 inInputChannels, int32 inPreferredSampleRate, bool inSupportsHardwareAEC)
+		: DeviceName(inDeviceName)
+		, DeviceId(inDeviceId)
+		, InputChannels(inInputChannels)
+		, PreferredSampleRate(inPreferredSampleRate)
+		, SupportsHardwareAEC(inSupportsHardwareAEC)
+	{
+	}
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString DeviceName;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString DeviceId;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 InputChannels = 0;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 PreferredSampleRate = 0;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool SupportsHardwareAEC = false;
+};
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
@@ -21,9 +55,9 @@ public:
 	static void GetAudioDeviceList(TArray<FString>& OutAudioDeviceNames);
 
 	// Gets a list of available audio capture devices
-	// NOTE: Only Supports Windows at the moment
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|AudioHelpers")
-    static void GetAudioCaptureDeviceList(TArray<FString>& OutAudioCaptureDeviceNames);
+    static void GetAudioCaptureDeviceList(TArray<FRyCaptureDeviceInfo>& OutAudioCaptureDevices);
 
-	TArray<FString> CachedCaptureDeviceList;
+private:
+	TUniquePtr<Audio::IAudioCaptureStream> AudioCaptureStream;
 };

@@ -1,23 +1,16 @@
-// Copyright 2020-2022 Sheffer Online Services.
-// MIT License. See LICENSE for details.
+// Copyright 2020-2022 Solar Storm Interactive
 
 #include "RyEditorStaticMeshHelpers.h"
 
 #include "Editor.h"
 #include "Engine/StaticMesh.h"
-//#include "StaticMeshResources.h"
-//#include "BusyCursor.h"
 #include "Editor/UnrealEd/Private/GeomFitUtils.h"
-//#include "EditorViewportCommands.h"
-//#include "Editor/UnrealEd/Private/ConvexDecompTool.h"
 #include "PhysicsEngine/BodySetup.h"
 #include "Subsystems/AssetEditorSubsystem.h"
 
-// Set USE_ASYNC_DECOMP to zero to go back to the fully synchronous; blocking version of V-HACD
-// #ifndef USE_ASYNC_DECOMP
-// #define USE_ASYNC_DECOMP 1
-// #endif
-
+//--------------------------------------------------------------------------------------------------------------------
+/**
+*/
 void URyEditorStaticMeshHelpers::SetCollisionTraceFlag(class UStaticMesh* StaticMesh, TEnumAsByte<enum ECollisionTraceFlag> collisionTraceFlag)
 {
 #if ENGINE_MAJOR_VERSION == 5 || ENGINE_MINOR_VERSION >= 27
@@ -56,6 +49,9 @@ void URyEditorStaticMeshHelpers::SetCollisionTraceFlag(class UStaticMesh* Static
     }
 }
 
+//--------------------------------------------------------------------------------------------------------------------
+/**
+*/
 void URyEditorStaticMeshHelpers::SetCanAffectNavMesh(class UStaticMeshComponent* StaticMesh, bool canAffect)
 {
     if(StaticMesh)

@@ -1,10 +1,11 @@
-// Copyright 2020-2022 Sheffer Online Services.
-// MIT License. See LICENSE for details.
+// Copyright 2020-2022 Solar Storm Interactive
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Engine/LatentActionManager.h"
+
 #include "RyRuntimeObjectHelpers.generated.h"
 
 /** Async package loading result */
@@ -108,12 +109,12 @@ public:
 
     DECLARE_DYNAMIC_DELEGATE_OneParam(FOnAssetLoaded, class UObject*, Loaded);
 
-    UFUNCTION(BlueprintCallable, meta = (Latent, LatentInfo = "LatentInfo", WorldContext = "WorldContextObject", BlueprintInternalUseOnly = "true"), Category = "RyRuntime|ObjectHelpers")
-    static void LoadAssetPriority(UObject* WorldContextObject, TSoftObjectPtr<UObject> Asset, const int32 Priority, FOnAssetLoaded OnLoaded, FLatentActionInfo LatentInfo);
+    UFUNCTION(BlueprintCallable, meta = (Latent = "", LatentInfo = "LatentInfo", WorldContext = "WorldContextObject", BlueprintInternalUseOnly = "true"), Category = "RyRuntime|ObjectHelpers")
+    static void LoadAssetPriority(UObject* WorldContextObject, const TSoftObjectPtr<UObject> Asset, const int32 Priority, FOnAssetLoaded OnLoaded, FLatentActionInfo LatentInfo);
 
 	DECLARE_DYNAMIC_DELEGATE_TwoParams(FOnPackageLoaded, UPackage*, LoadedPackage, ERyAsyncLoadingResult, Result);
 
-	UFUNCTION(BlueprintCallable, meta = (Latent, LatentInfo = "LatentInfo", WorldContext = "WorldContextObject", BlueprintInternalUseOnly = "true"), Category = "RyRuntime|ObjectHelpers")
+	UFUNCTION(BlueprintCallable, meta = (Latent = "", LatentInfo = "LatentInfo", WorldContext = "WorldContextObject", BlueprintInternalUseOnly = "true"), Category = "RyRuntime|ObjectHelpers")
     static void LoadPackagePriority(UObject* WorldContextObject, const FString& PackagePath, const int32 Priority, const bool BlockOnLoad, FOnPackageLoaded OnLoaded, FLatentActionInfo LatentInfo);
 
 	/**
@@ -161,17 +162,14 @@ public:
     static void GetClassHierarchy(UClass* Class, TArray<UClass*>& ClassHierarchy, const bool includeSelf = true);
 
     // Returns the default object associated with this class.
-    // WARNING: If you edit this class, it could affect created instances!
-    // NOTE: This function only works if RY_INCLUDE_DANGEROUS_FUNCTIONS define is enabled.
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
-    static UObject* GetClassDefaultObject(TSubclassOf<UObject> theClass);
+    static const UObject* GetClassDefaultObject(TSubclassOf<UObject> theClass);
 
     // Sets an objects property by name using reflection to a Value.
     // WARNING: You can do naughty things with this like setting native variables not exposed to blueprints. Beware!
     // NOTE: This only supports setting these types: Numeric (Int, Float, Byte, etc), Bool, LinearColor, Color, Vector, Rotator, String.
     //       With struct types like Vector, the Value string must be in a text serializable form ex (X=20, Y=30, Z=40). Use ToString on the types for examples.
     // NOTE: If the property is numeric, ensure your Value can actually work with that type. If the value can be converted but precision is lost, no warnings will occur.
-    // NOTE: This function only works if RY_INCLUDE_DANGEROUS_FUNCTIONS define is enabled.
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers", meta=(AdvancedDisplay = "3"))
     static bool SetObjectPropertyValue(UObject* object, const FName PropertyName, const FString& Value, const bool PrintWarnings = true);
 
