@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="/Resources/Icon128.png">
+</p>
+
 # Ryans Helpful Helpers for Unreal Engine
 This plugin contains an enormous number of extremely helpful functions for working on Unreal Engine projects of all types.
 
