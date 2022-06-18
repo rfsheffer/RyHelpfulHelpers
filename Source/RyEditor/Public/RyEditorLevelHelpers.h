@@ -17,7 +17,9 @@ class RYEDITOR_API URyEditorLevelHelpers : public UBlueprintFunctionLibrary
 public:
     URyEditorLevelHelpers(const FObjectInitializer& ObjectInitializer);
 
-    // A Helper function to create a component of a class type and attach it to the actor
+    /// A Helper function to create a component of a class type and attach it to the actor
+	/// This version is for creating a component to attach to an actor in an editor context. It will so the usual
+	/// work to setup the component to be attached to your actor and saved with your level.
     UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|LevelHelpers")
-    static UActorComponent* CreateComponentForActor(AActor *owner, TSubclassOf<UActorComponent> newComponentClass, USceneComponent *attachComponent = nullptr);
+    static UActorComponent* CreateComponentForEditorActor(AActor *owner, TSubclassOf<UActorComponent> newComponentClass, USceneComponent *attachComponent = nullptr);
 };

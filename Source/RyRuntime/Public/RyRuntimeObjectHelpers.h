@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UObject/Object.h"
+#include "Templates/SubclassOf.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Engine/LatentActionManager.h"
 
@@ -163,7 +165,7 @@ public:
 
     // Returns the default object associated with this class.
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
-    static const UObject* GetClassDefaultObject(TSubclassOf<UObject> theClass);
+    static UObject* GetClassDefaultObject(TSubclassOf<UObject> theClass);
 
     // Sets an objects property by name using reflection to a Value.
     // WARNING: You can do naughty things with this like setting native variables not exposed to blueprints. Beware!

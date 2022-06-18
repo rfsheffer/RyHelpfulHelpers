@@ -24,19 +24,19 @@ struct FRyCaptureDeviceInfo
 	{
 	}
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "CaptureDeviceInfo")
 	FString DeviceName;
 	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "CaptureDeviceInfo")
 	FString DeviceId;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "CaptureDeviceInfo")
 	int32 InputChannels = 0;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "CaptureDeviceInfo")
 	int32 PreferredSampleRate = 0;
 	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "CaptureDeviceInfo")
 	bool SupportsHardwareAEC = false;
 };
 

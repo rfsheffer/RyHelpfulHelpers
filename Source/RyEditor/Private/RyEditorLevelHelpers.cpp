@@ -18,7 +18,7 @@ URyEditorLevelHelpers::URyEditorLevelHelpers(const FObjectInitializer& ObjectIni
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-UActorComponent* URyEditorLevelHelpers::CreateComponentForActor(AActor *owner, TSubclassOf<UActorComponent> newComponentClass, 
+UActorComponent* URyEditorLevelHelpers::CreateComponentForEditorActor(AActor *owner, TSubclassOf<UActorComponent> newComponentClass, 
                                                                 USceneComponent *attachComponent /*= nullptr*/)
 {
     if(!owner || !newComponentClass)

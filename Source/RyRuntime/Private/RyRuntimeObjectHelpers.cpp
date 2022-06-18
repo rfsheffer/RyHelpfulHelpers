@@ -401,7 +401,7 @@ void URyRuntimeObjectHelpers::GetClassHierarchy(UClass* Class, TArray<UClass*>& 
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-const UObject* URyRuntimeObjectHelpers::GetClassDefaultObject(TSubclassOf<UObject> theClass)
+UObject* URyRuntimeObjectHelpers::GetClassDefaultObject(TSubclassOf<UObject> theClass)
 {
     if(!theClass)
     {

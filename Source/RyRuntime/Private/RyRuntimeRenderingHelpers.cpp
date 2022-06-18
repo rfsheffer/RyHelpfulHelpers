@@ -110,6 +110,10 @@ ERyRenderingFeatureLevel URyRuntimeRenderingHelpers::GetRenderingFeatureLevel(UO
 		return ERyRenderingFeatureLevel::ES3_1;
 	case ERHIFeatureLevel::SM5:
 		return ERyRenderingFeatureLevel::SM5;
+#if ENGINE_MAJOR_VERSION >= 5
+	case ERHIFeatureLevel::SM6:
+		return ERyRenderingFeatureLevel::SM6;
+#endif
 	default: ;
 	}
 

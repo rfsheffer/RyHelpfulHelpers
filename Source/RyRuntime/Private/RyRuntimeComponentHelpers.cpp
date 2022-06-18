@@ -157,7 +157,13 @@ void URyRuntimeComponentHelpers::GetWorldComponentsByClass(UWorld* world, TSubcl
 		componentClass = UActorComponent::StaticClass();
 	}
 	
-	for (TObjectIterator<UActorComponent> objIt(RF_ClassDefaultObject, true, EInternalObjectFlags::PendingKill); objIt; ++objIt)
+#if ENGINE_MAJOR_VERSION >= 5
+	EInternalObjectFlags flags = EInternalObjectFlags::Garbage;
+#else
+	EInternalObjectFlags flags = EInternalObjectFlags::PendingKill;
+#endif
+	
+	for (TObjectIterator<UActorComponent> objIt(RF_ClassDefaultObject, true, flags); objIt; ++objIt)
 	{
 		UActorComponent* obj = *objIt;
 		if (obj && obj->GetWorld() == world && obj->IsA(componentClass))

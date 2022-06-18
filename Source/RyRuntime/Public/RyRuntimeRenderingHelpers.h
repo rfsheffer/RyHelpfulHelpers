@@ -9,32 +9,32 @@
 UENUM(Blueprintable)
 enum class ERyShaderPlatform : uint8
 {
-	SP_INVALID,
-	SP_PCD3D_SM5,
-	SP_METAL,
-	SP_METAL_MRT,
-	SP_PCD3D_ES3_1,
-	SP_OPENGL_PCES3_1,
-	SP_METAL_SM5,
-	SP_VULKAN_PCES3_1,
+	SP_INVALID UMETA(DisplayName="INVALID"),
+	SP_PCD3D_SM5 UMETA(DisplayName="PCD3D SM5"),
+	SP_METAL UMETA(DisplayName="METAL"),
+	SP_METAL_MRT UMETA(DisplayName="METAL MRT"),
+	SP_PCD3D_ES3_1 UMETA(DisplayName="PCD3D ES3.1"),
+	SP_OPENGL_PCES3_1 UMETA(DisplayName="OPENGL PCES3.1"),
+	SP_METAL_SM5 UMETA(DisplayName="METAL SM5"),
+	SP_VULKAN_PCES3_1 UMETA(DisplayName="VULKAN PCES3.1"),
 #if ENGINE_MAJOR_VERSION < 5
-	SP_METAL_SM5_NOTESS,
+	SP_METAL_SM5_NOTESS UMETA(DisplayName="METAL SM5 NOTESS"),
 #endif
-	SP_VULKAN_SM5,
-	SP_VULKAN_ES3_1_ANDROID,
-	SP_METAL_MACES3_1,
-	SP_OPENGL_ES3_1_ANDROID,
-	SP_METAL_MRT_MAC,
+	SP_VULKAN_SM5 UMETA(DisplayName="VULKAN SM5"),
+	SP_VULKAN_ES3_1_ANDROID UMETA(DisplayName="VULKAN ES3.1 ANDROID"),
+	SP_METAL_MACES3_1 UMETA(DisplayName="METAL MACES3.1"),
+	SP_OPENGL_ES3_1_ANDROID UMETA(DisplayName="OPENGL ES3.1 ANDROID"),
+	SP_METAL_MRT_MAC UMETA(DisplayName="METAL MRT MAC"),
 #if ENGINE_MAJOR_VERSION < 5
-	SP_VULKAN_SM5_LUMIN,
-	SP_VULKAN_ES3_1_LUMIN,
+	SP_VULKAN_SM5_LUMIN UMETA(DisplayName="VULKAN SM5 LUMIN"),
+	SP_VULKAN_ES3_1_LUMIN UMETA(DisplayName="VULKAN ES3.1 LUMIN"),
 #endif
-	SP_METAL_TVOS,
-	SP_METAL_MRT_TVOS,
-	SP_VULKAN_SM5_ANDROID,
+	SP_METAL_TVOS UMETA(DisplayName="METAL TVOS"),
+	SP_METAL_MRT_TVOS UMETA(DisplayName="METAL MRT TVOS"),
+	SP_VULKAN_SM5_ANDROID UMETA(DisplayName="VULKAN SM5 ANDROID"),
 #if ENGINE_MAJOR_VERSION >= 5
-	SP_PCD3D_SM6,
-	SP_D3D_ES3_1_HOLOLENS,
+	SP_PCD3D_SM6 UMETA(DisplayName="PCD3D SM6"),
+	SP_D3D_ES3_1_HOLOLENS UMETA(DisplayName="D3D ES3.1 HOLOLENS"),
 #endif
 };
 
@@ -44,7 +44,7 @@ enum class ERyRenderingFeatureLevel : uint8
 	INVALID,
 
 	/** Feature level defined by the core capabilities of OpenGL ES3.1 & Metal/Vulkan. */
-	ES3_1,
+	ES3_1 UMETA(DisplayName="ES 3.1 / Metal / Vulkan"),
 
 	/**
 	 * Feature level defined by the capabilities of DX11 Shader Model 5.
@@ -55,7 +55,18 @@ enum class ERyRenderingFeatureLevel : uint8
 	 *   Read-only depth or stencil views (eg read depth buffer as SRV while depth test and stencil write)
 	 * Tessellation is not considered part of Feature Level SM5 and has a separate capability flag.
 	 */
-	SM5
+	SM5 UMETA(DisplayName="Shader Model 5"),
+#if ENGINE_MAJOR_VERSION >= 5
+	/**
+	 * Feature level defined by the capabilities of DirectX 12 hardware feature level 12_2 with Shader Model 6.5
+	 *   Raytracing Tier 1.1
+	 *   Mesh and Amplification shaders
+	 *   Variable rate shading
+	 *   Sampler feedback
+	 *   Resource binding tier 3
+	 */
+	SM6 UMETA(DisplayName="Shader Model 6"),
+#endif
 };
 
 UENUM(Blueprintable)
