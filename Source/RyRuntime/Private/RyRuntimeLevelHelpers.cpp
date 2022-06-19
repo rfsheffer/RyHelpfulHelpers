@@ -320,6 +320,36 @@ UActorComponent* URyRuntimeLevelHelpers::CreateComponentForActor(AActor *owner, 
                                                                  const ERyComponentCreationMethod creationMethod,
                                                                  const bool allowAnyoneToDestroy)
 {
+    if(owner)
+    {
+        check(owner->GetWorld());
+        if(!owner->GetWorld()->IsGameWorld())
+        {
+            UE_LOG(LogRyRuntime, Warning, TEXT("RyRuntimeLevelHelpers::CreateComponentForActor cannot be used in editor worlds! Use CreateComponentForEditorActor instead!"));
+            return nullptr;
+        }
+    }
+    else if(attachComponent)
+    {
+        owner = attachComponent->GetOwner();
+        if(!owner)
+        {
+            return nullptr;
+        }
+
+        check(owner->GetWorld());
+
+        if(!owner->GetWorld()->IsGameWorld())
+        {
+            UE_LOG(LogRyRuntime, Warning, TEXT("RyRuntimeLevelHelpers::CreateComponentForActor cannot be used in editor worlds! Use CreateComponentForEditorActor instead!"));
+            return nullptr;
+        }
+    }
+    else
+    {
+        return nullptr;
+    }
+
     UActorComponent* NewInstanceComponent = NewObject<UActorComponent>(owner, newComponentClass, newName);
     if(!NewInstanceComponent)
     {
@@ -336,16 +366,9 @@ UActorComponent* URyRuntimeLevelHelpers::CreateComponentForActor(AActor *owner, 
         {
             sceneComp->AttachToComponent(attachComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
         }
-
-        if(!owner)
-        {
-            owner = attachComponent->GetOwner();
-        }
     }
-    if(owner)
-    {
-        NewInstanceComponent->RegisterComponent();
-    }
+    
+    NewInstanceComponent->RegisterComponent();
     return NewInstanceComponent;
 }
 
