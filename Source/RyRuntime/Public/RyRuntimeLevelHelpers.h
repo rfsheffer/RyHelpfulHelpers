@@ -2,7 +2,14 @@
 
 #pragma once
 
+#include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "UObject/ObjectMacros.h"
+#include "UObject/Object.h"
+#include "Templates/SubclassOf.h"
+#include "Engine/EngineTypes.h"
+#include "GameFramework/Actor.h"
+
 #include "RyRuntimeLevelHelpers.generated.h"
 
 // An blueprintable enum type which corresponds with the EWorldType
