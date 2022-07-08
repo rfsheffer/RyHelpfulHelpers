@@ -1,6 +1,7 @@
 // Copyright 2020-2022 Solar Storm Interactive
 
 #include "RyRuntimePlatformHelpers.h"
+#include "RyRuntimeModule.h"
 #include "HAL/PlatformFileManager.h"
 #include "GenericPlatform/GenericPlatformFile.h"
 #include "GenericPlatform/GenericPlatformApplicationMisc.h"
@@ -320,6 +321,27 @@ void URyRuntimePlatformHelpers::ClipboardCopy(const FString& Str)
 void URyRuntimePlatformHelpers::ClipboardPaste(FString& Dest)
 {
     FGenericPlatformApplicationMisc::ClipboardPaste(Dest);
+}
+
+#if ENGINE_MAJOR_VERSION > 4 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 27)
+static_assert(ERyDeviceScreenOrientation::LandscapeSensor == static_cast<ERyDeviceScreenOrientation>(EDeviceScreenOrientation::LandscapeSensor), "EDeviceScreenOrientation misalignment!");
+#else
+static_assert(ERyDeviceScreenOrientation::FaceDown == static_cast<ERyDeviceScreenOrientation>(EDeviceScreenOrientation::FaceDown), "EDeviceScreenOrientation misalignment!");
+#endif
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimePlatformHelpers::SetDeviceOrientation(ERyDeviceScreenOrientation NewDeviceOrientation)
+{
+#if ENGINE_MAJOR_VERSION > 4 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 27)
+#if PLATFORM_ANDROID == 0
+    UE_LOG(LogRyRuntime, Warning, TEXT("SetDeviceOrientation does nothing on this platform!"));
+#endif
+    FPlatformMisc::SetDeviceOrientation(static_cast<EDeviceScreenOrientation>(NewDeviceOrientation));
+#else
+    UE_LOG(LogRyRuntime, Warning, TEXT("SetDeviceOrientation does nothing on this engine version! Supports 4.27 or greater!"));
+#endif
 }
 
 //---------------------------------------------------------------------------------------------------------------------

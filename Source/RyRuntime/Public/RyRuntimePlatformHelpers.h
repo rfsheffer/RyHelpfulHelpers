@@ -62,7 +62,14 @@ enum class ERyDeviceScreenOrientation : uint8
     FaceUp,
 
     /** The orientation is as if place on a desk with the screen downward */
-    FaceDown
+    FaceDown,
+#if ENGINE_MAJOR_VERSION > 4 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 27)
+	/** The orientation is portrait, oriented upright with the sensor */
+	PortraitSensor,
+
+	/** The orientation is landscape, oriented upright with the sensor */
+	LandscapeSensor,
+#endif
 };
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -395,10 +402,18 @@ public:
 
 	/**
 	* Returns the orientation of the device: e.g. Portrait, LandscapeRight.
-	* @see EScreenOrientation
+	* @see ERyDeviceScreenOrientation
 	*/
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
 	static ERyDeviceScreenOrientation GetDeviceOrientation();
+	
+	/**
+	 * Change the orientation of the device: e.g. Portrait, LandscapeRight.
+	 * NOTE: This currently only supports Android on Engine version 4.27 or greater.
+	 * @see ERyDeviceScreenOrientation
+	 */
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|PlatformHelpers")
+	static void SetDeviceOrientation(ERyDeviceScreenOrientation NewDeviceOrientation);
 
 	/**
 	* Returns the device volume if the device is capable of returning that information.
@@ -671,8 +686,6 @@ FORCEINLINE bool URyRuntimePlatformHelpers::IsRunningOnBattery()
 {
     return FPlatformMisc::IsRunningOnBattery();
 }
-
-static_assert(ERyDeviceScreenOrientation::FaceDown == static_cast<ERyDeviceScreenOrientation>(EDeviceScreenOrientation::FaceDown), "EDeviceScreenOrientation misalignment!");
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
