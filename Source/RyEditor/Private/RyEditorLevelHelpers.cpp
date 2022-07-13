@@ -19,22 +19,27 @@ URyEditorLevelHelpers::URyEditorLevelHelpers(const FObjectInitializer& ObjectIni
 /**
 */
 UActorComponent* URyEditorLevelHelpers::CreateComponentForEditorActor(AActor *owner, TSubclassOf<UActorComponent> newComponentClass, 
-                                                                USceneComponent *attachComponent /*= nullptr*/)
+                                                                      USceneComponent *attachComponent, const FString newName)
 {
     if(!owner || !newComponentClass)
         return nullptr;
 
     // No template, so create a wholly new component
     owner->Modify();
-
+    
     // Create an appropriate name for the new component
-    FString ComponentTypeName = FBlueprintEditorUtils::GetClassNameWithoutSuffix(newComponentClass);
+    FString ComponentTypeName = newName;
 
-    // Strip off 'Component' if the class ends with that.  It just looks better in the UI.
-    FString SuffixToStrip(TEXT("Component"));
-    if(ComponentTypeName.EndsWith(SuffixToStrip))
+    if(ComponentTypeName.IsEmpty())
     {
-        ComponentTypeName = ComponentTypeName.Left(ComponentTypeName.Len() - SuffixToStrip.Len());
+        ComponentTypeName = FBlueprintEditorUtils::GetClassNameWithoutSuffix(newComponentClass);
+        
+        // Strip off 'Component' if the class ends with that.  It just looks better in the UI.
+        const FString SuffixToStrip(TEXT("Component"));
+        if(ComponentTypeName.EndsWith(SuffixToStrip))
+        {
+            ComponentTypeName = ComponentTypeName.Left(ComponentTypeName.Len() - SuffixToStrip.Len());
+        }
     }
 
     // Try to create a name without any numerical suffix first
@@ -45,7 +50,7 @@ UActorComponent* URyEditorLevelHelpers::CreateComponentForEditorActor(AActor *ow
         // Assign the lowest possible numerical suffix
         ComponentInstanceName = FString::Printf(TEXT("%s%d"), *ComponentTypeName, Counter++);
     }
-    FName NewComponentName = *ComponentInstanceName;
+    const FName NewComponentName = *ComponentInstanceName;
 
     // Get the set of owned components that exists prior to instancing the new component.
     TInlineComponentArray<UActorComponent*> PreInstanceComponents;
@@ -95,8 +100,21 @@ UActorComponent* URyEditorLevelHelpers::CreateComponentForEditorActor(AActor *ow
         }
     }
 
-    // Rerun construction scripts
-    owner->RerunConstructionScripts();
-
     return NewInstanceComponent;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyEditorLevelHelpers::RunConstructionScriptsForActor(AActor* actor)
+{
+    if(actor)
+    {
+        // These checks are the best we can do because we cannot access bActorIsBeingConstructed
+        const bool bAllowReconstruction = !actor->bActorSeamlessTraveled && !actor->IsPendingKill() && !actor->HasAnyFlags(RF_BeginDestroyed|RF_FinishDestroyed);
+        if(bAllowReconstruction)
+        {
+            actor->RerunConstructionScripts();
+        }
+    }
 }
