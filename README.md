@@ -2,7 +2,7 @@
   <img src="/Resources/Icon128.png">
 </p>
 
-# Ryans Helpful Helpers for Unreal Engine
+# Ryan's Helpful Helpers for Unreal Engine
 This plugin contains an enormous number of extremely helpful functions for working on Unreal Engine projects of all types.
 
 Find the plugin on the [Unreal Marketplace](https://www.unrealengine.com/marketplace/en-US/product/ryan-s-helpful-helpers) or feel free to download the sources from here and compile directly. The source repo will contain the most up-to-date extensions. I will push updates to the Marketplace in cadence with Epics engine version releases or if requested.
@@ -17,3 +17,5 @@ The plugin supports the Windows, MacOS, and Linux editor environments and can ta
 
 ## Documentation
 See the [Wiki](https://github.com/rfsheffer/RyansUE4Helpers/wiki) for documentation and examples.
+
+Visit the [Solar Storm Interactive Discord](https://discord.com/invite/zBXM6VC4r8) to talk about the plugin, make feature requests, etc!
