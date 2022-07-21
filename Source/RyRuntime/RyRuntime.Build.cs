@@ -48,16 +48,5 @@ public class RyRuntime : ModuleRules
         {
 	        PrivateDependencyModuleNames.Add("UnrealEd");
         }
-
-        if (Target.Platform.IsInGroup(UnrealPlatformGroup.Windows))
-        {
-	        AddEngineThirdPartyPrivateStaticDependencies(Target, "DirectSound");
-	        PrivateIncludePaths.AddRange(
-		        new string[]
-		        {
-			        Path.GetFullPath(Path.Combine(EngineDirectory, "Source/Runtime/Online/Voice/Private")),
-		        }
-	        );
-        }
     }
 }
