@@ -46,7 +46,7 @@ public class RyEditor : ModuleRules
 			}
 		);
 		
-#if UE_4_27_OR_LATER
+#if UE_4_26_OR_LATER
 	    PublicDependencyModuleNames.AddRange(
 		    new string[]
 		    {

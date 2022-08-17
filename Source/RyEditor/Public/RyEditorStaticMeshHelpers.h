@@ -4,10 +4,10 @@
 
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Runtime/Launch/Resources/Version.h"
-#if ENGINE_MAJOR_VERSION == 5 || ENGINE_MINOR_VERSION >= 27
-#include "PhysicsCore/Public/BodySetupEnums.h"
-#else
+#if ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION < 26
 #include "PhysicsEngine/BodySetupEnums.h"
+#else
+#include "PhysicsCore/Public/BodySetupEnums.h"
 #endif
 
 #include "RyEditorStaticMeshHelpers.generated.h"
