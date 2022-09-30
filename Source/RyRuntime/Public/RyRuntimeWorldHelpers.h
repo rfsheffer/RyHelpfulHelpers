@@ -28,7 +28,7 @@ UCLASS()
 class RYRUNTIME_API URyRuntimeWorldHelpers : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
-
+public:
 	/** 
 	* Executes the "Tick" pin every tick until the "Stop" pin is executed. Calling "Start" again while it is still ticking will be ignored.
 	* 
