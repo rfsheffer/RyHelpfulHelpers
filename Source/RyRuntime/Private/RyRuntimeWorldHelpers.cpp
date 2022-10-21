@@ -54,3 +54,78 @@ void URyRuntimeWorldHelpers::TickUntilStop(const UObject* WorldContextObject, co
 		}
 	}
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+UWorld* URyRuntimeWorldHelpers::GetEngineWorld(UObject* WorldContextObject, ERyWorldType specificType)
+{
+	check(GEngine);
+	bool shouldSearch = true;
+	if(WorldContextObject)
+	{
+		shouldSearch = false;
+		UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
+		if(World)
+		{
+			return World;
+		}
+	}
+
+	if(specificType != ERyWorldType::None)
+	{
+		shouldSearch = false;
+
+		for(const FWorldContext& context : GEngine->GetWorldContexts())
+		{
+			if(static_cast<EWorldType::Type>(specificType) == context.WorldType)
+			{
+				return context.World();
+			}
+		}
+	}
+	
+	if(!shouldSearch)
+	{
+		return nullptr;
+	}
+
+	UWorld* bestWorldOut = nullptr;
+	for(const FWorldContext& context : GEngine->GetWorldContexts())
+	{
+		if(context.WorldType == EWorldType::Game || context.WorldType == EWorldType::PIE)
+		{
+			return context.World();
+		}
+
+		if(context.WorldType == EWorldType::Editor)
+		{
+			bestWorldOut = context.World();
+		}
+	}
+
+	return bestWorldOut;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeWorldHelpers::GetEngineWorldContexts(TArray<FRyWorldContext>& worldsOut)
+{
+	worldsOut.Empty(GEngine->GetWorldContexts().Num());
+	check(GEngine);
+	for(const FWorldContext& context : GEngine->GetWorldContexts())
+	{
+		FRyWorldContext worldContext;
+		worldContext.World = context.World();
+		worldContext.WorldType = static_cast<ERyWorldType>(context.WorldType.GetValue());
+		worldContext.ContextHandle = context.ContextHandle;
+		worldContext.TravelURL = context.TravelURL;
+		worldContext.TravelType = context.TravelType;
+		worldContext.OwningGameInstance = context.OwningGameInstance;
+		worldContext.PIEPrefix = context.PIEPrefix;
+		worldContext.RunAsDedicated = context.RunAsDedicated;
+		worldContext.bWaitingOnOnlineSubsystem = context.bWaitingOnOnlineSubsystem;
+		worldContext.CustomDescription = context.CustomDescription;
+	}
+}
