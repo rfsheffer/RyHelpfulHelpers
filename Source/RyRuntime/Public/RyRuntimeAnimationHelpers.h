@@ -71,4 +71,8 @@ public:
 	/// Create an animation meta data instance
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|AnimationHelpers")
 	static UAnimMetaData* CreateAnimMetaDataInstance(TSubclassOf<UAnimMetaData> MetaDataClass);
+
+	/// Get all montage instances in an anim instance, active or not.
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|AnimationHelpers")
+	static void GetAllMontages(UAnimInstance* animInstance, TArray<UAnimMontage*>& montagesOut);
 };

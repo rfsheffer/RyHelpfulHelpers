@@ -3,6 +3,7 @@
 #include "RyRuntimeAnimationHelpers.h"
 #include "RyRuntimeModule.h"
 
+#include "Animation/AnimInstance.h"
 #include "Animation/AnimSequence.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/Skeleton.h"
@@ -339,6 +340,23 @@ UAnimMetaData* URyRuntimeAnimationHelpers::CreateAnimMetaDataInstance(TSubclassO
     }
 
     return MetaDataInstance;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeAnimationHelpers::GetAllMontages(UAnimInstance* animInstance, TArray<UAnimMontage*>& montagesOut)
+{
+    if(animInstance)
+    {
+        for(FAnimMontageInstance*& instance : animInstance->MontageInstances)
+        {
+            if(instance)
+            {
+                montagesOut.Add(instance->Montage);
+            }
+        }
+    }
 }
 
 #undef LOCTEXT_NAMESPACE
