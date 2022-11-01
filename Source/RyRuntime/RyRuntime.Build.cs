@@ -44,9 +44,22 @@ public class RyRuntime : ModuleRules
             }
         );
         
-        if (Target.Type == TargetRules.TargetType.Editor)
+        if(Target.IsInPlatformGroup(UnrealPlatformGroup.Desktop))
         {
-	        PrivateDependencyModuleNames.Add("UnrealEd");
+	        PrivateDependencyModuleNames.Add("DesktopPlatform");
+        }
+        
+        if (Target.bBuildEditor)
+        {
+	        PrivateDependencyModuleNames.AddRange(
+		        new string[]
+		        {
+			        "UnrealEd",
+			        "MainFrame",
+			        "PropertyEditor",
+			        "EditorStyle",
+		        }
+		    );
         }
     }
 }
