@@ -2,9 +2,8 @@
 
 #include "RyRuntimeDialogHelpers.h"
 
-#include "AssetToolsModule.h"
-
 #if WITH_EDITOR
+#include "AssetToolsModule.h"
 #include "PropertyEditorModule.h"
 #include "Editor/LevelEditor/Public/LevelEditor.h"
 #include "Interfaces/IMainFrameModule.h"
@@ -99,9 +98,9 @@ bool URyRuntimeDialogHelpers::SaveFileDialog(const FString& DialogTitle, const F
 #endif
     return false;
 }
-
+#if WITH_EDITOR
 static_assert(ERyRunLastDirectory::MAX == static_cast<ERyRunLastDirectory>(ELastDirectory::MAX), "Last Directory Enum changed. Update ERyRunLastDirectory to match ELastDirectory!");
-
+#endif
 //--------------------------------------------------------------------------------------------------------------------
 /**
 */
