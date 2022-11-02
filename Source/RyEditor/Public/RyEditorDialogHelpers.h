@@ -77,38 +77,32 @@ class RYEDITOR_API URyEditorDialogHelpers : public UBlueprintFunctionLibrary
 public:
 
     // Open a file open dialog box for selecting a file to open
-	UE_DEPRECATED(4.26, "OpenFileDialog is deprecated. Please use RyRuntimeDialogHelpers::OpenFileDialog instead.")
-    UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|DialogHelpers", meta=(DeprecatedFunction, DeprecationMessage="OpenFileDialog is deprecated. Please use RyRuntimeDialogHelpers::OpenFileDialog instead."))
+    UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|DialogHelpers")
     static bool OpenFileDialog(const FString& DialogTitle, const FString& DefaultPath, const FString& DefaultFile, 
                                TArray<FString>& OutFilenames, int32& OutFilterIndex,
                                ERyOpenFileDialogFlags Flag = ERyOpenFileDialogFlags::None,
                                const FString& FileTypes = TEXT("All Files (*)|*|Text Files (*.txt)|*.txt"));
 
     // Open a directory select dialog for selecting a directory to use
-	UE_DEPRECATED(4.26, "OpenDirectoryDialog is deprecated. Please use RyRuntimeDialogHelpers::OpenDirectoryDialog instead.")
-    UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|DialogHelpers", meta=(DeprecatedFunction, DeprecationMessage="OpenDirectoryDialog is deprecated. Please use RyRuntimeDialogHelpers::OpenDirectoryDialog instead."))
+    UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|DialogHelpers")
     static bool OpenDirectoryDialog(const FString& DialogTitle, const FString& DefaultPath, FString& OutFolderName);
 
     // Open a save file dialog box for setting a filename or overwrite file path
-	UE_DEPRECATED(4.26, "SaveFileDialog is deprecated. Please use RyRuntimeDialogHelpers::SaveFileDialog instead.")
-    UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|DialogHelpers", meta=(DeprecatedFunction, DeprecationMessage="SaveFileDialog is deprecated. Please use RyRuntimeDialogHelpers::SaveFileDialog instead."))
+    UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|DialogHelpers")
     static bool SaveFileDialog(const FString& DialogTitle, const FString& DefaultPath, const FString& DefaultFile, TArray<FString>& OutFilenames,
                                ERyOpenFileDialogFlags Flag = ERyOpenFileDialogFlags::None,
                                const FString& FileTypes = TEXT("All Files (*)|*|Text Files (*.txt)|*.txt"));
 
     // Get the last directory path for a specific type of directory access. Good to pass this value into DefaultPath for OpenFileDialog, SaveFileDialog and OpenDirectoryDialog
-	UE_DEPRECATED(4.26, "GetLastDirectory is deprecated. Please use RyRuntimeDialogHelpers::GetLastDirectory instead.")
-    UFUNCTION(BlueprintPure, CallInEditor, Category = "RyEditor|DialogHelpers", meta=(DeprecatedFunction, DeprecationMessage="GetLastDirectory is deprecated. Please use RyRuntimeDialogHelpers::GetLastDirectory instead."))
+    UFUNCTION(BlueprintPure, CallInEditor, Category = "RyEditor|DialogHelpers")
     static FString GetLastDirectory(ERyLastDirectory lastDirectory = ERyLastDirectory::GENERIC_OPEN);
 
     // Open a generic message dialog
-	UE_DEPRECATED(4.26, "OpenMessageDialog is deprecated. Please use RyRuntimeDialogHelpers::OpenMessageDialog instead.")
-    UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|DialogHelpers", meta=(DeprecatedFunction, DeprecationMessage="OpenMessageDialog is deprecated. Please use RyRuntimeDialogHelpers::OpenMessageDialog instead."))
+    UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|DialogHelpers")
     static ERyAppReturnType OpenMessageDialog(ERyAppMsgType MessageType, const FText Message, const FText WindowTitle = FText());
 
     // Open a debug message dialog
-	UE_DEPRECATED(4.26, "OpenDebugMessageDialog is deprecated. Please use RyRuntimeDialogHelpers::OpenDebugMessageDialog instead.")
-    UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|DialogHelpers", meta=(DeprecatedFunction, DeprecationMessage="OpenDebugMessageDialog is deprecated. Please use RyRuntimeDialogHelpers::OpenDebugMessageDialog instead."))
+    UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|DialogHelpers")
     static void OpenDebugMessageDialog(const FText Message, const FText WindowTitle = FText());
 
     // Opens a dialog containing the details of the supplied class. When the window is closed, an object of the class is returned with whatever edits were made.
@@ -120,8 +114,7 @@ public:
     // @param ButtonPressedOut - The button was pressed, the window wasn't closed.
     // @param WindowSize - Default Window Size
     // @return The object created and edited in the details panel
-	UE_DEPRECATED(4.26, "OpenObjectDetailsDialog is deprecated. Please use RyRuntimeDialogHelpers::OpenObjectDetailsDialog instead.")
-    UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|DialogHelpers", meta=(DeprecatedFunction, DeprecationMessage="OpenObjectDetailsDialog is deprecated. Please use RyRuntimeDialogHelpers::OpenObjectDetailsDialog instead."))
+    UFUNCTION(BlueprintCallable, CallInEditor, Category = "RyEditor|DialogHelpers")
     static UObject* OpenObjectDetailsDialog(TSubclassOf<UObject> DetailsClass, 
                                             const FText WindowTitle, 
                                             const FText ButtonText, 

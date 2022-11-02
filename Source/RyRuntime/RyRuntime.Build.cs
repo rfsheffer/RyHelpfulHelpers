@@ -43,21 +43,13 @@ public class RyRuntime : ModuleRules
 				"RHI",
             }
         );
-        
-        if(Target.IsInPlatformGroup(UnrealPlatformGroup.Desktop))
-        {
-	        PrivateDependencyModuleNames.Add("DesktopPlatform");
-        }
-        
+
         if (Target.bBuildEditor)
         {
 	        PrivateDependencyModuleNames.AddRange(
 		        new string[]
 		        {
 			        "UnrealEd",
-			        "MainFrame",
-			        "PropertyEditor",
-			        "EditorStyle",
 		        }
 		    );
         }
