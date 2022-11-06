@@ -5,6 +5,7 @@
 #include "Core/Public/Misc/FileHelper.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "HighResScreenshot.h"
+#include "RenderCore/Public/ShaderPipelineCache.h"
 
 #if WITH_EDITOR
 	#include "Editor/EditorEngine.h"
@@ -354,4 +355,37 @@ void URyRuntimeRenderingHelpers::TakeScreenshot(UObject* WorldContextObject, FLa
 			UE_LOG(LogRyRuntime, Warning, TEXT("TakeScreenshot not executed. The previous action hasn't finished yet."));
 		}
 	}
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+int32 URyRuntimeRenderingHelpers::ShaderPipelineCache_PrecompilesRemaining()
+{
+	return FShaderPipelineCache::NumPrecompilesRemaining();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeRenderingHelpers::ShaderPipelineCache_PauseBatching()
+{
+	FShaderPipelineCache::PauseBatching();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeRenderingHelpers::ShaderPipelineCache_ResumeBatching()
+{
+	FShaderPipelineCache::ResumeBatching();
+}
+
+static_assert(ERyBatchMode::Precompile == static_cast<ERyBatchMode>(FShaderPipelineCache::BatchMode::Precompile), "Batch mode enum has changed!");
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeRenderingHelpers::ShaderPipelineCache_SetBatchMode(ERyBatchMode batchMode)
+{
+	FShaderPipelineCache::SetBatchMode(static_cast<FShaderPipelineCache::BatchMode>(batchMode));
 }

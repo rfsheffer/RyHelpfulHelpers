@@ -41,6 +41,7 @@ public class RyRuntime : ModuleRules
 				"Voice",
 				"EngineSettings",
 				"RHI",
+				"RenderCore",
             }
         );
 

@@ -77,7 +77,7 @@ enum class ERyShadingPath : uint8
 	Deferred,
 };
 
-UENUM()
+UENUM(Blueprintable)
 enum class ERyScreenShotMode : uint8
 {
 	/// Game window
@@ -86,6 +86,17 @@ enum class ERyScreenShotMode : uint8
 	EditorActiveWindow,
 	/// Editor level viewport (Editor Only)
 	EditorLevelViewport,
+};
+
+UENUM(Blueprintable)
+enum class ERyBatchMode : uint8
+{
+	/// The maximum batch size is defined by r.ShaderPipelineCache.BackgroundBatchSize
+	Background,
+	/// The maximum batch size is defined by r.ShaderPipelineCache.BatchSize
+	Fast,
+	/// The maximum batch size is defined by r.ShaderPipelineCache.PrecompileBatchSize
+	Precompile
 };
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -120,4 +131,21 @@ public:
 	/// @param outSuccess True if a screenshot was produced.
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|RenderingHelpers", meta = (Latent = "", LatentInfo = "LatentInfo", WorldContext = "WorldContextObject"))
 	static void TakeScreenshot(UObject* WorldContextObject, FLatentActionInfo LatentInfo, const FString& requestedPathOut, const ERyScreenShotMode screenshotMode, FString& pathOut, bool &outSuccess);
+
+	/// Returns the number of shader pipeline cache precompiles remaining
+	/// This is related to PSO caching and may not be relavent to your project. See "PSO caching" in the documentation for details.
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|RenderingHelpers")
+	static int32 ShaderPipelineCache_PrecompilesRemaining();
+
+	/// Pause PSO Caching - Pauses the PSO Caching compilation.
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|RenderingHelpers")
+	static void ShaderPipelineCache_PauseBatching();
+
+	/// Resume PSO Caching - Resumes the PSO Caching if it has been stopped or paused.
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|RenderingHelpers")
+	static void ShaderPipelineCache_ResumeBatching();
+
+	/// Set Batch Mode Speed - Sets the speed at which the PSO Caching should be processed.
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|RenderingHelpers")
+	static void ShaderPipelineCache_SetBatchMode(ERyBatchMode batchMode);
 };
