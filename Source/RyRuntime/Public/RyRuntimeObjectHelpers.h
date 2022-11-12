@@ -31,6 +31,14 @@ class RYRUNTIME_API URyRuntimeObjectHelpers : public UBlueprintFunctionLibrary
 {
     GENERATED_BODY()
 public:
+
+	/// Create a new object of objectClass
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers", Meta = (DeterminesOutputType = "objectClass", DynamicOutputParam = "objectOut"))
+	static void CreateObject(TSubclassOf<UObject> objectClass, UObject* outer, UObject*& objectOut);
+
+	/// Duplicate a current object
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers", Meta = (DeterminesOutputType = "objectClass", DynamicOutputParam = "objectOut"))
+	static void DuplicateObject(TSubclassOf<UObject> objectClass, UObject* object, UObject* outer, UObject*& objectOut);
 	
     /** Returns true if the Soft Object Reference is not null AND not pending kill */
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers", meta = (BlueprintThreadSafe))

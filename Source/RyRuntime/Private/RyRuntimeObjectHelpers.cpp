@@ -14,6 +14,33 @@
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
+void URyRuntimeObjectHelpers::CreateObject(TSubclassOf<UObject> objectClass, UObject* outer, UObject*& objectOut)
+{
+    if(!objectClass)
+    {
+        objectOut = nullptr;
+        return;
+    }
+    
+    objectOut = NewObject<UObject>(outer ? outer : GetTransientPackage(), objectClass);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeObjectHelpers::DuplicateObject(TSubclassOf<UObject> objectClass, UObject* object, UObject* outer, UObject*& objectOut)
+{
+    if(!object)
+    {
+        objectOut = nullptr;
+        return;
+    }
+    objectOut = ::DuplicateObject(object, outer ? outer : object->GetOuter());
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
 bool URyRuntimeObjectHelpers::IsLiveSoftObjectReference(const TSoftObjectPtr<UObject>& SoftObjectReference)
 {
     if(SoftObjectReference.IsNull())
