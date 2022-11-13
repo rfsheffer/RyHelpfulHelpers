@@ -32,6 +32,24 @@ public:
     */
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|String")
     static void SetChar(UPARAM(ref) FString& sourceString, const int32 charIndex, const FString& charIn);
+ 
+    /**
+     * Gets a char by index in the string
+    */
+    UFUNCTION(BlueprintPure, Category = "RyRuntime|String")
+    static FString GetChar(UPARAM(ref) FString& sourceString, const int32 charIndex);
+
+    /**
+     * Pops a character off the end of a string
+    */
+    UFUNCTION(BlueprintCallable, Category = "RyRuntime|String")
+    static void PopChar(UPARAM(ref) FString& sourceString);
+    
+    /**
+     * Pushes a character to the end of a string
+    */
+    UFUNCTION(BlueprintCallable, Category = "RyRuntime|String")
+    static void PushChar(UPARAM(ref) FString& sourceString, const FString& charIn);
 
     /**
      * Fills a string with a specific character overwriting the original string. Good for initializing a string with characters to start.

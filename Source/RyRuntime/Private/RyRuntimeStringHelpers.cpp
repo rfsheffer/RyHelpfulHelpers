@@ -39,6 +39,47 @@ void URyRuntimeStringHelpers::SetChar(FString& sourceString, const int32 charInd
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
+FString URyRuntimeStringHelpers::GetChar(FString& sourceString, const int32 charIndex)
+{
+    if(sourceString.Len() <= charIndex || charIndex < 0)
+    {
+        return TEXT("");
+    }
+    
+    FString charOut;
+    TArray<TCHAR>& chars = sourceString.GetCharArray();
+    charOut += chars[charIndex];
+    return charOut;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeStringHelpers::PopChar(FString& sourceString)
+{
+    if(!sourceString.Len())
+    {
+        return;
+    }
+    sourceString.RemoveAt(sourceString.Len() - 1, 1, false);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeStringHelpers::PushChar(FString& sourceString, const FString& charIn)
+{
+    if(!charIn.Len())
+    {
+        return;
+    }
+    
+    sourceString.InsertAt(sourceString.Len(), **charIn);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
 void URyRuntimeStringHelpers::FillString(FString& sourceString, const int32 numChars, const FString& charIn)
 {
     if(charIn.Len() == 0 || numChars <= 0)
