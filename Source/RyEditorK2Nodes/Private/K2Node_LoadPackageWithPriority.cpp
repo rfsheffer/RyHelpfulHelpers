@@ -409,7 +409,7 @@ UEnum* UK2Node_LoadPackageWithPriority::GetRyAsyncLoadingResultEnum()
 {
 	if(!RyAsyncLoadingResultEnum)
 	{
-		RyAsyncLoadingResultEnum = FindObject<UEnum>(nullptr, TEXT("ERyAsyncLoadingResult"), true);
+		RyAsyncLoadingResultEnum = FindObject<UEnum>(nullptr, TEXT("/Script/RyRuntime.ERyAsyncLoadingResult"), true);
 		check(RyAsyncLoadingResultEnum);
 		PreloadObject(RyAsyncLoadingResultEnum);
 	}
