@@ -8,7 +8,9 @@
 	"CreatedBy": "Solar Storm Interactive",
 	"CreatedByURL": "https://github.com/rfsheffer",
 	"DocsURL": "https://github.com/rfsheffer/RyHelpfulHelpers/wiki",
+	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/25653d83f1f84775b09ed750659f9ca3",
 	"SupportURL": "https://discord.gg/zBXM6VC4r8",
+	"EngineVersion": "",
 	"CanContainContent": true,
 	"Installed": true,
 	"Modules": [
