@@ -338,7 +338,11 @@ void URyRuntimePlatformHelpers::SetDeviceOrientation(ERyDeviceScreenOrientation 
 #if PLATFORM_ANDROID == 0
     UE_LOG(LogRyRuntime, Warning, TEXT("SetDeviceOrientation does nothing on this platform!"));
 #endif
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1) || ENGINE_MAJOR_VERSION > 5
+    FPlatformMisc::SetAllowedDeviceOrientation(static_cast<EDeviceScreenOrientation>(NewDeviceOrientation));
+#else
     FPlatformMisc::SetDeviceOrientation(static_cast<EDeviceScreenOrientation>(NewDeviceOrientation));
+#endif
 #else
     UE_LOG(LogRyRuntime, Warning, TEXT("SetDeviceOrientation does nothing on this engine version! Supports 4.27 or greater!"));
 #endif

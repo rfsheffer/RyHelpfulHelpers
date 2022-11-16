@@ -10,7 +10,7 @@
 bool URyRuntimeMetaHelpers::GetEnumIndexFromName(const FString enumName, FName entryName, uint8& indexOut)
 {
 	// First try to find a static enum
-	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, *enumName, false);
+	const UEnum* EnumPtr = FindObject<UEnum>(nullptr, *enumName, false);
 	if(!EnumPtr)
 	{
 		// Look for the dynamic enum
@@ -48,7 +48,7 @@ bool URyRuntimeMetaHelpers::GetEnumIndexFromName(const FString enumName, FName e
 */
 bool URyRuntimeMetaHelpers::GetEnumValueFromName(const FString enumName, const FName entryName, int64& valueOut)
 {
-	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, *enumName, false);
+	const UEnum* EnumPtr = FindObject<UEnum>(nullptr, *enumName, false);
 	if(!EnumPtr)
 	{
 		// Look for the dynamic enum
@@ -85,7 +85,7 @@ bool URyRuntimeMetaHelpers::GetEnumValueFromName(const FString enumName, const F
 */
 bool URyRuntimeMetaHelpers::GetEnumNameByIndex(const FString enumName, const uint8 enumIndex, FName& nameOut)
 {
-	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, *enumName, false);
+	const UEnum* EnumPtr = FindObject<UEnum>(nullptr, *enumName, false);
 	if(!EnumPtr)
 	{
 		// Look for the dynamic enum
@@ -117,7 +117,7 @@ bool URyRuntimeMetaHelpers::GetEnumNameByIndex(const FString enumName, const uin
 */
 bool URyRuntimeMetaHelpers::GetEnumNameByValue(const FString enumName, const int64 enumValue, FName& nameOut)
 {
-	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, *enumName, false);
+	const UEnum* EnumPtr = FindObject<UEnum>(nullptr, *enumName, false);
 	if(!EnumPtr)
 	{
 		// Look for the dynamic enum

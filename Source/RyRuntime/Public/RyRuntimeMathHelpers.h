@@ -50,6 +50,10 @@ enum class ERyUnit : uint8
 	Lux UMETA(Hidden),
 	CandelaPerMeter2 UMETA(Hidden),
 
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1) || ENGINE_MAJOR_VERSION > 5
+	Nanoseconds, Microseconds,
+#endif
+
     /** Time units */
     Milliseconds, Seconds, Minutes, Hours, Days, Months, Years,
 

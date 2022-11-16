@@ -111,7 +111,13 @@ void URyEditorLevelHelpers::RunConstructionScriptsForActor(AActor* actor)
     if(actor)
     {
         // These checks are the best we can do because we cannot access bActorIsBeingConstructed
-        const bool bAllowReconstruction = !actor->bActorSeamlessTraveled && !actor->IsPendingKill() && !actor->HasAnyFlags(RF_BeginDestroyed|RF_FinishDestroyed);
+        const bool bAllowReconstruction = !actor->bActorSeamlessTraveled &&
+#if ENGINE_MAJOR_VERSION >= 5
+                                          IsValid(actor) &&
+#else
+                                          !actor->IsPendingKill() &&
+#endif
+                                          !actor->HasAnyFlags(RF_BeginDestroyed|RF_FinishDestroyed);
         if(bAllowReconstruction)
         {
             actor->RerunConstructionScripts();

@@ -9,7 +9,12 @@
 
 #include "Misc/MessageDialog.h"
 
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1) || ENGINE_MAJOR_VERSION > 5
+#include "AssetRegistry/AssetRegistryModule.h"
+#else
 #include "AssetRegistryModule.h"
+#endif
+
 #include "Runtime/Launch/Resources/Version.h"
 
 #define LOCTEXT_NAMESPACE "RyEditor"
@@ -95,7 +100,11 @@ UAnimMontage* URyEditorAnimationHelpers::CreateMontageOfSequences(const TArray<U
 
         // Create the segment
         FAnimSegment newSegment;
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1) || ENGINE_MAJOR_VERSION > 5
+        newSegment.SetAnimReference(sequence);
+#else
         newSegment.AnimReference = sequence;
+#endif
         newSegment.StartPos = curTime;
         newSegment.AnimStartTime = 0.0f;
 #if ENGINE_MAJOR_VERSION >= 5
@@ -147,12 +156,27 @@ void URyEditorAnimationHelpers::CreateMontageSectionsFromSegments(UAnimMontage* 
     for(int32 segIndex = 0; segIndex < MontageIn->SlotAnimTracks[0].AnimTrack.AnimSegments.Num(); ++segIndex)
     {
         FAnimSegment& segment = MontageIn->SlotAnimTracks[0].AnimTrack.AnimSegments[segIndex];
-        if(segment.AnimReference)
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1) || ENGINE_MAJOR_VERSION > 5
+        if(segment.GetAnimReference())
+#else
+    	if(segment.AnimReference)
+#endif
         {
-            const int32 sectionIndex = MontageIn->AddAnimCompositeSection(segment.AnimReference->GetFName(), curTime);
+    	    
+            const int32 sectionIndex = MontageIn->AddAnimCompositeSection(
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1) || ENGINE_MAJOR_VERSION > 5
+				segment.GetAnimReference()->GetFName(),
+#else
+				segment.AnimReference->GetFName(),
+#endif
+            	curTime);
             MontageIn->CompositeSections[sectionIndex].ChangeLinkMethod(EAnimLinkMethod::Relative);
 #if ENGINE_MAJOR_VERSION >= 5
-            curTime += segment.AnimReference->GetPlayLength();
+#if ENGINE_MINOR_VERSION >= 1 || ENGINE_MAJOR_VERSION > 5
+            curTime += segment.GetAnimReference()->GetPlayLength();
+#else
+    		curTime += segment.AnimReference->GetPlayLength();
+#endif
 #else
             curTime += segment.AnimReference->SequenceLength;
 #endif

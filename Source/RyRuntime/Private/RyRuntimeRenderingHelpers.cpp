@@ -259,7 +259,11 @@ struct FTakeScreenshotAction : FPendingLatentAction
 					if (IFileManager::Get().MakeDirectory(*FPaths::ScreenShotDir(), true))
 					{
 						TArray<uint8> CompressedBitmap;
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1) || ENGINE_MAJOR_VERSION > 5
+						FImageUtils::ThumbnailCompressImageArray(ImageSize.X, ImageSize.Y, ImageData, CompressedBitmap);
+#else
 						FImageUtils::CompressImageArray(ImageSize.X, ImageSize.Y, ImageData, CompressedBitmap);
+#endif
 						if (FFileHelper::SaveArrayToFile(CompressedBitmap, *PathOut))
 						{
 							InProgress = true;

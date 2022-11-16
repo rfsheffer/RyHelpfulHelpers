@@ -12,6 +12,11 @@
 #include "EditorDirectories.h"
 #include "Framework/Application/SlateApplication.h"
 
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1) || ENGINE_MAJOR_VERSION > 5
+#include "Editor/EditorStyle/Public/EditorStyleSet.h"
+#include "Runtime/SlateCore/Public/Styling/AppStyle.h"
+#endif
+
 #include "Misc/MessageDialog.h"
 #include "Runtime/Launch/Resources/Version.h"
 
@@ -211,7 +216,11 @@ public:
             .FillHeight(1.0f)
             [
                 SNew(SBorder)
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1) || ENGINE_MAJOR_VERSION > 5
+                .BorderImage(FAppStyle::GetBrush(TEXT("PropertyWindow.WindowBorder")))
+#else
                 .BorderImage(FEditorStyle::GetBrush(TEXT("PropertyWindow.WindowBorder")))
+#endif
                 [
                     DetailView
                 ]
@@ -220,7 +229,11 @@ public:
             .AutoHeight()
             [
                 SNew(SBorder)
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1) || ENGINE_MAJOR_VERSION > 5
+                .BorderImage(FAppStyle::GetBrush(TEXT("PropertyWindow.WindowBorder")))
+#else
                 .BorderImage(FEditorStyle::GetBrush(TEXT("PropertyWindow.WindowBorder")))
+#endif
                 [
                     SNew(SButton)
                     .Text(buttonText)

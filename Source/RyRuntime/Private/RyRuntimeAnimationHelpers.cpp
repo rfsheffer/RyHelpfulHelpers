@@ -128,7 +128,11 @@ int32 AddAnimCompositeSection(UAnimMontage* NewMontage, FName InSectionName, flo
         return INDEX_NONE;
     }
 
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1) || ENGINE_MAJOR_VERSION > 5
+    NewSection.Link(NewMontage, StartTime);
+#else
     NewSection.LinkMontage(NewMontage, StartTime);
+#endif
 
     // we'd like to sort them in the order of time
     int32 NewSectionIndex = NewMontage->CompositeSections.Add(NewSection);
@@ -201,7 +205,11 @@ UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageOfSequences(const 
 
         // Create the segment
         FAnimSegment& animSegment = animTrack.AnimTrack.AnimSegments.AddDefaulted_GetRef();
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1) || ENGINE_MAJOR_VERSION > 5
+        animSegment.SetAnimReference(sequence);
+#else
         animSegment.AnimReference = sequence;
+#endif
         animSegment.StartPos = curTime;
         animSegment.AnimStartTime = 0.0f;
 #if ENGINE_MAJOR_VERSION >= 5

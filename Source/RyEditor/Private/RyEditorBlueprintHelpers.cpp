@@ -7,7 +7,11 @@
 #include "Kismet2/KismetEditorUtilities.h"
 #include "PackageTools.h"
 #include "KismetCompilerModule.h"
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1) || ENGINE_MAJOR_VERSION > 5
+#include "AssetRegistry/AssetRegistryModule.h"
+#else
 #include "AssetRegistryModule.h"
+#endif
 #include "Kismet2/CompilerResultsLog.h"
 
 // Helpers
