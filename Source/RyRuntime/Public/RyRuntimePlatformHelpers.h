@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 #include "RyRuntimePlatformHelpers.generated.h"
 

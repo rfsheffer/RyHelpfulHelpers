@@ -6,6 +6,7 @@
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "HighResScreenshot.h"
 #include "RenderCore/Public/ShaderPipelineCache.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 #if WITH_EDITOR
 	#include "Editor/EditorEngine.h"

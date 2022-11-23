@@ -3,6 +3,7 @@
 
 #include "RyRuntimeComponentHelpers.h"
 #include "RyRuntimeModule.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**

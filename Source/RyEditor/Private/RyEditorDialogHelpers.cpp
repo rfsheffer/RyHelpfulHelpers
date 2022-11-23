@@ -1,6 +1,7 @@
 // Copyright 2020-2022 Solar Storm Interactive
 
 #include "RyEditorDialogHelpers.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 #include "AssetToolsModule.h"
 #include "PropertyEditorModule.h"
@@ -18,7 +19,6 @@
 #endif
 
 #include "Misc/MessageDialog.h"
-#include "Runtime/Launch/Resources/Version.h"
 
 //--------------------------------------------------------------------------------------------------------------------
 /**

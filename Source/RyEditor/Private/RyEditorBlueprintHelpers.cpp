@@ -2,6 +2,7 @@
 
 #include "RyEditorBlueprintHelpers.h"
 #include "RyEditorModule.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 // Creating new blueprints
 #include "Kismet2/KismetEditorUtilities.h"
@@ -17,7 +18,6 @@
 // Helpers
 #include "RyRuntimeObjectHelpers.h"
 #include "Misc/Paths.h"
-#include "Runtime/Launch/Resources/Version.h"
 
 #define LOCTEXT_NAMESPACE "RyEditor"
 
