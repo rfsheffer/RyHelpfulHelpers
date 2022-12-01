@@ -356,3 +356,29 @@ bool URyRuntimePlatformHelpers::PlatformRequiresCookedData()
 {
     return FPlatformProperties::RequiresCookedData();
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FString URyRuntimePlatformHelpers::GetAndroidInternalStoragePath()
+{
+#if PLATFORM_ANDROID
+    extern FString GInternalFilePath;
+    return GInternalFilePath;
+#else
+    return TEXT("");
+#endif
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FString URyRuntimePlatformHelpers::GetAndroidExternalStoragePath()
+{
+#if PLATFORM_ANDROID
+    extern FString GExternalFilePath;
+    return GExternalFilePath;
+#else
+    return TEXT("");
+#endif
+}

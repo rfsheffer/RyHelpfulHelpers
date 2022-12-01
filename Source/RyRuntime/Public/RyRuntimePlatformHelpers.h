@@ -431,6 +431,22 @@ public:
 	/// Does this platform require cooked data?
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|PlatformHelpers")
 	static bool PlatformRequiresCookedData();
+
+	/**
+	 * Only valid on android devices, returns the internal storage path. This path is always accessible at runtime
+	 * and should be where you put the games extra runtime generated files.
+	 */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|FileHelpers")
+	static FString GetAndroidInternalStoragePath();
+
+	/**
+	 * Only valid on android devices, returns the external storage path. This path is only valid if the application
+	 * has the permissions WRITE_EXTERNAL_STORAGE or READ_EXTERNAL_STORAGE set (one or the other depending on your needs)
+	 * and the user as given the application permission using the permission granting prompt.
+	 * This is usually used when the user can use their own files to add something to the game like mods, music, art.
+	 */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|FileHelpers")
+	static FString GetAndroidExternalStoragePath();
 };
 
 //---------------------------------------------------------------------------------------------------------------------
