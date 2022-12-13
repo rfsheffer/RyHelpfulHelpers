@@ -7,9 +7,33 @@
 #include "UObject/UObjectIterator.h"
 #include "LatentActions.h"
 #include "Runtime/Launch/Resources/Version.h"
+#include "Engine/Classes/Engine/LatentActionManager.h"
+#include "Engine/Public/TimerManager.h"
 
 // Async asset loading extension
 #include "Engine/StreamableManager.h"
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeObjectHelpers::RemoveLatentActionsForObject(UObject* WorldContextObject, UObject* object)
+{
+    if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+    {
+        World->GetLatentActionManager().RemoveActionsForObject(object);
+    }
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeObjectHelpers::ClearAllTimersForObject(UObject* WorldContextObject, UObject* object)
+{
+    if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+    {
+        World->GetTimerManager().ClearAllTimersForObject(object);
+    }
+}
 
 //---------------------------------------------------------------------------------------------------------------------
 /**

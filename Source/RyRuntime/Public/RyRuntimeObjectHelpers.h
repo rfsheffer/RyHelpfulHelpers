@@ -32,6 +32,15 @@ class RYRUNTIME_API URyRuntimeObjectHelpers : public UBlueprintFunctionLibrary
     GENERATED_BODY()
 public:
 
+	/// Remove all latent actions for an object. Latent actions are delays, async requests, etc. Use this with caution.
+	/// This can be useful for stopping an actor completely (disabled all delays when turning tick off)
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "RyRuntime|ObjectHelpers")
+	static void RemoveLatentActionsForObject(UObject* WorldContextObject, UObject* object);
+
+	/// Clear all timers running for an object. Use this with caution.
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "RyRuntime|ObjectHelpers")
+	static void ClearAllTimersForObject(UObject* WorldContextObject, UObject* object);
+
 	/// Create a new object of objectClass
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers", Meta = (DeterminesOutputType = "objectClass", DynamicOutputParam = "objectOut"))
 	static void CreateObject(TSubclassOf<UObject> objectClass, UObject* outer, UObject*& objectOut);
