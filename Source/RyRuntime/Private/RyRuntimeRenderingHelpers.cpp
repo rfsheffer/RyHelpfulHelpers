@@ -7,6 +7,7 @@
 #include "HighResScreenshot.h"
 #include "RenderCore/Public/ShaderPipelineCache.h"
 #include "Runtime/Launch/Resources/Version.h"
+#include "Runtime/Engine/Public/LatentActions.h"
 
 #if WITH_EDITOR
 	#include "Editor/EditorEngine.h"
