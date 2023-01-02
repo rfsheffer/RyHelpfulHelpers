@@ -102,4 +102,29 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="RyRuntime|WorldHelpers")
 	static void GetEngineWorldContexts(TArray<FRyWorldContext>& worldsOut);
+
+	/**
+	 * Set a timer to execute delegate. Setting an existing timer will reset that timer with updated parameters.
+	 * @param Event						Event. Can be a K2 function or a Custom Event.
+	 * @param Time						How long to wait before executing the delegate, in seconds. Setting a timer to <= 0 seconds will clear it if it is set.
+	 * @param bLooping					True to keep executing the delegate every Time seconds, false to execute delegate only once.
+	 * @param InitialStartDelay			Initial delay passed to the timer manager, in seconds.
+	 * @param InitialStartDelayVariance	Use this to add some variance to when the timer starts in lieu of doing a random range on the InitialStartDelay input, in seconds. 
+	 * @return							The timer handle to pass to other timer functions to manipulate this timer.
+	 */
+	UFUNCTION(BlueprintCallable, meta=(AdvancedDisplay="InitialStartDelay, InitialStartDelayVariance"), Category="RyRuntime|WorldHelpers")
+	static FTimerHandle SetTimerByEventForWorld(UObject* WorldContextObject, UPARAM(DisplayName="Event") FTimerDynamicDelegate Delegate, float Time, bool bLooping, float InitialStartDelay = 0.f, float InitialStartDelayVariance = 0.f);
+
+	/**
+	 * Set a timer to execute delegate. Setting an existing timer will reset that timer with updated parameters.
+	 * @param Object					Object that implements the delegate function. Defaults to self (this blueprint)
+	 * @param FunctionName				Delegate function name. Can be a K2 function or a Custom Event.
+	 * @param Time						How long to wait before executing the delegate, in seconds. Setting a timer to <= 0 seconds will clear it if it is set.
+	 * @param bLooping					true to keep executing the delegate every Time seconds, false to execute delegate only once.
+	 * @param InitialStartDelay			Initial delay passed to the timer manager to allow some variance in when the timer starts, in seconds.
+	 * @param InitialStartDelayVariance	Use this to add some variance to when the timer starts in lieu of doing a random range on the InitialStartDelay input, in seconds.
+	 * @return							The timer handle to pass to other timer functions to manipulate this timer.
+	 */
+	UFUNCTION(BlueprintCallable, meta=(AdvancedDisplay="InitialStartDelay, InitialStartDelayVariance"), Category="RyRuntime|WorldHelpers")
+	static FTimerHandle SetTimerByFunctionForWorld(UObject* WorldContextObject, UObject* Object, FString FunctionName, float Time, bool bLooping, float InitialStartDelay = 0.f, float InitialStartDelayVariance = 0.f);
 };

@@ -129,3 +129,64 @@ void URyRuntimeWorldHelpers::GetEngineWorldContexts(TArray<FRyWorldContext>& wor
 		worldContext.CustomDescription = context.CustomDescription;
 	}
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FTimerHandle URyRuntimeWorldHelpers::SetTimerByEventForWorld(UObject* WorldContextObject,
+	FTimerDynamicDelegate Delegate, float Time, bool bLooping, float InitialStartDelay, float InitialStartDelayVariance)
+{
+	FTimerHandle Handle;
+	if (Delegate.IsBound())
+	{
+		const UWorld* const World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
+		if(World)
+		{
+			InitialStartDelay += FMath::RandRange(-InitialStartDelayVariance, InitialStartDelayVariance);
+			if (Time <= 0.f || (Time + InitialStartDelay) < 0.f)
+			{
+				FString ObjectName = GetNameSafe(Delegate.GetUObject());
+				FString FunctionName = Delegate.GetFunctionName().ToString(); 
+				FFrame::KismetExecutionMessage(*FString::Printf(TEXT("%s %s SetTimer passed a negative or zero time. The associated timer may fail to be created/fire! If using InitialStartDelayVariance, be sure it is smaller than (Time + InitialStartDelay)."), *ObjectName, *FunctionName), ELogVerbosity::Warning);
+			}
+
+			FTimerManager& TimerManager = World->GetTimerManager();
+			Handle = TimerManager.K2_FindDynamicTimerHandle(Delegate);
+			TimerManager.SetTimer(Handle, Delegate, Time, bLooping, (Time + InitialStartDelay));
+		}
+	}
+	else
+	{
+		UE_LOG(LogBlueprintUserMessages, Warning, 
+			TEXT("SetTimer passed a bad function (%s) or object (%s)"),
+			*Delegate.GetFunctionName().ToString(), *GetNameSafe(Delegate.GetUObject()));
+	}
+
+	return Handle;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FTimerHandle URyRuntimeWorldHelpers::SetTimerByFunctionForWorld(UObject* WorldContextObject, UObject* Object,
+	FString FunctionName, float Time, bool bLooping, float InitialStartDelay, float InitialStartDelayVariance)
+{
+	FName const FunctionFName(*FunctionName);
+
+	if (Object)
+	{
+		UFunction* const Func = Object->FindFunction(FunctionFName);
+		if ( Func && (Func->ParmsSize > 0) )
+		{
+			// User passed in a valid function, but one that takes parameters
+			// FTimerDynamicDelegate expects zero parameters and will choke on execution if it tries
+			// to execute a mismatched function
+			UE_LOG(LogBlueprintUserMessages, Warning, TEXT("SetTimer passed a function (%s) that expects parameters."), *FunctionName);
+			return FTimerHandle();
+		}
+	}
+
+	FTimerDynamicDelegate Delegate;
+	Delegate.BindUFunction(Object, FunctionFName);
+	return SetTimerByEventForWorld(WorldContextObject, Delegate, Time, bLooping, InitialStartDelay, InitialStartDelayVariance);
+}
