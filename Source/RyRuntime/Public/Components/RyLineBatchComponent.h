@@ -156,6 +156,18 @@ public:
                   const ERyLineBatchDepthPriority DepthPriority = ERyLineBatchDepthPriority::World);
 
 	/**
+	 * Add a quad.
+	 * @param LifeTime - The lifetime of the line. -1 means infitite. 
+	 */
+	UFUNCTION(BlueprintCallable, Category="RyLineBatch")
+	void AddQuad(const FPlane& PlaneCoordinates,
+				       const FVector Location,
+				       const FVector2D Extents,
+				       const FLinearColor PlaneColor = FLinearColor::White,
+				       const float LifeTime=-1.0f,
+				       const ERyLineBatchDepthPriority DepthPriority = ERyLineBatchDepthPriority::World);
+
+	/**
 	 * Add a frustum.
 	 * @param LifeTime - The lifetime of the line. -1 means infitite. 
 	 */

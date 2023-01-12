@@ -375,6 +375,36 @@ void URyLineBatchComponent::AddPlane(const FPlane& PlaneCoordinates, const FVect
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
+void URyLineBatchComponent::AddQuad(const FPlane& PlaneCoordinates, const FVector Location,
+	const FVector2D Extents, const FLinearColor PlaneColor, const float LifeTime,
+	const ERyLineBatchDepthPriority DepthPriority)
+{
+	FVector const ClosestPtOnPlane = Location - PlaneCoordinates.PlaneDot(Location) * PlaneCoordinates;
+
+	FVector U, V;
+	PlaneCoordinates.FindBestAxisVectors(U, V);
+	U *= Extents.Y;
+	V *= Extents.X;
+
+	TArray<FVector> Verts;
+	Verts.AddUninitialized(4);
+	Verts[0] = ClosestPtOnPlane + U + V;
+	Verts[1] = ClosestPtOnPlane - U + V;
+	Verts[2] = ClosestPtOnPlane + U - V;
+	Verts[3] = ClosestPtOnPlane - U - V;
+
+	TArray<int32> Indices;
+	Indices.AddUninitialized(6);
+	Indices[0] = 0; Indices[1] = 2; Indices[2] = 1;
+	Indices[3] = 1; Indices[4] = 2; Indices[5] = 3;
+
+	// plane quad
+	AddMesh(Verts, Indices, PlaneColor, LifeTime, DepthPriority);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
 void URyLineBatchComponent::AddFrustum(const FTransform& FrustumTransform, const FLinearColor FrustumColor,
 	const float LifeTime, const float Thickness, const ERyLineBatchDepthPriority DepthPriority)
 {
