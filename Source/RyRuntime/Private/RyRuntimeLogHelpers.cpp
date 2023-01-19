@@ -1,5 +1,4 @@
-// Copyright 2020-2022 Solar Storm Interactive
-
+// Copyright 2020-2023 Solar Storm Interactive
 
 #include "RyRuntimeLogHelpers.h"
 #include "RyRuntimeModule.h"
@@ -22,7 +21,7 @@ void URyRuntimeLogHelpers::PrintLogString(UObject* WorldContextObject, const FSt
                                           bool PrintToScreen, bool PrintToLog, FLinearColor TextColor /*= FColor::Blue*/, const float Duration /*= 0.0f*/)
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST) // Do not Print in Shipping or Test
-    UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull);
+    const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull);
     FString Prefix;
     if(World)
     {
@@ -38,26 +37,31 @@ void URyRuntimeLogHelpers::PrintLogString(UObject* WorldContextObject, const FSt
                     Prefix = FString::Printf(TEXT("Server: "));
                     break;
                 case NM_Standalone:
+                default:
                     break;
             }
         }
     }
 
     const FString FinalDisplayString = Prefix + InString;
+#else
+    const FString FinalDisplayString = InString;
+#endif
 
     if(PrintToLog)
     {
-        ELogVerbosity::Type internalVerbosity = (ELogVerbosity::Type)verbosity;
+        const ELogVerbosity::Type internalVerbosity = static_cast<ELogVerbosity::Type>(verbosity);
         FMsg::Logf_Internal(nullptr, 0, FLogCategoryName(*CategoryName), internalVerbosity, TEXT("%s"), *FinalDisplayString);
-
-        APlayerController* PC = (WorldContextObject ? UGameplayStatics::GetPlayerController(WorldContextObject, 0) : NULL);
-        ULocalPlayer* LocalPlayer = (PC ? Cast<ULocalPlayer>(PC->Player) : NULL);
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST) // Do not Print in Shipping or Test
+        const APlayerController* PC = (WorldContextObject ? UGameplayStatics::GetPlayerController(WorldContextObject, 0) : nullptr);
+        const ULocalPlayer* LocalPlayer = (PC ? Cast<ULocalPlayer>(PC->Player) : nullptr);
         if(LocalPlayer && LocalPlayer->ViewportClient && LocalPlayer->ViewportClient->ViewportConsole)
         {
             LocalPlayer->ViewportClient->ViewportConsole->OutputText(FinalDisplayString);
         }
+#endif
     }
-
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST) // Do not Print in Shipping or Test
     if(PrintToScreen)
     {
         if(GAreScreenMessagesEnabled)
@@ -67,7 +71,7 @@ void URyRuntimeLogHelpers::PrintLogString(UObject* WorldContextObject, const FSt
             {
                 GConfig->GetFloat(TEXT("Kismet"), TEXT("PrintStringDuration"), actualDuration, GEngineIni);
             }
-            GEngine->AddOnScreenDebugMessage((uint64)-1, actualDuration, TextColor.ToFColor(true), FinalDisplayString);
+            GEngine->AddOnScreenDebugMessage(static_cast<uint64>(-1), actualDuration, TextColor.ToFColor(true), FinalDisplayString);
         }
         else
         {

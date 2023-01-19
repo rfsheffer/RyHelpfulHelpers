@@ -1,4 +1,4 @@
-﻿// Copyright 2020-2022 Solar Storm Interactive
+﻿// Copyright 2020-2023 Solar Storm Interactive
 
 #include "RyRuntimeProjectHelpers.h"
 #include "Runtime/EngineSettings/Classes/GeneralProjectSettings.h"

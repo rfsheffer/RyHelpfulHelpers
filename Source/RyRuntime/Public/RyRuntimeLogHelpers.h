@@ -1,4 +1,4 @@
-// Copyright 2020-2022 Solar Storm Interactive
+// Copyright 2020-2023 Solar Storm Interactive
 
 #pragma once
 
@@ -56,7 +56,8 @@ class RYRUNTIME_API URyRuntimeLogHelpers : public UBlueprintFunctionLibrary
 public:
 
     /// Prints a log string to the console and screen depending on request
-    UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContextObject", CallableWithoutWorldContext, Keywords = "log print", AdvancedDisplay = "4", DevelopmentOnly), Category = "RyRuntime|LogHelpers")
+    /// In Shipping and Test builds this function is greatly stripped, printing to the log and not to the users local console or the screen.
+    UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContextObject", CallableWithoutWorldContext, Keywords = "log print", AdvancedDisplay = "4"), Category = "RyRuntime|LogHelpers")
 	static void PrintLogString(UObject* WorldContextObject, const FString& InString, const FString& CategoryName, ERyRuntimeLogVerbosity verbosity = ERyRuntimeLogVerbosity::Log, 
                                bool PrintToScreen = false, bool PrintToLog = true, FLinearColor TextColor = FLinearColor(0.0, 0.66, 1.0), const float Duration = 0.0f);
 
