@@ -406,6 +406,17 @@ void URyRuntimeLevelHelpers::RegisterComponentForActor(UActorComponent* componen
     }
 }
 
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeLevelHelpers::SetAllowAnyoneToDestroyMe(UActorComponent* componentToSet, const bool can)
+{
+    if(componentToSet)
+    {
+        componentToSet->bAllowAnyoneToDestroyMe = can;
+    }
+}
+
 static_assert(ERyWorldType::None == static_cast<ERyWorldType>(EWorldType::None) &&
               ERyWorldType::Inactive == static_cast<ERyWorldType>(EWorldType::Inactive), "ERyWorldType is not aligned to EWorldType! Update ERyWorldType to contain all elements of EWorldType!");
 

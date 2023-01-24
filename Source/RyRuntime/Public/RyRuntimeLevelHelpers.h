@@ -191,11 +191,15 @@ public:
                                                           const ERyComponentCreationMethod creationMethod = ERyComponentCreationMethod::Native,
                                                           const bool allowAnyoneToDestroy = false);
 
-	// With an un-registered component, register it with an actor
+	/// With an un-registered component, register it with an actor
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers")
 	static void RegisterComponentForActor(class UActorComponent* componentToRegister, AActor* actor, class USceneComponent *attachComponent = nullptr);
 
-    // Get the type of world the context object is in (editor, preview, game, PlayInEditor[PIE], etc)
+	/// Set a component to be destroyable by anyone. This goes against the nature of components in Unreal, but sometimes you just want momentary components...
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers")
+	static void SetAllowAnyoneToDestroyMe(class UActorComponent* componentToSet, const bool can);
+	
+    /// Get the type of world the context object is in (editor, preview, game, PlayInEditor[PIE], etc)
     UFUNCTION(BlueprintPure, Category = "RyRuntime|WorldHelpers", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext))
 	static ERyWorldType GetWorldType(UObject* WorldContextObject);
 
