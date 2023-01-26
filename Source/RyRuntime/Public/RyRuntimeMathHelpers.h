@@ -257,6 +257,14 @@ public:
 									  const ERyXScreenAnchor anchorX, const ERyYScreenAnchor anchorY, const FVector2D boxAnchorFrac,
 									  FVector2D &boxPosOut, FVector2D &boxSizeOut);
 
+	/** Set the bit of a byte to val (0 or 1). Bits index from 0 to 7 for a byte. */
+	UFUNCTION(BlueprintCallable, Category="RyRuntime|Math|Byte")
+	static void ByteSetBit(UPARAM(ref) uint8& byte, uint8 bit, bool val);
+
+	/** Return true if the bit of a byte is 1. Bits index from 0 to 7 for a byte. */
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Byte")
+	static bool ByteIsBitSet(uint8 byte, uint8 bit);
+
     /** Bitwise AND (A & B) */
 	UFUNCTION(BlueprintPure, meta=(DisplayName = "Bitwise AND", CompactNodeTitle = "&", Keywords = "& and", CommutativeAssociativeBinaryOperator = "true"), Category="RyRuntime|Math|Byte")
 	static uint8 And_ByteByte(uint8 A, uint8 B);
@@ -280,6 +288,14 @@ public:
     /** Bitwise Shift Right >> */
 	UFUNCTION(BlueprintPure, meta=(DisplayName = "Bitwise Shift Right", CompactNodeTitle = ">>", Keywords = ">> shift"), Category="RyRuntime|Math|Byte")
 	static uint8 ShiftRight_Byte(uint8 val, int32 shift = 1);
+
+	/** Set the bit of an int to val (0 or 1). Bits index from 0 to 31 for an int. */
+	UFUNCTION(BlueprintCallable, Category="RyRuntime|Math|Byte")
+	static void IntSetBit(UPARAM(ref) int32& intIn, uint8 bit, bool val);
+
+	/** Return true if the bit of an int is 1. Bits index from 0 to 31 for an int. */
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Byte")
+	static bool IntIsBitSet(int32 intIn, uint8 bit);
 
     /** Bitwise Shift Left << */
 	UFUNCTION(BlueprintPure, meta=(DisplayName = "Bitwise Shift Left", CompactNodeTitle = "<<", Keywords = "<< shift"), Category="RyRuntime|Math|Integer")

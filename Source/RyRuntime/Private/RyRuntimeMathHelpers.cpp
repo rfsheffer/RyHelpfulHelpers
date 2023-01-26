@@ -312,3 +312,45 @@ void URyRuntimeMathHelpers::PositionAndScaleBoxIntoScreenSpace(const FVector2D b
 		boxPosOut.Y = areaOrigin.Y + (areaSize.Y - boxSizeOut.Y * boxAnchorFrac.Y);
 	}
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeMathHelpers::ByteSetBit(uint8& byte, uint8 bit, bool val)
+{
+	uint8 toSet = val;
+	toSet <<= bit;
+	uint8 mask = 1;
+	mask <<= bit;
+	byte &= ~mask;
+	byte |= toSet;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeMathHelpers::ByteIsBitSet(uint8 byte, uint8 bit)
+{
+	return (byte & (1 << bit)) != 0;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeMathHelpers::IntSetBit(int32& intIn, uint8 bit, bool val)
+{
+	int32 toSet = val;
+	toSet <<= bit;
+	int32 mask = 1;
+	mask <<= bit;
+	intIn &= ~mask;
+	intIn |= toSet;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeMathHelpers::IntIsBitSet(int32 intIn, uint8 bit)
+{
+	return (intIn & (1 << bit)) != 0;
+}
