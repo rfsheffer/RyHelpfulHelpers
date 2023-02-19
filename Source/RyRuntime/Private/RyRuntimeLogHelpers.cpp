@@ -86,11 +86,6 @@ void URyRuntimeLogHelpers::PrintLogString(UObject* WorldContextObject, const FSt
 */
 bool URyRuntimeLogHelpers::CopyCurrentLogFile(const FString& destLogFileName, FString& outLogFileName)
 {
-    if(FGenericPlatformOutputDevices::GetLog()->IsMemoryOnly())
-    {
-        UE_LOG(LogRyRuntime, Warning, TEXT("CopyCurrentLogFile: Failed because this platform is memory only logging!"));
-        return false;
-    }
     FString path;
     FString fileName;
     FString ext;
@@ -112,14 +107,27 @@ bool URyRuntimeLogHelpers::CopyCurrentLogFile(const FString& destLogFileName, FS
     {
         FFileHelper::GenerateNextBitmapFilename(filePathToTest, ext, outLogFileName);
     }
-    
-    const FString logSrcAbsolute = FGenericPlatformOutputDevices::GetAbsoluteLogFilename();
 
     // Flush out the log
     GLog->Flush();
 
-    // Copy log
-    return IFileManager::Get().Copy(*outLogFileName, *logSrcAbsolute,
-                                    true, false, false, nullptr,
-                                    FILEREAD_AllowWrite, FILEWRITE_AllowRead) == COPY_OK;
+    if(!FGenericPlatformOutputDevices::GetLog()->IsMemoryOnly())
+    {
+        const FString logSrcAbsolute = FGenericPlatformOutputDevices::GetAbsoluteLogFilename();
+
+        // Copy log
+        return IFileManager::Get().Copy(*outLogFileName, *logSrcAbsolute,
+                                        true, false, false, nullptr,
+                                        FILEREAD_AllowWrite, FILEWRITE_AllowRead) == COPY_OK;
+    }
+
+    IFileManager& FileManager = IFileManager::Get();
+    FArchive* ManifestFileArchive(FileManager.CreateFileWriter(*outLogFileName));
+    if (ManifestFileArchive)
+    {
+        FGenericPlatformOutputDevices::GetLog()->Dump(*ManifestFileArchive);
+        return true;
+    }
+
+    return false;
 }
