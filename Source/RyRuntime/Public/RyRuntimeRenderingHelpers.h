@@ -4,6 +4,8 @@
 
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Runtime/Launch/Resources/Version.h"
+#include "Runtime/Engine/Classes/Components/ExponentialHeightFogComponent.h"
+
 #include "RyRuntimeRenderingHelpers.generated.h"
 
 UENUM(Blueprintable)
@@ -148,4 +150,7 @@ public:
 	/// Set Batch Mode Speed - Sets the speed at which the PSO Caching should be processed.
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|RenderingHelpers")
 	static void ShaderPipelineCache_SetBatchMode(ERyBatchMode batchMode);
+
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|RenderingHelpers")
+	static void SetSecondFogData(UExponentialHeightFogComponent* heightFogComponent, const FExponentialHeightFogData& newFogData);
 };

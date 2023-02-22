@@ -395,3 +395,15 @@ void URyRuntimeRenderingHelpers::ShaderPipelineCache_SetBatchMode(ERyBatchMode b
 {
 	FShaderPipelineCache::SetBatchMode(static_cast<FShaderPipelineCache::BatchMode>(batchMode));
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeRenderingHelpers::SetSecondFogData(UExponentialHeightFogComponent* heightFogComponent, const FExponentialHeightFogData& newFogData)
+{
+	if(heightFogComponent)
+	{
+		heightFogComponent->SecondFogData = newFogData;
+		heightFogComponent->MarkRenderStateDirty();
+	}
+}
