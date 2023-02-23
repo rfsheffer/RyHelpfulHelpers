@@ -399,11 +399,14 @@ void URyRuntimeRenderingHelpers::ShaderPipelineCache_SetBatchMode(ERyBatchMode b
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-void URyRuntimeRenderingHelpers::SetSecondFogData(UExponentialHeightFogComponent* heightFogComponent, const FExponentialHeightFogData& newFogData)
+void URyRuntimeRenderingHelpers::SetSecondFogData(UExponentialHeightFogComponent* heightFogComponent, FRyExponentialHeightFogData newFogData)
 {
 	if(heightFogComponent)
 	{
-		heightFogComponent->SecondFogData = newFogData;
+		newFogData.ClampToValidRanges();
+		heightFogComponent->SecondFogData.FogDensity = newFogData.FogDensity;
+		heightFogComponent->SecondFogData.FogHeightFalloff = newFogData.FogHeightFalloff;
+		heightFogComponent->SecondFogData.FogHeightOffset = newFogData.FogHeightOffset;
 		heightFogComponent->MarkRenderStateDirty();
 	}
 }
