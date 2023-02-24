@@ -42,6 +42,7 @@ public class RyRuntime : ModuleRules
 				"EngineSettings",
 				"RHI",
 				"RenderCore",
+				"PakFile",
             }
         );
 
