@@ -50,4 +50,16 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ComponentHelpers|Query")
 	static void GetWorldComponentsByClass(UWorld* world, TSubclassOf<UActorComponent> componentClass, TArray<UActorComponent*>& componentsOut);
+
+	/**
+	*	Add a force to all rigid bodies below at location.
+	*   This is like a 'thruster'. Good for adding a burst over some (non zero) time. Should be called every frame for the duration of the force.
+	*
+	*	@param	Force		 Force vector to apply. Magnitude indicates strength of force.
+	*	@param Location		 Location to apply force, in world space.
+	*	@param	BoneName	 If a SkeletalMeshComponent, name of body to apply force to. 'None' indicates root body.
+	*	@param bIncludeSelf  If false, Force is only applied to bodies below but not given bone name.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ComponentHelpers|SkeletalMesh")
+	static void AddForceAtLocationToAllBodiesBelow(class USkeletalMeshComponent* skelMesh, FVector Force, FVector Location, FName BoneName = NAME_None, bool bIncludeSelf = true);
 };

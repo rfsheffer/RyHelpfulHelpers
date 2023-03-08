@@ -4,6 +4,8 @@
 #include "RyRuntimeComponentHelpers.h"
 #include "RyRuntimeModule.h"
 #include "Runtime/Launch/Resources/Version.h"
+//#include "Runtime/Core/Public/Logging/MessageLog.h"
+#include "Runtime/Engine/Classes/Components/SkeletalMeshComponent.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
@@ -172,4 +174,75 @@ void URyRuntimeComponentHelpers::GetWorldComponentsByClass(UWorld* world, TSubcl
 			componentsOut.Add(obj);
 		}
 	}
+}
+
+namespace
+{
+	int32 ForEachBodyBelow(USkeletalMeshComponent* skelMesh, FName BoneName, bool bIncludeSelf, bool bSkipCustomType, TFunctionRef<void(FBodyInstance*)> Func)
+	{
+		if(!skelMesh)
+		{
+			return 0;
+		}
+	
+		if (BoneName == NAME_None && bIncludeSelf && !bSkipCustomType)
+		{
+			for (FBodyInstance* BI : skelMesh->Bodies)	//we want all bodies so just iterate the regular array
+			{
+				Func(BI);
+			}
+
+			return skelMesh->Bodies.Num();
+		}
+
+		UPhysicsAsset* const PhysicsAsset = skelMesh->GetPhysicsAsset();
+		if (!PhysicsAsset || !skelMesh->SkeletalMesh)
+		{
+			return 0;
+		}
+
+		// if physics state is invalid - i.e. collision is disabled - or it does not have a valid bodies, this will crash right away
+		if (!skelMesh->IsPhysicsStateCreated() || !skelMesh->bHasValidBodies)
+		{
+			//FMessageLog("PIE").Warning(LOCTEXT("InvalidBodies", "Invalid Bodies : Make sure collision is enabled or root bone has body in PhysicsAsset."));
+			return 0;
+		}
+
+		TArray<int32> BodyIndices;
+		BodyIndices.Reserve(skelMesh->Bodies.Num());
+		PhysicsAsset->GetBodyIndicesBelow(BodyIndices, BoneName, skelMesh->SkeletalMesh, bIncludeSelf);
+
+		int32 NumBodiesFound = 0;
+		for (int32 BodyIdx : BodyIndices)
+		{
+			FBodyInstance* BI = skelMesh->Bodies[BodyIdx];
+			if (bSkipCustomType)
+			{
+				if (UBodySetup* PhysAssetBodySetup = PhysicsAsset->SkeletalBodySetups[BodyIdx])
+				{
+					if (PhysAssetBodySetup->PhysicsType != EPhysicsType::PhysType_Default)
+					{
+						continue;
+					}
+				}
+			}
+
+			++NumBodiesFound;
+			Func(BI);
+		}
+
+		return NumBodiesFound;
+	}
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeComponentHelpers::AddForceAtLocationToAllBodiesBelow(USkeletalMeshComponent* skelMesh, FVector Force,
+	FVector Location, FName BoneName, bool bIncludeSelf)
+{
+	ForEachBodyBelow(skelMesh, BoneName, bIncludeSelf, /*bSkipCustomPhysics=*/false, [Force, Location](FBodyInstance* BI)
+		{
+			BI->AddForceAtPosition(Force, Location);
+		});
 }
