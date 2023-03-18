@@ -196,7 +196,19 @@ namespace
 		}
 
 		UPhysicsAsset* const PhysicsAsset = skelMesh->GetPhysicsAsset();
-		if (!PhysicsAsset || !skelMesh->SkeletalMesh)
+		if (!PhysicsAsset)
+		{
+			return 0;
+		}
+
+		USkeletalMesh* skeletalMeshAsset = nullptr;
+#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1)
+		skeletalMeshAsset = skelMesh->GetSkeletalMeshAsset();
+#else
+		skeletalMeshAsset = skelMesh->SkeletalMesh;
+#endif
+
+		if(!skeletalMeshAsset)
 		{
 			return 0;
 		}
@@ -210,7 +222,7 @@ namespace
 
 		TArray<int32> BodyIndices;
 		BodyIndices.Reserve(skelMesh->Bodies.Num());
-		PhysicsAsset->GetBodyIndicesBelow(BodyIndices, BoneName, skelMesh->SkeletalMesh, bIncludeSelf);
+		PhysicsAsset->GetBodyIndicesBelow(BodyIndices, BoneName, skeletalMeshAsset, bIncludeSelf);
 
 		int32 NumBodiesFound = 0;
 		for (int32 BodyIdx : BodyIndices)
