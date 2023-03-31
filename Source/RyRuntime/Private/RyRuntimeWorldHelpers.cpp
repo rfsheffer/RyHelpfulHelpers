@@ -58,7 +58,7 @@ void URyRuntimeWorldHelpers::TickUntilStop(const UObject* WorldContextObject, co
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-UWorld* URyRuntimeWorldHelpers::GetEngineWorld(UObject* WorldContextObject, ERyWorldType specificType)
+UWorld* URyRuntimeWorldHelpers::GetEngineWorld(UObject* WorldContextObject, ERyWorldType specificType, bool gameWorldOnly)
 {
 	check(GEngine);
 	bool shouldSearch = true;
@@ -98,7 +98,7 @@ UWorld* URyRuntimeWorldHelpers::GetEngineWorld(UObject* WorldContextObject, ERyW
 			return context.World();
 		}
 
-		if(context.WorldType == EWorldType::Editor)
+		if(context.WorldType == EWorldType::Editor && !gameWorldOnly)
 		{
 			bestWorldOut = context.World();
 		}

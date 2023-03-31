@@ -93,9 +93,10 @@ public:
 	 * NOTE: Since there can be many worlds in Unreal Engine this call might be ambiguous
 	 * @param WorldContextObject If non-None, will return the world associated with the object if possible, else returns None
 	 * @param specificType The specific world type to try and get if set to non-None, else returns None
+	 * @param gameWorldOnly If true, will never return an editor world if searching and specificType is not set
 	 */
 	UFUNCTION(BlueprintCallable, Category="RyRuntime|WorldHelpers")
-	static UWorld* GetEngineWorld(UObject* WorldContextObject = nullptr, ERyWorldType specificType = ERyWorldType::None);
+	static UWorld* GetEngineWorld(UObject* WorldContextObject = nullptr, ERyWorldType specificType = ERyWorldType::None, bool gameWorldOnly = false);
 
 	/**
 	 * Get all current registered worlds with the engine and context info
