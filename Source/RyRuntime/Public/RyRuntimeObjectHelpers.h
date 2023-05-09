@@ -45,7 +45,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers", Meta = (DeterminesOutputType = "objectClass", DynamicOutputParam = "objectOut"))
 	static void CreateObject(TSubclassOf<UObject> objectClass, UObject* outer, UObject*& objectOut);
 
-	/// Duplicate a current object
+	/**
+	 * duplicate an object
+	 *
+	 * @param objectClass the class of object to output
+	 * @param object the object of objectClass to be duplicated
+	 * @param outer (optional) the outer for this new object. If None will use the outer of the object being duplicated.
+	 *
+	 * @param objectOut the duplicated object or null if it failed for some reason
+	 */
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers", Meta = (DeterminesOutputType = "objectClass", DynamicOutputParam = "objectOut"))
 	static void DuplicateObject(TSubclassOf<UObject> objectClass, UObject* object, UObject* outer, UObject*& objectOut);
 	

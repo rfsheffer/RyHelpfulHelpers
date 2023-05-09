@@ -2,6 +2,7 @@
 
 #include "RyRuntimeWidgetHelpers.h"
 #include "RyRuntimeModule.h"
+#include "Components/Button.h"
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
 #include "UMG/Public/Components/Widget.h"
 
@@ -38,6 +39,73 @@ void URyRuntimeWidgetHelpers::ForceOnMouseLeave(UWidget* widget, const FPointerE
 	{
 		slateWidget->OnMouseLeave(mouseEvent);
 	}
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeWidgetHelpers::BroadcastButtonOnClicked(UButton* button)
+{
+	if(button)
+	{
+		button->OnClicked.Broadcast();
+	}
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeWidgetHelpers::BroadcastButtonOnPressed(UButton* button)
+{
+	if(button)
+	{
+		button->OnPressed.Broadcast();
+	}
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeWidgetHelpers::BroadcastButtonOnReleased(UButton* button)
+{
+	if(button)
+	{
+		button->OnReleased.Broadcast();
+	}
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeWidgetHelpers::BroadcastButtonOnHovered(UButton* button)
+{
+	if(button)
+	{
+		button->OnHovered.Broadcast();
+	}
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeWidgetHelpers::BroadcastButtonOnUnhovered(UButton* button)
+{
+	if(button)
+	{
+		button->OnUnhovered.Broadcast();
+	}
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+UWidget* URyRuntimeWidgetHelpers::GetNavigationWidget(FWidgetNavigationData& navigationData, EUINavigation direction)
+{
+	if(navigationData.CustomDelegate.IsBound())
+	{
+		return navigationData.CustomDelegate.Execute(direction);
+	}
+	return navigationData.Widget.Get(false);
 }
 
 #undef LOCTEXT_NAMESPACE
