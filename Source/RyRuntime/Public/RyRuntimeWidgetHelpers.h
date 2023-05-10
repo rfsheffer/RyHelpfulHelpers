@@ -80,5 +80,5 @@ public:
 	/// @param navigationData The data to fetch the widget reference from
 	/// @param direction The direction of this navigation data. Passed into the custom delegate if used, otherwise not important.
 	UFUNCTION(BlueprintPure, Category="RyRuntime|WidgetHelpers")
-	static class UWidget* GetNavigationWidget(FWidgetNavigationData& navigationData, EUINavigation direction);
+	static class UWidget* GetNavigationWidget(const FWidgetNavigationData& navigationData, EUINavigation direction);
 };

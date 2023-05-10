@@ -99,7 +99,7 @@ void URyRuntimeWidgetHelpers::BroadcastButtonOnUnhovered(UButton* button)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
-UWidget* URyRuntimeWidgetHelpers::GetNavigationWidget(FWidgetNavigationData& navigationData, EUINavigation direction)
+UWidget* URyRuntimeWidgetHelpers::GetNavigationWidget(const FWidgetNavigationData& navigationData, EUINavigation direction)
 {
 	if(navigationData.CustomDelegate.IsBound())
 	{
