@@ -24,6 +24,18 @@ public:
     static void SetInputMode_GameOnly_NoMouseDownConsume(APlayerController* PlayerController);
 
 	/**
+	 * Gets whether or not the cursor should always be locked to the viewport
+	 */
+	UFUNCTION(BlueprintPure, Category="RyRuntime|WidgetHelpers", meta=(WorldContext = "WorldContextObject", CallableWithoutWorldContext))
+	static bool GetShouldAlwaysLockMouse(UObject* WorldContextObject);
+
+	/**
+	 * Gets whether or not the cursor is locked to the viewport when the viewport captures the mouse
+	 */
+	UFUNCTION(BlueprintPure, Category="RyRuntime|WidgetHelpers", meta=(WorldContext = "WorldContextObject", CallableWithoutWorldContext))
+	static bool GetMouseLockDuringCapture(UObject* WorldContextObject);
+
+	/**
 	 * Force a on mouse leave event on a widget (can be useful for clearing the hovered state of a widget)
 	 */
 	UFUNCTION(BlueprintCallable, Category="RyRuntime|WidgetHelpers")

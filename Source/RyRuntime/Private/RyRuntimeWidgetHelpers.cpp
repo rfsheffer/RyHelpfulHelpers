@@ -5,6 +5,7 @@
 #include "Components/Button.h"
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
 #include "UMG/Public/Components/Widget.h"
+#include "Runtime/Engine/Classes/Engine/GameViewportClient.h"
 
 #define LOCTEXT_NAMESPACE "WidgetHelpers"
 
@@ -22,6 +23,56 @@ void URyRuntimeWidgetHelpers::SetInputMode_GameOnly_NoMouseDownConsume(APlayerCo
 	FInputModeGameOnly InputMode;
 	InputMode.SetConsumeCaptureMouseDown(false);
 	PlayerController->SetInputMode(InputMode);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeWidgetHelpers::GetShouldAlwaysLockMouse(UObject* WorldContextObject)
+{
+	if(!WorldContextObject)
+	{
+		return false;
+	}
+
+	const UWorld *World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull);
+	if (!World)
+	{
+		return false;
+	}
+	
+	UGameViewportClient* GameViewportClient = World->GetGameViewport();
+	if(!GameViewportClient)
+	{
+		return false;
+	}
+
+	return GameViewportClient->ShouldAlwaysLockMouse();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeWidgetHelpers::GetMouseLockDuringCapture(UObject* WorldContextObject)
+{
+	if(!WorldContextObject)
+	{
+		return false;
+	}
+
+	const UWorld *World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull);
+	if (!World)
+	{
+		return false;
+	}
+	
+	UGameViewportClient* GameViewportClient = World->GetGameViewport();
+	if(!GameViewportClient)
+	{
+		return false;
+	}
+
+	return GameViewportClient->LockDuringCapture();
 }
 
 //---------------------------------------------------------------------------------------------------------------------
