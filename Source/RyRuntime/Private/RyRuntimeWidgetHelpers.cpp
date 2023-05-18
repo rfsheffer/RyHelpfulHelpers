@@ -159,4 +159,33 @@ UWidget* URyRuntimeWidgetHelpers::GetNavigationWidget(const FWidgetNavigationDat
 	return navigationData.Widget.Get(false);
 }
 
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+UPanelWidget* URyRuntimeWidgetHelpers::GetWidgetParent(UWidget* widget)
+{
+	if(!widget)
+	{
+		return nullptr;
+	}
+
+	if(widget->GetParent())
+	{
+		return widget->GetParent();
+	}
+
+	if(!widget->GetOuter())
+	{
+		return nullptr;
+	}
+
+	const UUserWidget* userWidget = Cast<UUserWidget>(widget->GetOuter()->GetOuter());
+	if(!userWidget)
+	{
+		return nullptr;
+	}
+
+	return userWidget->GetParent();
+}
+
 #undef LOCTEXT_NAMESPACE

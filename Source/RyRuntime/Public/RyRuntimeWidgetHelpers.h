@@ -93,4 +93,14 @@ public:
 	/// @param direction The direction of this navigation data. Passed into the custom delegate if used, otherwise not important.
 	UFUNCTION(BlueprintPure, Category="RyRuntime|WidgetHelpers")
 	static class UWidget* GetNavigationWidget(const FWidgetNavigationData& navigationData, EUINavigation direction);
+
+	/**
+	 * Gets the next parent of a widget and if needed gets the parent widget of sub UserWidgets
+	 * GetParent would usually only go up to the UserWidget root widget and no further. This routine detects the root
+	 * and continues into the next owning widget if there is one.
+	 * @param widget The widget to get the parent of
+	 * @return The parent if there is one
+	 */
+	UFUNCTION(BlueprintCallable, Category="RyRuntime|WidgetHelpers")
+	static class UPanelWidget* GetWidgetParent(class UWidget* widget);
 };
