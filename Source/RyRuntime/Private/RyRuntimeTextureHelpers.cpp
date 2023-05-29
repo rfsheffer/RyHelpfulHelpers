@@ -3,6 +3,8 @@
 #include "RyRuntimeTextureHelpers.h"
 #include "LatentActions.h"
 #include "Runtime/Launch/Resources/Version.h"
+#include "Runtime/Engine/Classes/Engine/Texture.h"
+#include "Runtime/Engine/Public/TextureResource.h"
 
 class FRyEnsureTextureResourceLatentAction : public FPendingLatentAction
 {

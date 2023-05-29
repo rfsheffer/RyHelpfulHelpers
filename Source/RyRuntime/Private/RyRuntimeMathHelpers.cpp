@@ -8,6 +8,7 @@
 #include "Engine/GameViewportClient.h"
 #include "GameFramework/Character.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Runtime/Engine/Public/UnrealClient.h"
 
 static_assert(ERyUnit::Unspecified == static_cast<ERyUnit>(EUnit::Unspecified), "ERyUnit isn't aligned to EUnit!");
 

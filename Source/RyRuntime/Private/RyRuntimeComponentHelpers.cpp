@@ -6,6 +6,9 @@
 #include "Runtime/Launch/Resources/Version.h"
 //#include "Runtime/Core/Public/Logging/MessageLog.h"
 #include "Runtime/Engine/Classes/Components/SkeletalMeshComponent.h"
+#include "Runtime/Engine/Classes/PhysicsEngine/PhysicsAsset.h"
+#include "Runtime/Engine/Classes/PhysicsEngine/BodySetup.h"
+#include "Runtime/CoreUObject/Public/UObject/UObjectIterator.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**

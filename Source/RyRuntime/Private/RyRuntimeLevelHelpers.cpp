@@ -11,6 +11,7 @@
 #include "Engine/LevelStreamingDynamic.h"
 #include "Engine/LevelScriptActor.h"
 #include "Runtime/Launch/Resources/Version.h"
+#include "Runtime/CoreUObject/Public/UObject/Package.h"
 
 // Ensure our blueprintable version of the enum is aligned with epics
 static_assert(ERyComponentCreationMethod::Native == static_cast<ERyComponentCreationMethod>(EComponentCreationMethod::Native) &&
@@ -524,9 +525,10 @@ ULevelStreamingDynamic* URyRuntimeLevelHelpers::LoadLevelInstanceBySoftObjectPtr
     return LoadLevelInstance_Internal(World, Level.GetLongPackageName(), Location, Rotation, OutSuccess, prefixIn, ShouldBeLoaded, ShouldBeVisible, BlockOnLoad, Priority);
 }
 
+PRAGMA_DISABLE_DEPRECATION_WARNINGS
 static_assert(ERyCurrentLevelStreamingState::MakingInvisible ==
     static_cast<ERyCurrentLevelStreamingState>(ULevelStreaming::ECurrentState::MakingInvisible), "ERyCurrentLevelStreamingState is not aligned to ECurrentState! Update ERyCurrentLevelStreamingState to contain all elements of ECurrentState!");
-
+PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
@@ -538,7 +540,9 @@ ERyCurrentLevelStreamingState URyRuntimeLevelHelpers::GetCurrentLevelStreamingSt
         return ERyCurrentLevelStreamingState::Removed;
     }
 
+PRAGMA_DISABLE_DEPRECATION_WARNINGS
     return static_cast<ERyCurrentLevelStreamingState>(StreamingLevel->GetCurrentState());
+PRAGMA_ENABLE_DEPRECATION_WARNINGS
 }
 
 //---------------------------------------------------------------------------------------------------------------------

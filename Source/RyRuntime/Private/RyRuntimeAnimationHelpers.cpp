@@ -10,6 +10,9 @@
 #include "Animation/AnimMetaData.h"
 #include "Runtime/Launch/Resources/Version.h"
 
+#include "Runtime/CoreUObject/Public/UObject/UObjectGlobals.h"
+#include "Runtime/CoreUObject/Public/UObject/Package.h"
+
 #define LOCTEXT_NAMESPACE "RyRuntime"
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -61,9 +64,13 @@ UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageFromMontage(UAnimM
     NewMontage->Notifies = MontageIn->Notifies;
 
     // Other important stuff
+#if ENGINE_MAJOR_VERSION < 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION < 2)
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
     NewMontage->SequenceLength = MontageIn->SequenceLength;
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
+#else
+    NewMontage->SetCompositeLength(NewMontage->GetPlayLength());
+#endif
     NewMontage->RateScale = MontageIn->RateScale;
 
     if(OverrideBlendIn != -1.0f)
@@ -196,12 +203,18 @@ UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageOfSequences(const 
             UE_LOG(LogRyRuntime, Warning, TEXT("CreateDynamicMontageFromSequences : Sequences array contains null sequence!"));
             continue;
         }
+#if WITH_EDITORONLY_DATA
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 2) || ENGINE_MAJOR_VERSION > 5
+        if(!AssetSkeleton->IsCompatibleForEditor(sequence->GetSkeleton()))
+#else
         if(!AssetSkeleton->IsCompatible(sequence->GetSkeleton()))
+#endif
         {
             UE_LOG(LogRyRuntime, Warning, TEXT("CreateDynamicMontageFromSequences : Sequences array contains sequences which"
                                              " are not compatible with eachother (skeleton not compatible)!"));
             continue;
         }
+#endif
 
         // Create the segment
         FAnimSegment& animSegment = animTrack.AnimTrack.AnimSegments.AddDefaulted_GetRef();
@@ -248,9 +261,14 @@ UAnimMontage* URyRuntimeAnimationHelpers::CreateDynamicMontageOfSequences(const 
     NewMontage->BlendOutTriggerTime = BlendOutTriggerTime;
     NewMontage->bEnableAutoBlendOut = EnableAutoBlendOut;
 
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 2) || ENGINE_MAJOR_VERSION > 5
+    NewMontage->SetCompositeLength(curTime);
+#else
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
     NewMontage->SequenceLength = curTime;
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
+#endif
+
     NewMontage->RateScale = 1.0f;
 
     return NewMontage;

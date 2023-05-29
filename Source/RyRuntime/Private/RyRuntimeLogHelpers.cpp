@@ -13,6 +13,7 @@
 #include "Misc/ConfigCacheIni.h"
 #include "Misc/FileHelper.h"
 #include "GenericPlatform/GenericPlatformOutputDevices.h"
+#include "Runtime/Engine/Classes/Engine/GameViewportClient.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**

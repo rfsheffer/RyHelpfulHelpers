@@ -125,10 +125,14 @@ UAnimMontage* URyEditorAnimationHelpers::CreateMontageOfSequences(const TArray<U
         curTime += sequence->SequenceLength;
 #endif
     }
-    
+
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 2) || ENGINE_MAJOR_VERSION > 5
+    montage->SetCompositeLength(curTime);
+#else
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
     montage->SequenceLength = curTime;
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
+#endif
 
     montage->SetSkeleton(skel);
 
