@@ -86,12 +86,12 @@ public:
     /**
     * Iterates files in a directory.
     * When IterateSubFolders is True, also iterates sub folders after the current folder has been fully iterated.
-    * @param DirectoryName: The path to the folder to iterate
-    * @param IterateSubFolders: Should sub directories be iterated as well?
-    * @param OutType: The type of output in PathsOut.
-    * @param PathsOut: Paths collected during iteration, based on OutType setting.
-    * @param Visitor: (Optional) Called each file or directory found while searching. Return false to halt iteration. Useful for deeper control of iteration. Returns true by default.
-    * @param Filter: (Optional) Allows filtering of paths which would be added to the PathsOut array. Returns false by default;
+    * @param DirectoryName The path to the folder to iterate
+    * @param IterateSubFolders Should sub directories be iterated as well?
+    * @param OutType The type of output in PathsOut.
+    * @param PathsOut Paths collected during iteration, based on OutType setting.
+    * @param Visitor Called each file or directory found while searching. Return false to halt iteration. Useful for deeper control of iteration. Returns true by default.
+    * @param Filter Allows filtering of paths which would be added to the PathsOut array. Returns false by default;
     */
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|PlatformHelpers|Directory", DisplayName = "IterateDirectory")
     static bool RyIterateDirectory(const FString& DirectoryName, const bool IterateSubFolders, ERyIterateDirectoryOut OutType, TArray<FString>& PathsOut, 
@@ -101,12 +101,12 @@ public:
     * Iterates files in a directory.
     * This is a native and more optimal version which doesn't rely on dynamic delegates.
     * When IterateSubFolders is True, also iterates sub folders after the current folder has been fully iterated.
-    * @param DirectoryName: The path to the folder to iterate
-    * @param IterateSubFolders: Should sub directories be iterated as well?
-    * @param OutType: The type of output in PathsOut.
-    * @param PathsOut: Paths collected during iteration, based on OutType setting.
-    * @param Visitor: (Optional) Called each file or directory found while searching. Return false to halt iteration. Useful for deeper control of iteration. Returns true by default.
-    * @param Filter: (Optional) Allows filtering of paths which would be added to the PathsOut array. Returns false by default;
+    * @param DirectoryName The path to the folder to iterate
+    * @param IterateSubFolders Should sub directories be iterated as well?
+    * @param OutType The type of output in PathsOut.
+    * @param PathsOut Paths collected during iteration, based on OutType setting.
+    * @param Visitor (Optional) Called each file or directory found while searching. Return false to halt iteration. Useful for deeper control of iteration. Returns true by default.
+    * @param Filter (Optional) Allows filtering of paths which would be added to the PathsOut array. Returns false by default;
     */
     static bool IterateDirectory(const FString& DirectoryName, const bool IterateSubFolders, ERyIterateDirectoryOut OutType, TArray<FString>& PathsOut, 
                                  RyNativeVisitorSig Visitor = nullptr, RyNativeFileFilterSig Filter = nullptr);

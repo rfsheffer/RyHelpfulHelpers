@@ -154,7 +154,7 @@ public:
 	// @param allowDuringConstructionScript - If true you can spawn actors during construction script. This is can be very useful for spawning helper actors but make sure you are cleaning up after yourself or bad things can happen!
 	// @param absoluteTransform - Use absolute transform (override root component transform) and SpawnParameters.
 	// @param useDefaultScale - When spawning should the actors original scale of the root transform be used instead of the transform passed in?
-	UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers", meta = (WorldContext = "WorldContextObject", AdvancedDisplay = "3", CallableWithoutWorldContext))
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers", meta = (WorldContext = "WorldContextObject", AdvancedDisplay = "3", CallableWithoutWorldContext, DeterminesOutputType = "actorClass"))
 	static class AActor* SpawnActorAdvanced(UObject* WorldContextObject,
 										   TSubclassOf<class AActor> actorClass,
 										   const FTransform& transform,
@@ -185,7 +185,7 @@ public:
      * @param creationMethod - Creation method. See enum values for details.
      * @param allowAnyoneToDestroy - By default components can only be destroyed by thier owners. If this is true, this component can be destroyed by anything.
      */
-    UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers", meta = (AdvancedDisplay = "3"))
+    UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers", meta = (AdvancedDisplay = "3", DeterminesOutputType = "newComponentClass"))
     static class UActorComponent* CreateComponentForActor(AActor *owner, TSubclassOf<class UActorComponent> newComponentClass,
                                                           class USceneComponent *attachComponent = nullptr, const FName newName = NAME_None,
                                                           const ERyComponentCreationMethod creationMethod = ERyComponentCreationMethod::Native,
