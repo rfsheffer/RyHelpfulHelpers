@@ -62,4 +62,31 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ComponentHelpers|SkeletalMesh")
 	static void AddForceAtLocationToAllBodiesBelow(class USkeletalMeshComponent* skelMesh, FVector Force, FVector Location, FName BoneName = NAME_None, bool bIncludeSelf = true);
+
+	/**
+	 * @brief Gets the current array of bone transforms from the poseable mesh
+	 * @param poseableMesh The Mesh to get transforms of
+	 * @param transformsOut The transforms to get
+	 */
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ComponentHelpers|PoseableMesh")
+	static void GetPoseableMeshTransforms(class UPoseableMeshComponent* poseableMesh, TArray<FTransform>& transformsOut);
+
+	/**
+	 * @brief Sets the current array of bone transforms from the poseable mesh
+	 * If this function fails with a return of False, check that the number of transforms you pass in is the same as the
+	 * number of transforms returned from GetPoseableMeshTransforms / The number of bones of the reference skeleton.
+	 * @param poseableMesh The Mesh to get transforms of
+	 * @param transformsIn The transforms to set
+	 * @param markDirty If true the transforms will be marked as dirty to refresh the mesh rendering
+	 * @return True if setting was possible. False if the passed in transforms are greater than the number of expected.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ComponentHelpers|PoseableMesh")
+	static bool SetPoseableMeshTransforms(class UPoseableMeshComponent* poseableMesh, const TArray<FTransform>& transformsIn, bool markDirty = true);
+
+	/**
+	 * @brief 
+	 * @param poseableMesh The mesh to mark as dirty
+	 */
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ComponentHelpers|PoseableMesh")
+	static void MarkPoseableMeshTransformsDirty(class UPoseableMeshComponent* poseableMesh);
 };

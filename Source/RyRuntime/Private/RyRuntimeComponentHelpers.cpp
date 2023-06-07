@@ -9,6 +9,7 @@
 #include "Runtime/Engine/Classes/PhysicsEngine/PhysicsAsset.h"
 #include "Runtime/Engine/Classes/PhysicsEngine/BodySetup.h"
 #include "Runtime/CoreUObject/Public/UObject/UObjectIterator.h"
+#include "Runtime/Engine/Classes/Components/PoseableMeshComponent.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
@@ -260,4 +261,53 @@ void URyRuntimeComponentHelpers::AddForceAtLocationToAllBodiesBelow(USkeletalMes
 		{
 			BI->AddForceAtPosition(Force, Location);
 		});
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeComponentHelpers::GetPoseableMeshTransforms(UPoseableMeshComponent* poseableMesh, TArray<FTransform>& transformsOut)
+{
+	if(poseableMesh)
+	{
+		transformsOut.Reset(poseableMesh->BoneSpaceTransforms.Num());
+		transformsOut = poseableMesh->BoneSpaceTransforms;
+	}
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeComponentHelpers::SetPoseableMeshTransforms(UPoseableMeshComponent* poseableMesh, const TArray<FTransform>& transformsIn, bool markDirty)
+{
+	if(poseableMesh && poseableMesh->SkeletalMesh)
+	{
+		// Important check because otherwise it will crash
+		if(poseableMesh->SkeletalMesh->GetRefSkeleton().GetNum() != transformsIn.Num())
+		{
+			UE_LOG(LogRyRuntime, Warning, TEXT("SetPoseableMeshTransforms failed - Reference skeleton doesn't have the same number of bones as transformsIn!"));
+			return false;
+		}
+		
+		poseableMesh->BoneSpaceTransforms = transformsIn;
+		if(markDirty)
+		{
+			poseableMesh->MarkRefreshTransformDirty();
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeComponentHelpers::MarkPoseableMeshTransformsDirty(UPoseableMeshComponent* poseableMesh)
+{
+	if(poseableMesh)
+	{
+		poseableMesh->MarkRefreshTransformDirty();
+	}
 }
