@@ -188,12 +188,16 @@ public:
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers", meta = (AdvancedDisplay = "3", DeterminesOutputType = "newComponentClass"))
     static class UActorComponent* CreateComponentForActor(AActor *owner, TSubclassOf<class UActorComponent> newComponentClass,
                                                           class USceneComponent *attachComponent = nullptr, const FName newName = NAME_None,
-                                                          const ERyComponentCreationMethod creationMethod = ERyComponentCreationMethod::Native,
+                                                          const ERyComponentCreationMethod creationMethod = ERyComponentCreationMethod::UserConstructionScript,
                                                           const bool allowAnyoneToDestroy = false);
 
 	/// With an un-registered component, register it with an actor
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers")
 	static void RegisterComponentForActor(class UActorComponent* componentToRegister, AActor* actor, class USceneComponent *attachComponent = nullptr);
+
+	// Allows you to change the creation method of a component. WARNING: This can be dangerous and should only be used to fixup errors.
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers")
+	static void SetComponentCreationMethod(class UActorComponent* componentToSet, const ERyComponentCreationMethod creationMethod);
 
 	/// Set a component to be destroyable by anyone. This goes against the nature of components in Unreal, but sometimes you just want momentary components...
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|LevelHelpers")

@@ -107,6 +107,9 @@ public:
     UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers")
     static UPackage* GetPackageOfObject(UObject* object);
 
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
+	static bool MarkObjectPackageDirty(UObject* object, bool callPostEditChange = false);
+
     // With a package, returns all objects within that package
     // NOTE: This loads every asset within the package so it can be returned.
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")

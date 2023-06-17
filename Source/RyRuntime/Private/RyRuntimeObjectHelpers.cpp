@@ -146,6 +146,24 @@ UPackage* URyRuntimeObjectHelpers::GetPackageOfObject(UObject* object)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
+bool URyRuntimeObjectHelpers::MarkObjectPackageDirty(UObject* object, bool callPostEditChange)
+{
+    if(object)
+    {
+        const bool result = object->MarkPackageDirty();
+        if(callPostEditChange)
+        {
+            object->PostEditChange();
+        }
+        return result;
+    }
+
+    return false;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
 void URyRuntimeObjectHelpers::GetObjectsInPackage(UPackage* package, TArray<UObject*>& ObjectsOut)
 {
     if(!package)

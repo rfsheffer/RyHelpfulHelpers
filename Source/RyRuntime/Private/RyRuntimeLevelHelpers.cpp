@@ -410,6 +410,17 @@ void URyRuntimeLevelHelpers::RegisterComponentForActor(UActorComponent* componen
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
+void URyRuntimeLevelHelpers::SetComponentCreationMethod(UActorComponent* componentToSet, const ERyComponentCreationMethod creationMethod)
+{
+    if(componentToSet)
+    {
+        componentToSet->CreationMethod = static_cast<EComponentCreationMethod>(creationMethod);
+    }
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
 void URyRuntimeLevelHelpers::SetAllowAnyoneToDestroyMe(UActorComponent* componentToSet, const bool can)
 {
     if(componentToSet)

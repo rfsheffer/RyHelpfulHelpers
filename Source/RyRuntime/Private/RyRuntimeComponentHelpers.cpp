@@ -280,22 +280,30 @@ void URyRuntimeComponentHelpers::GetPoseableMeshTransforms(UPoseableMeshComponen
 */
 bool URyRuntimeComponentHelpers::SetPoseableMeshTransforms(UPoseableMeshComponent* poseableMesh, const TArray<FTransform>& transformsIn, bool markDirty)
 {
-	if(poseableMesh && poseableMesh->SkeletalMesh)
+	if(poseableMesh)
 	{
-		// Important check because otherwise it will crash
-		if(poseableMesh->SkeletalMesh->GetRefSkeleton().GetNum() != transformsIn.Num())
+#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1)
+		USkeletalMesh* skelMesh = Cast<class USkeletalMesh>(poseableMesh->GetSkinnedAsset());
+#else
+		USkeletalMesh* skelMesh = poseableMesh->SkeletalMesh;
+#endif
+		if(skelMesh)
 		{
-			UE_LOG(LogRyRuntime, Warning, TEXT("SetPoseableMeshTransforms failed - Reference skeleton doesn't have the same number of bones as transformsIn!"));
-			return false;
-		}
+			// Important check because otherwise it will crash
+			if(skelMesh->GetRefSkeleton().GetNum() != transformsIn.Num())
+			{
+				UE_LOG(LogRyRuntime, Warning, TEXT("SetPoseableMeshTransforms failed - Reference skeleton doesn't have the same number of bones as transformsIn!"));
+				return false;
+			}
 		
-		poseableMesh->BoneSpaceTransforms = transformsIn;
-		if(markDirty)
-		{
-			poseableMesh->MarkRefreshTransformDirty();
-		}
+			poseableMesh->BoneSpaceTransforms = transformsIn;
+			if(markDirty)
+			{
+				poseableMesh->MarkRefreshTransformDirty();
+			}
 
-		return true;
+			return true;
+		}
 	}
 
 	return false;
