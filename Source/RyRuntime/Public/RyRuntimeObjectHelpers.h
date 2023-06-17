@@ -89,29 +89,31 @@ public:
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers", meta = (BlueprintThreadSafe))
 	static bool IsSoftObjectValid(const TSoftObjectPtr<UObject>& SoftObjectReference);
 
-    // A call to see if a package is currently loaded and load that. If not loaded, tries to load the package.
-    // Package path is in this format: /Game/MyFolder/MyPackage
-    // Where /Game/ is the mounting point.
-    // Common mount points are:
-    // /Game/* : This is your projects primary content folder
-    // /Plugin/* : If a plugin has content the mounting point will be the name of the plugin
-    // /Engine/* : Content found in the engine
+    /// A call to see if a package is currently loaded and load that. If not loaded, tries to load the package.
+    /// Package path is in this format: /Game/MyFolder/MyPackage
+    /// Where /Game/ is the mounting point.
+    /// Common mount points are:
+    /// /Game/* : This is your projects primary content folder
+    /// /Plugin/* : If a plugin has content the mounting point will be the name of the plugin
+    /// /Engine/* : Content found in the engine
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
     static UPackage* FindOrLoadPackage(const FString& PackageName);
 
-    // Loads an object in a package
+    /// Loads an object in a package
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
     static UObject* LoadObjectFromPackage(UPackage* package, const FString& objectName);
 
-    // Gets the package of an object. Returns None if this object isn't part of a package
+    /// Gets the package of an object. Returns None if this object isn't part of a package
     UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers")
     static UPackage* GetPackageOfObject(UObject* object);
 
+	/// Marks an object package dirty. Optionally if callPostEditChange is true PostEditChange will also be called.
+	/// NOTE: callPostEditChange only works in editor.
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
 	static bool MarkObjectPackageDirty(UObject* object, bool callPostEditChange = false);
 
-    // With a package, returns all objects within that package
-    // NOTE: This loads every asset within the package so it can be returned.
+    /// With a package, returns all objects within that package
+    /// NOTE: This loads every asset within the package so it can be returned.
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
     static void GetObjectsInPackage(UPackage* package, TArray<UObject*>& ObjectsOut);
 
@@ -183,23 +185,23 @@ public:
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers")
 	static FName GetPackageMountPoint(const FString& InPackagePath, bool InWithoutSlashes = true);
 	
-    // Return the parent class of a class
+    /// Return the parent class of a class
     UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers")
     static UClass* GetParentClass(UClass* Class);
 
-    // Return the class hierarchy in an array ordered from children to root parent
+    /// Return the class hierarchy in an array ordered from children to root parent
     UFUNCTION(BlueprintPure, Category = "RyRuntime|ObjectHelpers")
     static void GetClassHierarchy(UClass* Class, TArray<UClass*>& ClassHierarchy, const bool includeSelf = true);
 
-    // Returns the default object associated with this class.
+    /// Returns the default object associated with this class.
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers")
     static UObject* GetClassDefaultObject(TSubclassOf<UObject> theClass);
 
-    // Sets an objects property by name using reflection to a Value.
-    // WARNING: You can do naughty things with this like setting native variables not exposed to blueprints. Beware!
-    // NOTE: This only supports setting these types: Numeric (Int, Float, Byte, etc), Bool, LinearColor, Color, Vector, Rotator, String.
-    //       With struct types like Vector, the Value string must be in a text serializable form ex (X=20, Y=30, Z=40). Use ToString on the types for examples.
-    // NOTE: If the property is numeric, ensure your Value can actually work with that type. If the value can be converted but precision is lost, no warnings will occur.
+    /// Sets an objects property by name using reflection to a Value.
+    /// WARNING: You can do naughty things with this like setting native variables not exposed to blueprints. Beware!
+    /// NOTE: This only supports setting these types: Numeric (Int, Float, Byte, etc), Bool, LinearColor, Color, Vector, Rotator, String.
+    ///       With struct types like Vector, the Value string must be in a text serializable form ex (X=20, Y=30, Z=40). Use ToString on the types for examples.
+    /// NOTE: If the property is numeric, ensure your Value can actually work with that type. If the value can be converted but precision is lost, no warnings will occur.
     UFUNCTION(BlueprintCallable, Category = "RyRuntime|ObjectHelpers", meta=(AdvancedDisplay = "3"))
     static bool SetObjectPropertyValue(UObject* object, const FName PropertyName, const FString& Value, const bool PrintWarnings = true);
 

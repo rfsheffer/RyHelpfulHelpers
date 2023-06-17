@@ -151,10 +151,12 @@ bool URyRuntimeObjectHelpers::MarkObjectPackageDirty(UObject* object, bool callP
     if(object)
     {
         const bool result = object->MarkPackageDirty();
+#if WITH_EDITOR
         if(callPostEditChange)
         {
             object->PostEditChange();
         }
+#endif
         return result;
     }
 
