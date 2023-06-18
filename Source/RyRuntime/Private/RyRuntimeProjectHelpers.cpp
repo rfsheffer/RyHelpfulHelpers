@@ -119,3 +119,12 @@ FText URyRuntimeProjectHelpers::GetProjectDebugTitleInfo()
 	const UGeneralProjectSettings& ProjectSettings = *GetDefault<UGeneralProjectSettings>();
 	return ProjectSettings.ProjectDebugTitleInfo;
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeProjectHelpers::GetProjectStartInVR()
+{
+	const UGeneralProjectSettings& Settings = *GetDefault<UGeneralProjectSettings>();
+	return Settings.bStartInVR;
+}

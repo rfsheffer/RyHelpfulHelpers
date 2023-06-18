@@ -98,6 +98,10 @@ public:
 	/** Additional data to be displayed on the window title bar in non-shipping configurations (can include the tokens {GameName}, {PlatformArchitecture}, {BuildConfiguration} or {RHIName}, which will be replaced with the specified text) */
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|ProjectHelpers")
 	static FText GetProjectDebugTitleInfo();
+
+	/** Returns true if the project is set to Start in VR mode in the project settings **/
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|ProjectHelpers", DisplayName="Get Project Start In VR")
+	static bool GetProjectStartInVR();
 };
 
 //---------------------------------------------------------------------------------------------------------------------
