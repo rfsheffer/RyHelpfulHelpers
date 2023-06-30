@@ -133,6 +133,20 @@ void URyRuntimeWorldHelpers::GetEngineWorldContexts(TArray<FRyWorldContext>& wor
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
+APlayerController* URyRuntimeWorldHelpers::GetFirstLocalPlayerController(UObject* WorldContextObject)
+{
+	const UWorld* world = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
+	if(!world)
+	{
+		return nullptr;
+	}
+
+	return GEngine->GetFirstLocalPlayerController(world);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
 FTimerHandle URyRuntimeWorldHelpers::SetTimerByEventForWorld(UObject* WorldContextObject,
 	FTimerDynamicDelegate Delegate, float Time, bool bLooping, float InitialStartDelay, float InitialStartDelayVariance)
 {

@@ -105,6 +105,15 @@ public:
 	static void GetEngineWorldContexts(TArray<FRyWorldContext>& worldsOut);
 
 	/**
+	 * Find a Local Player Controller, which may not exist at all if this is a server.
+	 * Returns first found LocalPlayerController. Fine for single player, in split screen, one will be picked. 
+	 * @param WorldContextObject Object to get the world of
+	 * @return first found LocalPlayerController. Fine for single player, in split screen, one will be picked. 
+	 */
+	UFUNCTION(BlueprintPure, Category="RyRuntime|WorldHelpers", meta=(WorldContext="WorldContextObject"))
+	static class APlayerController* GetFirstLocalPlayerController(UObject* WorldContextObject);
+
+	/**
 	 * Set a timer to execute delegate. Setting an existing timer will reset that timer with updated parameters.
 	 * @param Event						Event. Can be a K2 function or a Custom Event.
 	 * @param Time						How long to wait before executing the delegate, in seconds. Setting a timer to <= 0 seconds will clear it if it is set.
