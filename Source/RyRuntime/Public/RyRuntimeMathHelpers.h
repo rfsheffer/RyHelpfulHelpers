@@ -319,11 +319,11 @@ public:
 
 	/** Returns true if vector A is equal to vector B (A == B) within a specified error tolerance, ignoring Z */
 	UFUNCTION(BlueprintPure, meta=(DisplayName = "Equal (Vector) 2D", CompactNodeTitle = "==2D", ScriptMethod = "IsNearEqual2D", Keywords = "== equal"), Category="RyRuntime|Math|Vector")
-    static bool EqualEqual_VectorVector2D(FVector A, FVector B, float ErrorTolerance = 1.e-4f);
+    static bool VectorEqualVector2D(FVector A, FVector B, float ErrorTolerance = 1.e-4f);
 
 	/** Returns true if vector A is not equal to vector B (A != B) within a specified error tolerance, ignoring Z */
 	UFUNCTION(BlueprintPure, meta=(DisplayName = "Not Equal (Vector) 2D", CompactNodeTitle = "!=2D", ScriptMethod = "IsNotNearEqual2D"), Category="RyRuntime|Math|Vector")
-    static bool NotEqual_VectorVector2D(FVector A, FVector B, float ErrorTolerance = 1.e-4f);
+    static bool VectorNotEqualVector2D(FVector A, FVector B, float ErrorTolerance = 1.e-4f);
 
 	/** Rotate the world forward vector by the given rotation, excluding the Z axis */
 	UFUNCTION(BlueprintPure, meta=(DisplayName = "Get Forward Vector 2D", ScriptMethod = "GetForwardVector2D", Keywords="rotation rotate"), Category="RyRuntime|Math|Vector")
@@ -741,7 +741,7 @@ float URyRuntimeMathHelpers::Dot_VectorVector2D(FVector A, FVector B)
 /**
 */
 FORCEINLINE
-bool URyRuntimeMathHelpers::EqualEqual_VectorVector2D(FVector A, FVector B, float ErrorTolerance)
+bool URyRuntimeMathHelpers::VectorEqualVector2D(FVector A, FVector B, float ErrorTolerance)
 {
 	A.Z = 0; B.Z = 0;
 	return A.Equals(B, ErrorTolerance);
@@ -751,7 +751,7 @@ bool URyRuntimeMathHelpers::EqualEqual_VectorVector2D(FVector A, FVector B, floa
 /**
 */
 FORCEINLINE
-bool URyRuntimeMathHelpers::NotEqual_VectorVector2D(FVector A, FVector B, float ErrorTolerance)
+bool URyRuntimeMathHelpers::VectorNotEqualVector2D(FVector A, FVector B, float ErrorTolerance)
 {
 	A.Z = 0; B.Z = 0;
 	return !A.Equals(B, ErrorTolerance);
