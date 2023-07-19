@@ -244,9 +244,16 @@ bool URyRuntimePlatformHelpers::CopyFile(const FString& sourcePath, const FStrin
 {
     IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
     const bool fileCopied = platformFile.CopyFile(*destinationPath,*sourcePath);
-    if(fileCopied && updateTimeStamp)
+    if(fileCopied)
     {
-        platformFile.SetTimeStamp(*destinationPath, FDateTime::Now());
+        if(updateTimeStamp)
+        {
+            platformFile.SetTimeStamp(*destinationPath, FDateTime::Now());
+        }
+        else
+        {
+            platformFile.SetTimeStamp(*destinationPath, platformFile.GetTimeStamp(*sourcePath));
+        }
     }
     return fileCopied;
 }
@@ -257,10 +264,18 @@ bool URyRuntimePlatformHelpers::CopyFile(const FString& sourcePath, const FStrin
 bool URyRuntimePlatformHelpers::MoveFile(const FString& sourcePath, const FString& destinationPath, const bool updateTimeStamp)
 {
     IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
+    const FDateTime fileTime = platformFile.GetTimeStamp(*sourcePath);
     const bool fileMoved = platformFile.MoveFile(*destinationPath, *sourcePath);
-    if(fileMoved && updateTimeStamp)
+    if(fileMoved)
     {
-        platformFile.SetTimeStamp(*destinationPath, FDateTime::Now());
+        if(updateTimeStamp)
+        {
+            platformFile.SetTimeStamp(*destinationPath, FDateTime::Now());
+        }
+        else if(fileTime != FDateTime::MinValue())
+        {
+            platformFile.SetTimeStamp(*destinationPath, fileTime);
+        }
     }
     return fileMoved;
 }

@@ -8,7 +8,8 @@ public class RyRuntime : ModuleRules
 {
     public RyRuntime(ReadOnlyTargetRules Target) : base(Target)
     {
-		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
+	    //OptimizeCode = CodeOptimization.Never;
+	    PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PrivateIncludePaths.Add("RyRuntime/ThirdParty/AHEasing");
 
