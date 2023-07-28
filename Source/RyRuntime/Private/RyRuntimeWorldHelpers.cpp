@@ -204,3 +204,19 @@ FTimerHandle URyRuntimeWorldHelpers::SetTimerByFunctionForWorld(UObject* WorldCo
 	Delegate.BindUFunction(Object, FunctionFName);
 	return SetTimerByEventForWorld(WorldContextObject, Delegate, Time, bLooping, InitialStartDelay, InitialStartDelayVariance);
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeWorldHelpers::ClearAndInvalidateTimerHandleForWorld(const UObject* WorldContextObject,
+	FTimerHandle& Handle)
+{
+	if (Handle.IsValid())
+	{
+		UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
+		if (World)
+		{
+			World->GetTimerManager().ClearTimer(Handle);
+		}
+	}
+}

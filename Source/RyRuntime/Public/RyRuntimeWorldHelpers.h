@@ -137,4 +137,11 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, meta=(AdvancedDisplay="InitialStartDelay, InitialStartDelayVariance"), Category="RyRuntime|WorldHelpers")
 	static FTimerHandle SetTimerByFunctionForWorld(UObject* WorldContextObject, UObject* Object, FString FunctionName, float Time, bool bLooping, float InitialStartDelay = 0.f, float InitialStartDelayVariance = 0.f);
+
+	/**
+	 * Clears a set timer.
+	 * @param Handle		The handle of the timer to clear.
+	 */
+	UFUNCTION(BlueprintCallable, Category="RyRuntime|WorldHelpers")
+	static void ClearAndInvalidateTimerHandleForWorld(const UObject* WorldContextObject, UPARAM(ref) FTimerHandle& Handle);
 };
