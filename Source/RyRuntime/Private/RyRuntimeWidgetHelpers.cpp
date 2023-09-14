@@ -4,7 +4,7 @@
 #include "RyRuntimeModule.h"
 #include "Components/Button.h"
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
-#include "UMG/Public/Components/Widget.h"
+#include "Components/Widget.h"
 #include "Runtime/Engine/Classes/Engine/GameViewportClient.h"
 
 #define LOCTEXT_NAMESPACE "WidgetHelpers"

@@ -1,7 +1,7 @@
 ﻿// Copyright 2020-2023 Solar Storm Interactive
 
 #include "RyEditorActorHelpers.h"
-#include "Engine/Classes/GameFramework/Actor.h"
+#include "GameFramework/Actor.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**

@@ -116,6 +116,10 @@ static_assert(ERyAppMsgType::YesNoYesAll == static_cast<ERyAppMsgType>(EAppMsgTy
 */
 ERyAppReturnType URyEditorDialogHelpers::OpenMessageDialog(ERyAppMsgType MessageType, const FText Message, const FText WindowTitle)
 {
+#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 3)
+    return static_cast<ERyAppReturnType>(FMessageDialog::Open(static_cast<EAppMsgType::Type>(MessageType), EAppReturnType::Cancel,
+                                                              Message, WindowTitle));
+#else
     const FText* optTitle = nullptr;
     if(!WindowTitle.IsEmpty())
     {
@@ -124,6 +128,7 @@ ERyAppReturnType URyEditorDialogHelpers::OpenMessageDialog(ERyAppMsgType Message
 
     return static_cast<ERyAppReturnType>(FMessageDialog::Open(static_cast<EAppMsgType::Type>(MessageType), EAppReturnType::Cancel,
                                                               Message, optTitle));
+#endif
 }
 
 //--------------------------------------------------------------------------------------------------------------------
@@ -131,6 +136,9 @@ ERyAppReturnType URyEditorDialogHelpers::OpenMessageDialog(ERyAppMsgType Message
 */
 void URyEditorDialogHelpers::OpenDebugMessageDialog(const FText Message, const FText WindowTitle)
 {
+#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 3)
+    FMessageDialog::Debugf(Message, WindowTitle);
+#else
     const FText* optTitle = nullptr;
     if(!WindowTitle.IsEmpty())
     {
@@ -138,6 +146,7 @@ void URyEditorDialogHelpers::OpenDebugMessageDialog(const FText Message, const F
     }
 
     FMessageDialog::Debugf(Message, optTitle);
+#endif
 }
 
 //--------------------------------------------------------------------------------------------------------------------

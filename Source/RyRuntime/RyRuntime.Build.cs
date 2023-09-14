@@ -46,6 +46,14 @@ public class RyRuntime : ModuleRules
 				"PakFile",
             }
         );
+#if UE_5_3_OR_LATER
+	    PrivateDependencyModuleNames.AddRange(
+	        new string[]
+	        {
+		        "XRBase",
+	        }
+        );
+#endif
 
         if (Target.bBuildEditor)
         {

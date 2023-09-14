@@ -3,8 +3,8 @@
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "SlateCore/Public/Input/Events.h"
-#include "UMG/Public/Blueprint/WidgetNavigation.h"
+#include "Input/Events.h"
+#include "Blueprint/WidgetNavigation.h"
 
 #include "RyRuntimeWidgetHelpers.generated.h"
 

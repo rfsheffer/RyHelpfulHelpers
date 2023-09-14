@@ -38,6 +38,13 @@ enum class ERyUnit : uint8
     /** Force units */
     Newtons, PoundsForce, KilogramsForce,
 
+#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 3)
+	KilogramCentimetersPerSecondSquared,
+
+	/** Torque Units */
+	NewtonMeters, KilogramCentimetersSquaredPerSecondSquared,
+#endif
+
     /** Frequency units */
     Hertz, Kilohertz, Megahertz, Gigahertz, RevolutionsPerMinute,
 
@@ -49,6 +56,9 @@ enum class ERyUnit : uint8
 	Candela UMETA(Hidden),
 	Lux UMETA(Hidden),
 	CandelaPerMeter2 UMETA(Hidden),
+#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 3)
+	ExposureValue UMETA(Hidden),
+#endif
 
 #if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1) || ENGINE_MAJOR_VERSION > 5
 	Nanoseconds, Microseconds,
@@ -62,6 +72,11 @@ enum class ERyUnit : uint8
 
     /** Arbitrary multipliers */
     Percentage UMETA(Hidden),	Multiplier UMETA(Hidden),
+
+#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 3)
+	/** Stress units */
+	Pascals, KiloPascals, MegaPascals, GigaPascals,
+#endif
 
     /** Symbolic entry, not specifiable on meta data */
     Unspecified  UMETA(Hidden)

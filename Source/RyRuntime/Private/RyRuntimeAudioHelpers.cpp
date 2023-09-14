@@ -4,7 +4,7 @@
 #include "RyRuntimeAudioHelpers.h"
 #include "RyRuntimeModule.h"
 #include "Runtime/Engine/Public/AudioDevice.h"
-#include "AudioCaptureCore/Public/AudioCaptureCore.h"
+#include "AudioCaptureCore.h"
 
 #if PLATFORM_WINDOWS
 #include "Runtime/Online/Voice/Private/VoicePrivate.h"

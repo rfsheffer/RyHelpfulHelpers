@@ -7,8 +7,8 @@
 #include "UObject/UObjectIterator.h"
 #include "LatentActions.h"
 #include "Runtime/Launch/Resources/Version.h"
-#include "Engine/Classes/Engine/LatentActionManager.h"
-#include "Engine/Public/TimerManager.h"
+#include "Engine/LatentActionManager.h"
+#include "TimerManager.h"
 
 // Async asset loading extension
 #include "Engine/StreamableManager.h"

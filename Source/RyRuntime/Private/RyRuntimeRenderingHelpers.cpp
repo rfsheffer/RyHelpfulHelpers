@@ -2,10 +2,10 @@
 
 #include "RyRuntimeRenderingHelpers.h"
 #include "RyRuntimeModule.h"
-#include "Core/Public/Misc/FileHelper.h"
+#include "Misc/FileHelper.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "HighResScreenshot.h"
-#include "RenderCore/Public/ShaderPipelineCache.h"
+#include "ShaderPipelineCache.h"
 #include "Runtime/Launch/Resources/Version.h"
 #include "Runtime/Engine/Public/LatentActions.h"
 #include "Runtime/Engine/Public/SceneInterface.h"
@@ -83,8 +83,10 @@ ERyShaderPlatform URyRuntimeRenderingHelpers::GetShaderPlatform(UObject* WorldCo
 #if ENGINE_MAJOR_VERSION >= 5
 	case SP_PCD3D_SM6:
 		return ERyShaderPlatform::SP_PCD3D_SM6;
+#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION < 3
 	case SP_D3D_ES3_1_HOLOLENS:
 		return ERyShaderPlatform::SP_D3D_ES3_1_HOLOLENS;
+#endif
 #endif
 	default: ;
 	}

@@ -7,7 +7,7 @@
 #if ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION < 26
 #include "PhysicsEngine/BodySetupEnums.h"
 #else
-#include "PhysicsCore/Public/BodySetupEnums.h"
+#include "BodySetupEnums.h"
 #endif
 
 #include "RyEditorStaticMeshHelpers.generated.h"

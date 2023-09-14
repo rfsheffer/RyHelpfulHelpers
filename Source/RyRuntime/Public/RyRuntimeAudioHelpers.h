@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "AudioCaptureCore/Public/AudioCaptureDeviceInterface.h"
+#include "AudioCaptureDeviceInterface.h"
 
 #include "RyRuntimeAudioHelpers.generated.h"
 

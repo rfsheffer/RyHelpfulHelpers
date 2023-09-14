@@ -54,5 +54,14 @@ public class RyEditor : ModuleRules
 		    }
 	    );
 #endif
+	    
+#if UE_5_3_OR_LATER
+	    PublicDependencyModuleNames.AddRange(
+		    new string[]
+		    {
+			    "ScriptableEditorWidgets",
+		    }
+	    );
+#endif
     }
 }
