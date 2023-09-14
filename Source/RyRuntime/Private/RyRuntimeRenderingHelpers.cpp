@@ -3,7 +3,12 @@
 #include "RyRuntimeRenderingHelpers.h"
 #include "RyRuntimeModule.h"
 #include "Misc/FileHelper.h"
+#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 3)
+#include "IXRTrackingSystem.h"
+#include "IHeadMountedDisplay.h"
+#else
 #include "HeadMountedDisplayFunctionLibrary.h"
+#endif
 #include "HighResScreenshot.h"
 #include "ShaderPipelineCache.h"
 #include "Runtime/Launch/Resources/Version.h"
@@ -19,6 +24,14 @@
 	#include "ImageUtils.h"
 	#include "Slate/SceneViewport.h"
 	extern UNREALED_API UEditorEngine* GEditor;
+#endif
+
+#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 3)
+static bool IsHeadMountedDisplayAllowedAndConnected()
+{
+	return GEngine->XRSystem.IsValid() && GEngine->XRSystem->IsHeadTrackingAllowed() &&
+			GEngine->XRSystem->GetHMDDevice() && GEngine->XRSystem->GetHMDDevice()->IsHMDConnected();
+}
 #endif
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -212,7 +225,11 @@ struct FTakeScreenshotAction : FPendingLatentAction
 		{
 		case ERyScreenShotMode::Game:
 			{
+#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 3)
+				if(IsHeadMountedDisplayAllowedAndConnected())
+#else
 				if(UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled() && UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayConnected())
+#endif
 				{
 					// In VR RequestScreenshot doesn't produce a proper image (either cropped or desaturated).
 					// We use the highresscreenshot version to get around this.

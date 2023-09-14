@@ -3,8 +3,8 @@
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "Runtime/HeadMountedDisplay/Public/IMotionController.h"
-#include "Runtime/HeadMountedDisplay/Public/HeadMountedDisplayTypes.h"
+#include "IMotionController.h"
+#include "HeadMountedDisplayTypes.h"
 
 #include "RyRuntimeXRHelpers.generated.h"
 
