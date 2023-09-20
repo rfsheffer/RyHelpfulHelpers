@@ -447,6 +447,17 @@ public:
 	 */
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|FileHelpers")
 	static FString GetAndroidExternalStoragePath();
+
+    /**
+     * @brief Gets the android no backup files dir if is Android platform and the API >= 21
+     * This is the directory you can store files in internally which will not be backed up to the cloud.
+     * This is a useful place to put your games cache files which could be large and should not take up backup space.
+     * NOTE: If the API version is less than 21 the output dir will be the android internal storage path.
+     * @param isValid Is the return path valid?
+     * @return If is the Android platform and the API >= 21, the no backup files dir. isValid will be false otherwise.
+     */
+    UFUNCTION(BlueprintPure, Category = "RyRuntime|FileHelpers")
+	static FString GetAndroidNoBackupFilesDir(bool& isValid);
 };
 
 //---------------------------------------------------------------------------------------------------------------------

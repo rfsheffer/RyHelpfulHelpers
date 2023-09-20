@@ -7,6 +7,11 @@
 #include "GenericPlatform/GenericPlatformApplicationMisc.h"
 #include "Runtime/Launch/Resources/Version.h"
 
+#if PLATFORM_ANDROID && USE_ANDROID_JNI
+#include "Android/AndroidJNI.h"
+#include "Android/AndroidApplication.h"
+#endif
+
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
@@ -396,4 +401,24 @@ FString URyRuntimePlatformHelpers::GetAndroidExternalStoragePath()
 #else
     return TEXT("");
 #endif
+}
+
+FString RyRuntimeAndroidNoBackupFilesDir;
+bool RyRuntimeAndroidNoBackupFilesDirValid = false;
+
+#if PLATFORM_ANDROID && USE_ANDROID_JNI
+JNI_METHOD void Java_com_epicgames_ue4_GameActivity_nativeRyRuntimeSetNoBackupFilesDir(JNIEnv* jenv, jobject thiz, jboolean isValid, jstring noBackupFilesDir)
+{
+    RyRuntimeAndroidNoBackupFilesDir = FJavaHelper::FStringFromParam(jenv, noBackupFilesDir);
+    RyRuntimeAndroidNoBackupFilesDirValid = isValid;
+}
+#endif
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FString URyRuntimePlatformHelpers::GetAndroidNoBackupFilesDir(bool& isValid)
+{
+    isValid = RyRuntimeAndroidNoBackupFilesDirValid;
+    return RyRuntimeAndroidNoBackupFilesDir;
 }

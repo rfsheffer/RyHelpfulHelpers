@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--RyHelpfulHelpers plugin additions-->
+<root xmlns:android="http://schemas.android.com/apk/res/android">
+	<!-- init section is always evaluated once per architecture -->
+	<init>
+	</init>
+
+	<gameActivityClassAdditions>
+		<insert>
+public native void nativeRyRuntimeSetNoBackupFilesDir(boolean isValid, String noBackupFilesDir);
+		</insert>
+	</gameActivityClassAdditions>
+
+	<gameActivityOverrideAPKOBBPackaging>
+		<insert>
+<![CDATA[
+		// RyHelpfulHelpers Additions
+		if (ANDROID_BUILD_VERSION >= 21)
+		{
+			Log.debug("RyRuntime Setting NoBackupFilesDir: " + getNoBackupFilesDir().getPath());
+			nativeRyRuntimeSetNoBackupFilesDir(true, getNoBackupFilesDir().getPath());
+		}
+		else
+		{
+			Log.debug("RyRuntime android version less than 21, defaulting NoBackupFilesDir: " + getFilesDir().getPath());
+			nativeRyRuntimeSetNoBackupFilesDir(false, getFilesDir().getPath());
+		}
+		// END RyHelpfulHelpers Additions
+]]>
+		</insert>
+	</gameActivityOverrideAPKOBBPackaging>
+</root>

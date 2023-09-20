@@ -56,5 +56,13 @@ public class RyRuntime : ModuleRules
 		        }
 		    );
         }
+        
+        if (Target.Platform == UnrealTargetPlatform.Android)
+        {
+	        PrivateDependencyModuleNames.Add("Launch");
+	        
+	        string PluginPath = Utils.MakePathRelativeTo(ModuleDirectory, Target.RelativeEnginePath);
+	        AdditionalPropertiesForReceipt.Add("AndroidPlugin", Path.Combine(PluginPath, "RyRuntime_APL.xml"));
+        }
     }
 }
