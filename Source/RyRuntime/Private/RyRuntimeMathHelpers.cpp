@@ -355,3 +355,35 @@ bool URyRuntimeMathHelpers::IntIsBitSet(int32 intIn, uint8 bit)
 {
 	return (intIn & (1 << bit)) != 0;
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FVector URyRuntimeMathHelpers::GetPlaneOrigin(const FPlane& plane)
+{
+	return plane.GetOrigin();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FVector URyRuntimeMathHelpers::GetPlaneNormal(const FPlane& plane)
+{
+	return plane.GetNormal();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+float URyRuntimeMathHelpers::GetPlaneDistanceToPoint(const FPlane& plane, const FVector& point)
+{
+	return plane.PlaneDot(point);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FPlane URyRuntimeMathHelpers::GetPlaneFlipped(const FPlane& plane)
+{
+	return plane.Flip();
+}

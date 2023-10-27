@@ -551,6 +551,40 @@ public:
 	*/
 	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box")
 	static FString BoxToString(const FBox& box);
+
+	/**
+	 * Get the origin of this plane.
+	 *
+	 * @return The origin (base point) of this plane.
+	 */
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Plane")
+	static FVector GetPlaneOrigin(const FPlane& plane);
+
+	/**
+	 * Get the normal of this plane.
+	 *
+	 * @return The normal of this plane.
+	 */
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Plane")
+	static FVector GetPlaneNormal(const FPlane& plane);
+
+	/**
+	 * Calculates distance between plane and a point.
+	 *
+	 * @param plane The plane to get distance to point
+	 * @param point The other point.
+	 * @return The distance from the plane to the point. 0: Point is on the plane. >0: Point is in front of the plane. <0: Point is behind the plane.
+	 */
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Plane")
+	static float GetPlaneDistanceToPoint(const FPlane& plane, const FVector& point);
+
+	/**
+	 * Get a flipped version of the plane.
+	 *
+	 * @return A flipped version of the plane.
+	 */
+	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Plane")
+	static FPlane GetPlaneFlipped(const FPlane& plane);
 };
 
 //---------------------------------------------------------------------------------------------------------------------
