@@ -6,6 +6,8 @@
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
 #include "Components/Widget.h"
 #include "Runtime/Engine/Classes/Engine/GameViewportClient.h"
+#include "GenericPlatform/GenericApplication.h"
+#include "Framework/Application/SlateApplication.h"
 
 #define LOCTEXT_NAMESPACE "WidgetHelpers"
 
@@ -186,6 +188,14 @@ UPanelWidget* URyRuntimeWidgetHelpers::GetWidgetParent(UWidget* widget)
 	}
 
 	return userWidget->GetParent();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeWidgetHelpers::IsCapsLock()
+{
+	return FSlateApplication::Get().GetModifierKeys().AreCapsLocked();
 }
 
 #undef LOCTEXT_NAMESPACE

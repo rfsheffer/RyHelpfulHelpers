@@ -103,4 +103,11 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="RyRuntime|WidgetHelpers")
 	static class UPanelWidget* GetWidgetParent(class UWidget* widget);
+
+	/**
+	 * @brief Check and return if caps lock is active
+	 * @return Return true if caps lock is active
+	 */
+	UFUNCTION(BlueprintPure, Category="RyRuntime|WidgetHelpers")
+	static bool IsCapsLock();
 };
