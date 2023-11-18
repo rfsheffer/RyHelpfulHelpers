@@ -220,3 +220,42 @@ void URyRuntimeWorldHelpers::ClearAndInvalidateTimerHandleForWorld(const UObject
 		}
 	}
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+float URyRuntimeWorldHelpers::GetTimeSecondsForWorld(const UObject* WorldContextObject)
+{
+	const UWorld* const World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
+	if(World)
+	{
+		return World->GetTimeSeconds();
+	}
+	return 0.0f;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+float URyRuntimeWorldHelpers::GetUnpausedTimeSecondsForWorld(const UObject* WorldContextObject)
+{
+	const UWorld* const World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
+	if(World)
+	{
+		return World->GetUnpausedTimeSeconds();
+	}
+	return 0.0f;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+float URyRuntimeWorldHelpers::GetRealTimeSecondsForWorld(const UObject* WorldContextObject)
+{
+	const UWorld* const World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
+	if(World)
+	{
+		return World->GetRealTimeSeconds();
+	}
+	return 0.0f;
+}

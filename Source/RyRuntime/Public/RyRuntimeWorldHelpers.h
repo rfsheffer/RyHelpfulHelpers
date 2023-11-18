@@ -144,4 +144,28 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="RyRuntime|WorldHelpers")
 	static void ClearAndInvalidateTimerHandleForWorld(const UObject* WorldContextObject, UPARAM(ref) FTimerHandle& Handle);
+
+	/**
+	 * Returns time in seconds since world was brought up for play, IS stopped when game pauses, IS dilated/clamped
+	 *
+	 * @return time in seconds since world was brought up for play
+	 */
+	UFUNCTION(BlueprintPure, Category="RyRuntime|WorldHelpers")
+	static float GetTimeSecondsForWorld(const UObject* WorldContextObject);
+
+	/**
+	* Returns time in seconds since world was brought up for play, IS NOT stopped when game pauses, IS dilated/clamped
+	*
+	* @return time in seconds since world was brought up for play
+	*/
+	UFUNCTION(BlueprintPure, Category="RyRuntime|WorldHelpers")
+	static float GetUnpausedTimeSecondsForWorld(const UObject* WorldContextObject);
+	
+	/**
+	* Returns time in seconds since world was brought up for play, does NOT stop when game pauses, NOT dilated/clamped
+	*
+	* @return time in seconds since world was brought up for play
+	*/
+	UFUNCTION(BlueprintPure, Category="RyRuntime|WorldHelpers")
+	static float GetRealTimeSecondsForWorld(const UObject* WorldContextObject);
 };
