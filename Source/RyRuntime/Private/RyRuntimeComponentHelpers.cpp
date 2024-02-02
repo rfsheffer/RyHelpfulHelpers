@@ -319,3 +319,25 @@ void URyRuntimeComponentHelpers::MarkPoseableMeshTransformsDirty(UPoseableMeshCo
 		poseableMesh->MarkRefreshTransformDirty();
 	}
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+void URyRuntimeComponentHelpers::CalculateComponentLocalBounds(const USceneComponent* Component, FVector& Origin,
+	FVector& BoxExtent, float& SphereRadius)
+{
+	if(Component)
+	{
+		const FBoxSphereBounds localBounds = Component->CalcLocalBounds();
+		Origin = localBounds.Origin;
+		BoxExtent = localBounds.BoxExtent;
+		SphereRadius = localBounds.SphereRadius;
+	}
+	else
+	{
+		Origin = FVector::ZeroVector;
+		BoxExtent = FVector::ZeroVector;
+		SphereRadius = 0.0f;
+		UE_LOG(LogRyRuntime, Verbose, TEXT("GetComponentLocalBounds passed a bad component"));
+	}
+}

@@ -89,4 +89,14 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|ComponentHelpers|PoseableMesh")
 	static void MarkPoseableMeshTransformsDirty(class UPoseableMeshComponent* poseableMesh);
+
+	/**
+	 * @brief Calculates a components local bounds. This is a calculation unlike GetComponentBounds which uses a cached value. Note this for performance reasons.
+	 * @param Component The component
+	 * @param Origin The local origin
+	 * @param BoxExtent The local extent
+	 * @param SphereRadius The sphere radius of the component
+	 */
+	UFUNCTION(BlueprintPure, Category="RyRuntime|ComponentHelpers|Collision")
+	static void CalculateComponentLocalBounds(const USceneComponent* Component, FVector& Origin, FVector& BoxExtent, float& SphereRadius);
 };
