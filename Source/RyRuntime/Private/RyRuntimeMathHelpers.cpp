@@ -2,6 +2,8 @@
 
 
 #include "RyRuntimeMathHelpers.h"
+
+#include "RyRuntimeModule.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/Engine.h"
@@ -386,4 +388,35 @@ float URyRuntimeMathHelpers::GetPlaneDistanceToPoint(const FPlane& plane, const 
 FPlane URyRuntimeMathHelpers::GetPlaneFlipped(const FPlane& plane)
 {
 	return plane.Flip();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FVector URyRuntimeMathHelpers::GetDirectionToHitMovingTarget(const FVector& sourceLocation,
+	const float sourceVelocityMagnitude, const FVector& targetLocation, const FVector& targetVelocity)
+{
+	// https://www.gamedeveloper.com/programming/shooting-a-moving-target
+	
+	const float velocityDelta = targetVelocity.SizeSquared() - FMath::Square(sourceVelocityMagnitude);
+
+	const FVector deltaLocation = targetLocation - sourceLocation;
+	const float b = 2.f * FVector::DotProduct(targetVelocity, deltaLocation);
+	
+	const float deltaSquared = deltaLocation.SizeSquared();
+
+	const float discriminant = b * b - 4.f * velocityDelta * deltaSquared; 
+
+	float time;
+	if(discriminant >= 0.f)
+	{
+		time = 2.f * deltaSquared / (FMath::Sqrt(discriminant) - b);
+	}
+	else
+	{
+		time = 0.f;
+		UE_LOG(LogRyRuntime, Warning, TEXT("GetDirectionToHitMovingTarget failed to find result. Returning target location!"));
+	}
+    
+	return (targetLocation + targetVelocity * time - sourceLocation).GetSafeNormal();
 }

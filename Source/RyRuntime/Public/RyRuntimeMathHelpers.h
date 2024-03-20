@@ -585,6 +585,17 @@ public:
 	 */
 	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Plane")
 	static FPlane GetPlaneFlipped(const FPlane& plane);
+
+    /**
+     * @brief For two moving objects (source and target), returns the direction where the source object will hit the target object.
+     * @param sourceLocation The source starting location
+     * @param sourceVelocityMagnitude How fast the source will be moving
+     * @param targetLocation The current world location of the target
+     * @param targetVelocity The current velocity vector of the target
+     * @return A direction vector you can assign to the source to hit the target
+     */
+    UFUNCTION(BlueprintCallable, Category="RyRuntime|Math|Game")
+	static FVector GetDirectionToHitMovingTarget(const FVector& sourceLocation, const float sourceVelocityMagnitude, const FVector& targetLocation, const FVector& targetVelocity);
 };
 
 //---------------------------------------------------------------------------------------------------------------------
