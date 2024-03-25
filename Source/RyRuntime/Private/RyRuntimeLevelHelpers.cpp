@@ -23,7 +23,14 @@ static_assert(ERyComponentCreationMethod::Native == static_cast<ERyComponentCrea
 */
 TSoftObjectPtr<UWorld> URyRuntimeLevelHelpers::GetWorldSoftReferenceFromPath(const FString& PathToWorld)
 {
-    return TSoftObjectPtr<UWorld>(PathToWorld);
+    const FString fullFilePath = FPaths::GetPath(PathToWorld);
+    FString fileName = FPaths::GetBaseFilename(PathToWorld);
+    if (fileName.StartsWith("UEDPIE_"))
+    {
+        // Strip off "UEDPIE_N_" prefix. N is a number, usually 0.
+        fileName = fileName.Right(fileName.Len() - 9);
+    }
+    return TSoftObjectPtr<UWorld>(FString::Printf(TEXT("%s/%s.%s"), *fullFilePath, *fileName, *fileName));
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -44,7 +51,7 @@ UWorld* URyRuntimeLevelHelpers::GetWorldOfActor(const AActor* actorIn)
 */
 TSoftObjectPtr<UWorld> URyRuntimeLevelHelpers::GetWorldSoftReference(UWorld* worldIn)
 {
-    return TSoftObjectPtr<UWorld>(worldIn);
+    return GetCleanWorldSoftReference(TSoftObjectPtr<UWorld>(worldIn));
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -60,12 +67,35 @@ FString URyRuntimeLevelHelpers::GetWorldSoftReferencePath(const TSoftObjectPtr<U
         worldRefPath.Split("/", &worldPath, &worldName, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
         if (worldName.StartsWith("UEDPIE_"))
         {
+            // Strip off "UEDPIE_N_" prefix. N is a number, usually 0.
             worldName = worldName.Right(worldName.Len() - 9);
             worldRefPath = FString::Printf(TEXT("%s/%s"), *worldPath, *worldName);
         }
     }
 
     return worldRefPath;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+TSoftObjectPtr<UWorld> URyRuntimeLevelHelpers::GetCleanWorldSoftReference(const TSoftObjectPtr<UWorld>& worldRef)
+{
+    FString worldRefPath = worldRef.ToString();
+    if (!worldRefPath.IsEmpty())
+    {
+        FString worldPath;
+        FString worldName;
+        worldRefPath.Split("/", &worldPath, &worldName, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
+        if (worldName.StartsWith("UEDPIE_"))
+        {
+            // Strip off "UEDPIE_N_" prefix. N is a number, usually 0.
+            worldName = worldName.Right(worldName.Len() - 9);
+            worldRefPath = FString::Printf(TEXT("%s/%s"), *worldPath, *worldName);
+        }
+    }
+
+    return TSoftObjectPtr<UWorld>(worldRefPath);
 }
 
 //---------------------------------------------------------------------------------------------------------------------

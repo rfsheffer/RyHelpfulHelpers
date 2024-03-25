@@ -92,8 +92,12 @@ public:
     static TSoftObjectPtr<UWorld> GetWorldSoftReference(UWorld* worldIn);
 
 	/// Get the world soft reference path cleaning up the string of UEPIE prefix if needed
-	UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers", meta=(AutoCreateRefTerm="worldRef"))
 	static FString GetWorldSoftReferencePath(const TSoftObjectPtr<UWorld>& worldRef);
+
+	/// Get the world soft reference cleaning up the UEPIE prefix if needed
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers", meta=(AutoCreateRefTerm="worldRef"))
+	static TSoftObjectPtr<UWorld> GetCleanWorldSoftReference(const TSoftObjectPtr<UWorld>& worldRef);
 
     // Return the associated level this actor exists in
     UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")

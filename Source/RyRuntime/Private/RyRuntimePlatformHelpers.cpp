@@ -4,8 +4,8 @@
 #include "RyRuntimeModule.h"
 #include "HAL/PlatformFileManager.h"
 #include "GenericPlatform/GenericPlatformFile.h"
-#include "GenericPlatform/GenericPlatformApplicationMisc.h"
 #include "Runtime/Launch/Resources/Version.h"
+#include "HAL/PlatformApplicationMisc.h"
 
 #if PLATFORM_ANDROID && USE_ANDROID_JNI
 #include "Android/AndroidJNI.h"
@@ -333,7 +333,7 @@ void URyRuntimePlatformHelpers::PathInfo(const FString& fileSystemPath,
 */
 void URyRuntimePlatformHelpers::ClipboardCopy(const FString& Str)
 {
-    FGenericPlatformApplicationMisc::ClipboardCopy(*Str);
+    FPlatformApplicationMisc::ClipboardCopy(*Str);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -341,7 +341,7 @@ void URyRuntimePlatformHelpers::ClipboardCopy(const FString& Str)
 */
 void URyRuntimePlatformHelpers::ClipboardPaste(FString& Dest)
 {
-    FGenericPlatformApplicationMisc::ClipboardPaste(Dest);
+    FPlatformApplicationMisc::ClipboardPaste(Dest);
 }
 
 #if ENGINE_MAJOR_VERSION > 4 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 27)
