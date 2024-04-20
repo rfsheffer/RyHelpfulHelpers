@@ -145,6 +145,18 @@ public:
 	static float ConvertUnit(const float value, const ERyUnit from, const ERyUnit to);
 
 	/**
+	 * Apply circular gaussian spread to a direction
+	 * @param vecDir The direction to apply spread to
+	 * @param spreadDegrees The spread to apply in degrees
+	 * @param alpha The alpha of the spread. A value between 0 and 1. 0 meaning no spread, 1 meaning full spread.
+	 * @param biasMin Controllable bias towards the min
+	 * @param biasMax Controllable bias towards the max
+	 * @returns The vecDir with applied gaussian spread based on the input parameters
+	 */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|Math|Utility", meta=(AdvancedDisplay = "3"))
+	static FVector ApplyGaussianSpread(const FVector& vecDir, const float spreadDegrees, float alpha = 1.0, const float biasMin = -1.0f, const float biasMax = 1.0f);
+
+	/**
 	 * Interpolate a normal vector Current to Target, by interpolating the angle between those vectors with constant step.
 	 */
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|Math|Interpolation", DisplayName = "InterpNormalRotationTo")

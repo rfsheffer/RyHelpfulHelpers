@@ -17,6 +17,47 @@ static_assert(ERyUnit::Unspecified == static_cast<ERyUnit>(EUnit::Unspecified), 
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
+FVector URyRuntimeMathHelpers::ApplyGaussianSpread(const FVector& vecDir, const float spreadDegrees, float alpha,
+	const float biasMin, const float biasMax)
+{
+	const FVector vecSpread = FVector(FMath::DegreesToRadians(spreadDegrees / 2.0f));
+	const FVector vecRight = vecDir.Rotation().RotateVector(FVector::RightVector);
+	const FVector vecUp = vecDir.Rotation().RotateVector(FVector::UpVector);
+
+	// get circular gaussian spread
+	float x, y, z;
+
+	if (alpha > 1.0)
+	{
+		alpha = 1.0;
+	}
+	else if (alpha < 0.0)
+	{
+		alpha = 0.0;
+	}
+
+	// 1.0 gaussian, 0.0 is flat, -1.0 is inverse gaussian
+	const float shotBias = ((biasMax - biasMin) * alpha) + biasMin;
+	const float flatness = (FMath::Abs(shotBias) * 0.5);
+
+	do
+	{
+		x = FMath::FRandRange(-1.0f, 1.0f) * flatness + FMath::FRandRange(-1, 1) * (1 - flatness);
+		y = FMath::FRandRange(-1, 1) * flatness + FMath::FRandRange(-1, 1) * (1 - flatness);
+		if (shotBias < 0)
+		{
+			x = (x >= 0) ? 1.0 - x : -1.0 - x;
+			y = (y >= 0) ? 1.0 - y : -1.0 - y;
+		}
+		z = x * x + y * y;
+	} while (z > 1);
+
+	return vecDir + x * vecSpread.Y * vecRight + y * vecSpread.Z * vecUp;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
 FVector URyRuntimeMathHelpers::VInterpNormalRotationTo(const FVector& current, const FVector& target,
 													   const float deltaTime, const float rotationSpeedDegrees)
 {
