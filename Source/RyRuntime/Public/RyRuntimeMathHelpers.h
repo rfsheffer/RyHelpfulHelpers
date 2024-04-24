@@ -27,6 +27,14 @@ enum class ERyUnit : uint8
 
     /** Speed units */
     MetersPerSecond, KilometersPerHour, MilesPerHour,
+	
+#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 4)
+	/** Angular speed unit. */
+	DegreesPerSecond, RadiansPerSecond,
+
+	/** Acceleration unit. */
+	CentimetersPerSecondSquared, MetersPerSecondSquared,
+#endif
 
     /** Temperature units */
     Celsius, Farenheit, Kelvin,
@@ -34,6 +42,11 @@ enum class ERyUnit : uint8
     /** Mass units */
     Micrograms, Milligrams, Grams, Kilograms, MetricTons,
     Ounces, Pounds, Stones,
+
+#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 4)
+	/** Density unit. */
+	GramsPerCubicCentimeter, GramsPerCubicMeter, KilogramsPerCubicCentimeter, KilogramsPerCubicMeter,
+#endif
 
     /** Force units */
     Newtons, PoundsForce, KilogramsForce,
@@ -43,6 +56,11 @@ enum class ERyUnit : uint8
 
 	/** Torque Units */
 	NewtonMeters, KilogramCentimetersSquaredPerSecondSquared,
+#endif
+
+#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 4)
+	/** Impulse unit. */
+	NewtonSeconds, KilogramCentimeters, KilogramMeters,
 #endif
 
     /** Frequency units */
@@ -70,8 +88,11 @@ enum class ERyUnit : uint8
     /** Pixel density units */
     PixelsPerInch UMETA(Hidden),
 
-    /** Arbitrary multipliers */
-    Percentage UMETA(Hidden),	Multiplier UMETA(Hidden),
+	/** Percentage. */
+    Percentage UMETA(Hidden),
+
+	/** Arbitrary multiplier. */
+	Multiplier UMETA(Hidden),
 
 #if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 3)
 	/** Stress units */

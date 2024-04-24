@@ -17,7 +17,11 @@ template<class T>
 static bool IsEditorLevelActor(T* Actor)
 {
 	bool bResult = false;
+#if ENGINE_MAJOR_VERSION < 5
 	if (Actor && !Actor->IsPendingKill())
+#else
+	if (Actor && !Actor->IsPendingKillPending())
+#endif
 	{
 		const UWorld* World = Actor->GetWorld();
 		if (World && World->WorldType == EWorldType::Editor)

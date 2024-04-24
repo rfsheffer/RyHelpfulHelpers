@@ -27,30 +27,30 @@ FVector URyRuntimeMathHelpers::ApplyGaussianSpread(const FVector& vecDir, const 
 	// get circular gaussian spread
 	float x, y, z;
 
-	if (alpha > 1.0)
+	if (alpha > 1.0f)
 	{
-		alpha = 1.0;
+		alpha = 1.0f;
 	}
-	else if (alpha < 0.0)
+	else if (alpha < 0.0f)
 	{
-		alpha = 0.0;
+		alpha = 0.0f;
 	}
 
 	// 1.0 gaussian, 0.0 is flat, -1.0 is inverse gaussian
 	const float shotBias = ((biasMax - biasMin) * alpha) + biasMin;
-	const float flatness = (FMath::Abs(shotBias) * 0.5);
+	const float flatness = (FMath::Abs(shotBias) * 0.5f);
 
 	do
 	{
-		x = FMath::FRandRange(-1.0f, 1.0f) * flatness + FMath::FRandRange(-1, 1) * (1 - flatness);
-		y = FMath::FRandRange(-1, 1) * flatness + FMath::FRandRange(-1, 1) * (1 - flatness);
-		if (shotBias < 0)
+		x = FMath::FRandRange(-1.0f, 1.0f) * flatness + FMath::FRandRange(-1.0f, 1.0f) * (1.0f - flatness);
+		y = FMath::FRandRange(-1.0f, 1.0f) * flatness + FMath::FRandRange(-1.0f, 1.0f) * (1.0f - flatness);
+		if (shotBias < 0.0f)
 		{
-			x = (x >= 0) ? 1.0 - x : -1.0 - x;
-			y = (y >= 0) ? 1.0 - y : -1.0 - y;
+			x = (x >= 0.0f) ? 1.0f - x : -1.0f - x;
+			y = (y >= 0.0f) ? 1.0f - y : -1.0f - y;
 		}
 		z = x * x + y * y;
-	} while (z > 1);
+	} while (z > 1.0f);
 
 	return vecDir + x * vecSpread.Y * vecRight + y * vecSpread.Z * vecUp;
 }
