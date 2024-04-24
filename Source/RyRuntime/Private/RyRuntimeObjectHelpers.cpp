@@ -9,6 +9,7 @@
 #include "Runtime/Launch/Resources/Version.h"
 #include "Engine/LatentActionManager.h"
 #include "TimerManager.h"
+#include "Engine/Engine.h"
 
 // Async asset loading extension
 #include "Engine/StreamableManager.h"

@@ -3,6 +3,7 @@
 
 #include "RyRuntimeMetaHelpers.h"
 #include "Engine/UserDefinedEnum.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**

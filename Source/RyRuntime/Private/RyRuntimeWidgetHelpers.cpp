@@ -8,6 +8,7 @@
 #include "Runtime/Engine/Classes/Engine/GameViewportClient.h"
 #include "GenericPlatform/GenericApplication.h"
 #include "Framework/Application/SlateApplication.h"
+#include "Engine/Engine.h"
 
 #define LOCTEXT_NAMESPACE "WidgetHelpers"
 

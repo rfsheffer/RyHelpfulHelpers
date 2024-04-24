@@ -5,6 +5,7 @@
 #include "Runtime/Launch/Resources/Version.h"
 #include "Runtime/Engine/Classes/Engine/Texture.h"
 #include "Runtime/Engine/Public/TextureResource.h"
+#include "Engine/Engine.h"
 
 class FRyEnsureTextureResourceLatentAction : public FPendingLatentAction
 {

@@ -225,7 +225,11 @@ void UK2Node_LoadPackageWithPriority::ExpandNode(class FKismetCompilerContext& C
 
 	// Create OnLoadEvent
 	const FName DelegateOnLoadedParamName(TEXT("OnLoaded"));
+#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 4)
+	UK2Node_CustomEvent* OnLoadEventNode = CompilerContext.SpawnIntermediateNode<UK2Node_CustomEvent>(this, SourceGraph);
+#else
 	UK2Node_CustomEvent* OnLoadEventNode = CompilerContext.SpawnIntermediateEventNode<UK2Node_CustomEvent>(this, CallFunctionPackagePathPin, SourceGraph);
+#endif
 	OnLoadEventNode->CustomFunctionName = *FString::Printf(TEXT("OnLoaded_%s"), *CompilerContext.GetGuid(this));
 	OnLoadEventNode->AllocateDefaultPins();
 	{

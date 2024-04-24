@@ -15,6 +15,10 @@
 #include "Runtime/Engine/Public/LatentActions.h"
 #include "Runtime/Engine/Public/SceneInterface.h"
 #include "Runtime/Engine/Public/UnrealClient.h"
+#include "Engine/Engine.h"
+#include "SceneUtils.h"
+#include "Misc/Paths.h"
+#include "Engine/GameViewportClient.h"
 
 #if WITH_EDITOR
 	#include "Editor/EditorEngine.h"

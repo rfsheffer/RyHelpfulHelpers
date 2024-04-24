@@ -2,6 +2,8 @@
 
 #include "RyRuntimeWorldHelpers.h"
 #include "LatentActions.h"
+#include "Engine/Engine.h"
+#include "TimerManager.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**

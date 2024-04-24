@@ -4,6 +4,8 @@
 #include "RyRuntimePakHelpers.h"
 #include "IPlatformFilePak.h"
 #include "RyRuntimeModule.h"
+#include "HAL/PlatformFileManager.h"
+#include "Misc/CoreDelegates.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**

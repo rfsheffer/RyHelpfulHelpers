@@ -6,6 +6,7 @@
 #include "IHeadMountedDisplay.h"
 #include "Runtime/Core/Public/Features/IModularFeatures.h"
 #include "Runtime/HeadMountedDisplay/Public/IXRTrackingSystem.h"
+#include "Engine/Engine.h"
 
 #define STEAMVR_SUPPORTED_PLATFORM (PLATFORM_MAC || (PLATFORM_LINUX && PLATFORM_CPU_X86_FAMILY && PLATFORM_64BITS) || (PLATFORM_WINDOWS && WINVER > 0x0502))
 #define OCULUS_HMD_SUPPORTED_PLATFORM (PLATFORM_WINDOWS && WINVER > 0x0502) || (PLATFORM_ANDROID_ARM || PLATFORM_ANDROID_ARM64)

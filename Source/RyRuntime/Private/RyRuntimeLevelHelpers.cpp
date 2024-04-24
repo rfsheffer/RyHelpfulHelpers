@@ -12,6 +12,7 @@
 #include "Engine/LevelScriptActor.h"
 #include "Runtime/Launch/Resources/Version.h"
 #include "Runtime/CoreUObject/Public/UObject/Package.h"
+#include "Misc/Paths.h"
 
 // Ensure our blueprintable version of the enum is aligned with epics
 static_assert(ERyComponentCreationMethod::Native == static_cast<ERyComponentCreationMethod>(EComponentCreationMethod::Native) &&

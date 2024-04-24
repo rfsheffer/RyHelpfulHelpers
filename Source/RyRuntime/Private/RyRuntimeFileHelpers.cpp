@@ -6,6 +6,7 @@
 #include "GenericPlatform/GenericPlatformFile.h"
 #include "GenericPlatform/GenericPlatformApplicationMisc.h"
 #include "Runtime/Launch/Resources/Version.h"
+#include "Misc/Paths.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**

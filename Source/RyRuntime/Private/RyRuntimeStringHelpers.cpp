@@ -5,6 +5,7 @@
 #include "Internationalization/StringTable.h"
 #include "Internationalization/StringTableCore.h"
 #include "Internationalization/StringTableRegistry.h"
+#include "Misc/Paths.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
