@@ -7,6 +7,7 @@
 #include "Runtime/Core/Public/Features/IModularFeatures.h"
 #include "Runtime/HeadMountedDisplay/Public/IXRTrackingSystem.h"
 #include "Engine/Engine.h"
+#include "Runtime/HeadMountedDisplay/Public/IHeadMountedDisplayModule.h"
 
 #define STEAMVR_SUPPORTED_PLATFORM (PLATFORM_MAC || (PLATFORM_LINUX && PLATFORM_CPU_X86_FAMILY && PLATFORM_64BITS) || (PLATFORM_WINDOWS && WINVER > 0x0502))
 #define OCULUS_HMD_SUPPORTED_PLATFORM (PLATFORM_WINDOWS && WINVER > 0x0502) || (PLATFORM_ANDROID_ARM || PLATFORM_ANDROID_ARM64)
@@ -82,6 +83,34 @@ FString URyRuntimeXRHelpers::GetHMDMonitorName()
 		}
 	}
 	return TEXT("Unknown");
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FString URyRuntimeXRHelpers::GetXRVersionString()
+{
+	if (GEngine->XRSystem.IsValid())
+	{
+		const IXRTrackingSystem* XRSystem = GEngine->XRSystem.Get();
+		return XRSystem->GetVersionString();
+	}
+	return TEXT("");
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+FString URyRuntimeXRHelpers::GetXRRuntimeName()
+{
+	if (GEngine->XRSystem.IsValid())
+	{
+		const IXRTrackingSystem* XRSystem = GEngine->XRSystem.Get();
+		FString runtimeOut;
+		XRSystem->GetVersionString().Split(TEXT(":"), &runtimeOut, nullptr);
+		return runtimeOut;
+	}
+	return TEXT("");
 }
 
 //---------------------------------------------------------------------------------------------------------------------

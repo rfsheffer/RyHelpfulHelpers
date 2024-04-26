@@ -8,35 +8,6 @@
 
 #include "RyRuntimeXRHelpers.generated.h"
 
-/** VR controller button and axis IDs */
-UENUM(BlueprintType)
-namespace ERySteamVRButtonIds
-{
-	enum Type
-	{
-		Button_System = 0,
-        Button_ApplicationMenu = 1,
-        Button_Grip = 2,
-        Button_DPad_Left = 3,
-        Button_DPad_Up = 4,
-        Button_DPad_Right = 5,
-        Button_DPad_Down = 6,
-
-		// Button A for SteamVR native controllers and Oculus controllers
-        Button_A = 7,
-
-        Button_ProximitySensor = 31,
-
-        Button_Axis0 = 32,
-        Button_Axis1 = 33,
-        Button_Axis2 = 34,
-        Button_Axis3 = 35,
-        Button_Axis4 = 36,
-
-        Button_Max = 64
-    };
-}
-
 //---------------------------------------------------------------------------------------------------------------------
 /**
 * Static Helper functions related to XR
@@ -49,9 +20,26 @@ public:
 
 	//UFUNCTION(BlueprintPure, Category = "RyRuntime|XR", DisplayName = "Get HMD Model Number")
 	//static FString GetHMDModelNumber();
-	
+
+	/**
+	 * Get the name or id of the display to output for this HMD.
+	 */
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|XR", DisplayName = "Get HMD Monitor Name")
 	static FString GetHMDMonitorName();
+
+	/**
+	 * Returns the complete version string from the XR system. Empty if the system is invalid.
+	 * The string is formated as such:
+	 * {RUNTIME}: {MAJOR}.{MINOR}.{PATCH}
+	 */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|XR", DisplayName = "Get XR Version String")
+	static FString GetXRVersionString();
+
+	/**
+	 * Returns the name of the XR runtime. Empty if invalid.
+	 */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|XR", DisplayName = "Get XR Runtime Name")
+	static FString GetXRRuntimeName();
 
 	/**
 	* Reports all devices currently available to the system, optionally limiting the result to a given class of devices.
