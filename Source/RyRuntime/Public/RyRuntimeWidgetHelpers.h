@@ -104,6 +104,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category="RyRuntime|WidgetHelpers")
 	static class UPanelWidget* GetWidgetParent(class UWidget* widget);
 
+	UFUNCTION(BlueprintCallable, Category="RyRuntime|WidgetHelpers")
+	static void GetUserWidgetSlotNames(class UUserWidget* userWidget, TArray<FName>& SlotNames);
+
+	UFUNCTION(BlueprintCallable, Category="RyRuntime|WidgetHelpers")
+	static class UWidget* GetUserWidgetContentForSlot(class UUserWidget* userWidget, const FName slotName);
+
+	UFUNCTION(BlueprintPure, Category="RyRuntime|WidgetHelpers")
+	static class UWidget* GetUserWidgetRootWidget(class UUserWidget* userWidget);
+	
 	/**
 	 * @brief Check and return if caps lock is active
 	 * @return Return true if caps lock is active

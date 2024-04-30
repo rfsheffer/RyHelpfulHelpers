@@ -194,6 +194,41 @@ UPanelWidget* URyRuntimeWidgetHelpers::GetWidgetParent(UWidget* widget)
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
+void URyRuntimeWidgetHelpers::GetUserWidgetSlotNames(UUserWidget* userWidget, TArray<FName>& SlotNames)
+{
+	if(userWidget)
+	{
+		userWidget->GetSlotNames(SlotNames);
+	}
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+UWidget* URyRuntimeWidgetHelpers::GetUserWidgetContentForSlot(UUserWidget* userWidget, const FName slotName)
+{
+	if(userWidget)
+	{
+		return userWidget->GetContentForSlot(slotName);
+	}
+	return nullptr;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+UWidget* URyRuntimeWidgetHelpers::GetUserWidgetRootWidget(UUserWidget* userWidget)
+{
+	if(userWidget)
+	{
+		return userWidget->GetRootWidget();
+	}
+	return nullptr;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
 bool URyRuntimeWidgetHelpers::IsCapsLock()
 {
 	return FSlateApplication::Get().GetModifierKeys().AreCapsLocked();
