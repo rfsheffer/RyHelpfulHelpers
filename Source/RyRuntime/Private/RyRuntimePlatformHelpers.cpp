@@ -6,6 +6,7 @@
 #include "GenericPlatform/GenericPlatformFile.h"
 #include "Runtime/Launch/Resources/Version.h"
 #include "HAL/PlatformApplicationMisc.h"
+#include "GameFramework/WorldSettings.h"
 
 #if PLATFORM_ANDROID && USE_ANDROID_JNI
 #include "Android/AndroidJNI.h"
@@ -425,4 +426,24 @@ FString URyRuntimePlatformHelpers::GetAndroidNoBackupFilesDir(bool& isValid)
 {
     isValid = RyRuntimeAndroidNoBackupFilesDirValid;
     return RyRuntimeAndroidNoBackupFilesDir;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+float URyRuntimePlatformHelpers::GetApplicationDeltaTime(const UObject* WorldContextObject)
+{
+    // Get the raw, undilated delta time.
+    float DeltaTime = FApp::GetDeltaTime();
+    if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull))
+    {
+        if (const AWorldSettings* WorldSettings = World ? World->GetWorldSettings() : nullptr)
+        {
+            // Clamp DeltaTime in the same way as before.
+            // UWorld::Tick called AWorldSettings::FixupDeltaSeconds, which clamped between Min and MaxUndilatedFrameTime.
+            DeltaTime = FMath::Clamp(DeltaTime, WorldSettings->MinUndilatedFrameTime, WorldSettings->MaxUndilatedFrameTime);
+        }
+    }
+
+    return DeltaTime;
 }

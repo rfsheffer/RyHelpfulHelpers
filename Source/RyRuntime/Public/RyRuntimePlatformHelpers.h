@@ -458,6 +458,13 @@ public:
      */
     UFUNCTION(BlueprintPure, Category = "RyRuntime|FileHelpers")
 	static FString GetAndroidNoBackupFilesDir(bool& isValid);
+
+	/**
+	 * Get the raw, undilated delta time for the application
+	 * NOTE: If WorldContextObject is included, the delta will be clamped to WorldSettings Min and MaxUndilatedFrameTime
+	 */
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|AppHelpers", meta=(AdvancedDisplay="1"))
+	static float GetApplicationDeltaTime(const UObject* WorldContextObject = nullptr);
 };
 
 //---------------------------------------------------------------------------------------------------------------------
