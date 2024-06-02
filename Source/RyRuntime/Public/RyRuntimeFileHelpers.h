@@ -126,4 +126,36 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "RyRuntime|FileHelpers")
 	static bool ReadBytesFromFile(const FString filePath, TArray<uint8>& bytesIn, const int64 offset = 0, const int64 numBytes = 99999999999);
+
+	/**
+	 * Write the FString to a file.
+	 * Supports all combination of ANSI/Unicode files and platforms.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|FileHelpers")
+	static bool SaveStringToFile(const FString& String, const FString& Filename);
+
+	/**
+	 * Write the FString array to a file.
+	 * Supports all combination of ANSI/Unicode files and platforms.
+	 */
+	static bool SaveStringArrayToFile(const TArray<FString>& Lines, const FString& Filename);
+
+	/**
+	 * Load a text file to an FString. Supports all combination of ANSI/Unicode files and platforms.
+	 *
+	 * @param Result       String representation of the loaded file
+	 * @param Filename     Name of the file to load
+	 */
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|FileHelpers")
+	static bool LoadFileToString(UPARAM(ref)FString& Result, const FString& Filename);
+
+	/**
+	* Checks to see if a filename is valid for saving.
+	* A filename must be under FPlatformMisc::GetMaxPathLength() to be saved
+	*
+	* @param Filename	Filename, with or without path information, to check.
+	* @param OutError	If an error occurs, this is the reason why
+	*/
+	UFUNCTION(BlueprintCallable, Category = "RyRuntime|FileHelpers")
+	static bool IsFilenameValidForSaving(const FString& Filename, FText& OutError);
 };

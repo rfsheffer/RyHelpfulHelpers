@@ -243,3 +243,35 @@ bool URyRuntimeFileHelpers::ReadBytesFromFile(const FString filePath, TArray<uin
 	
 	return false;
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeFileHelpers::SaveStringToFile(const FString& String, const FString& Filename)
+{
+	return FFileHelper::SaveStringToFile(String, *Filename);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeFileHelpers::SaveStringArrayToFile(const TArray<FString>& Lines, const FString& Filename)
+{
+	return FFileHelper::SaveStringArrayToFile(Lines, *Filename);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeFileHelpers::LoadFileToString(FString& Result, const FString& Filename)
+{
+	return FFileHelper::LoadFileToString(Result, *Filename);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
+bool URyRuntimeFileHelpers::IsFilenameValidForSaving(const FString& Filename, FText& OutError)
+{
+	return FFileHelper::IsFilenameValidForSaving(Filename, OutError);
+}
