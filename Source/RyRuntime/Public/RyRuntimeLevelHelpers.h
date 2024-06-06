@@ -80,6 +80,7 @@ public:
 	// Given a full path to your world ex: "/Game/MyLevels/MyLevel" return a constructed soft object ptr.
 	// This is used in cases such as the LevelStreamingDynamics need for a soft object pointer to a World
 	// which cannot be constructed dynamically.
+	// Strips any UEDPIE_N_" prefix or _LevelInstance_ postfix
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
 	static TSoftObjectPtr<UWorld> GetWorldSoftReferenceFromPath(const FString& PathToWorld);
 
@@ -91,11 +92,13 @@ public:
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
     static TSoftObjectPtr<UWorld> GetWorldSoftReference(UWorld* worldIn);
 
-	/// Get the world soft reference path cleaning up the string of UEPIE prefix if needed
+	/// Get the world soft reference path
+	/// Strips any UEDPIE_N_" prefix or _LevelInstance_ postfix
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers", meta=(AutoCreateRefTerm="worldRef"))
 	static FString GetWorldSoftReferencePath(const TSoftObjectPtr<UWorld>& worldRef);
 
-	/// Get the world soft reference cleaning up the UEPIE prefix if needed
+	/// Get the world soft reference
+	/// Strips any UEDPIE_N_" prefix or _LevelInstance_ postfix
 	UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers", meta=(AutoCreateRefTerm="worldRef"))
 	static TSoftObjectPtr<UWorld> GetCleanWorldSoftReference(const TSoftObjectPtr<UWorld>& worldRef);
 
@@ -110,6 +113,11 @@ public:
     // Returns true if 'actorToCheck' is in the level 'levelToCheck'
     UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
     static bool IsActorInLevel(const AActor* actorToCheck, const ULevel* levelToCheck);
+
+	// Removes extra name decorations to paths, ex : "/Path/MyLevels/UEDPIE_N_MyLevel_LevelInstance_N" becomes "/Path/MyLevels/MyLevel"
+	// Removes "UEDPIE_N_" and "_LevelInstance_N", whichever is found or both.
+	UFUNCTION(BlueprintPure, Category = "RyRuntime|LevelHelpers")
+	static FString RemoveLevelPathDecorators(const FString& levelNamePath);
 
 	// Return the level package string associated with this actor
 	// @param longName - If set to true, returns the full path name of the level asset (In PIE sessions, this will be the duplicate level name)

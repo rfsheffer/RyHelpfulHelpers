@@ -26,11 +26,20 @@ TSoftObjectPtr<UWorld> URyRuntimeLevelHelpers::GetWorldSoftReferenceFromPath(con
 {
     const FString fullFilePath = FPaths::GetPath(PathToWorld);
     FString fileName = FPaths::GetBaseFilename(PathToWorld);
+    
     if (fileName.StartsWith("UEDPIE_"))
     {
         // Strip off "UEDPIE_N_" prefix. N is a number, usually 0.
         fileName = fileName.Right(fileName.Len() - 9);
     }
+    
+    // Strip off _LevelInstance_N postfix
+    const int32 levelInstStart = fileName.Find(TEXT("_LevelInstance_"), ESearchCase::CaseSensitive, ESearchDir::FromEnd);
+    if(levelInstStart != INDEX_NONE)
+    {
+        fileName = fileName.Left(levelInstStart);
+    }
+    
     return TSoftObjectPtr<UWorld>(FString::Printf(TEXT("%s/%s.%s"), *fullFilePath, *fileName, *fileName));
 }
 
@@ -63,6 +72,7 @@ FString URyRuntimeLevelHelpers::GetWorldSoftReferencePath(const TSoftObjectPtr<U
     FString worldRefPath = worldRef.ToString();
     if (!worldRefPath.IsEmpty())
     {
+        bool shouldfix = false;
         FString worldPath;
         FString worldName;
         worldRefPath.Split("/", &worldPath, &worldName, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
@@ -70,6 +80,19 @@ FString URyRuntimeLevelHelpers::GetWorldSoftReferencePath(const TSoftObjectPtr<U
         {
             // Strip off "UEDPIE_N_" prefix. N is a number, usually 0.
             worldName = worldName.Right(worldName.Len() - 9);
+            shouldfix = true;
+        }
+
+        // Strip off _LevelInstance_N postfix
+        const int32 levelInstStart = worldName.Find(TEXT("_LevelInstance_"), ESearchCase::CaseSensitive, ESearchDir::FromEnd);
+        if(levelInstStart != INDEX_NONE)
+        {
+            worldName = worldName.Left(levelInstStart);
+            shouldfix = true;
+        }
+
+        if(shouldfix)
+        {
             worldRefPath = FString::Printf(TEXT("%s/%s"), *worldPath, *worldName);
         }
     }
@@ -85,6 +108,7 @@ TSoftObjectPtr<UWorld> URyRuntimeLevelHelpers::GetCleanWorldSoftReference(const 
     FString worldRefPath = worldRef.ToString();
     if (!worldRefPath.IsEmpty())
     {
+        bool shouldfix = false;
         FString worldPath;
         FString worldName;
         worldRefPath.Split("/", &worldPath, &worldName, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
@@ -92,6 +116,19 @@ TSoftObjectPtr<UWorld> URyRuntimeLevelHelpers::GetCleanWorldSoftReference(const 
         {
             // Strip off "UEDPIE_N_" prefix. N is a number, usually 0.
             worldName = worldName.Right(worldName.Len() - 9);
+            shouldfix = true;
+        }
+
+        // Strip off _LevelInstance_N postfix
+        const int32 levelInstStart = worldName.Find(TEXT("_LevelInstance_"), ESearchCase::CaseSensitive, ESearchDir::FromEnd);
+        if(levelInstStart != INDEX_NONE)
+        {
+            worldName = worldName.Left(levelInstStart);
+            shouldfix = true;
+        }
+
+        if(shouldfix)
+        {
             worldRefPath = FString::Printf(TEXT("%s/%s"), *worldPath, *worldName);
         }
     }
@@ -151,9 +188,55 @@ bool URyRuntimeLevelHelpers::IsActorInLevel(const AActor* actorToCheck, const UL
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
+FString URyRuntimeLevelHelpers::RemoveLevelPathDecorators(const FString& levelNamePath)
+{
+    if (levelNamePath.IsEmpty())
+    {
+        return TEXT("");
+    }
+
+    int32 pathSepIndex = INDEX_NONE;
+    levelNamePath.FindLastChar('/', pathSepIndex);
+    
+    FString pathPart;
+    FString filePart;
+    if(pathSepIndex != INDEX_NONE)
+    {
+        pathPart = levelNamePath.Left(pathSepIndex);
+        filePart = levelNamePath.Right(levelNamePath.Len() - (pathSepIndex + 1));
+    }
+    else
+    {
+        filePart = levelNamePath;
+    }
+    
+    // Strip off PIE prefix, "UEDPIE_N_" where N is a number
+    if (filePart.StartsWith("UEDPIE_"))
+    {
+        filePart = filePart.Right(filePart.Len() - 9);
+    }
+
+    // Strip off _LevelInstance_N postfix
+    const int32 levelInstStart = filePart.Find(TEXT("_LevelInstance_"), ESearchCase::CaseSensitive, ESearchDir::FromEnd);
+    if(levelInstStart != INDEX_NONE)
+    {
+        filePart = filePart.Left(levelInstStart);
+    }
+
+    if(!pathPart.IsEmpty())
+    {
+        return FString::Printf(TEXT("%s/%s"), *pathPart, *filePart);
+    }
+    
+    return filePart;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+*/
 FString URyRuntimeLevelHelpers::GetActorLevelPackageString(const AActor* actorIn, bool longName)
 {
-    ULevel* level = GetActorLevel(actorIn);
+    const ULevel* level = GetActorLevel(actorIn);
     if(level)
     {
         return GetLevelPackageString(level, longName);
@@ -180,7 +263,7 @@ FString URyRuntimeLevelHelpers::GetLevelPackageString(const ULevel* levelIn, boo
 */
 FString URyRuntimeLevelHelpers::GetLevelNameString(const ULevel* levelIn)
 {
-    if(levelIn == nullptr || levelIn->GetOutermost() == nullptr)
+    if(levelIn == nullptr || levelIn->GetOuter() == nullptr)
     {
         UE_LOG(LogRyRuntime, Warning, TEXT("URyRuntimeLevelHelpers::Get*LevelNameString called with invalid levelIn or actor!"));
         return TEXT("");
@@ -193,7 +276,7 @@ FString URyRuntimeLevelHelpers::GetLevelNameString(const ULevel* levelIn)
 */
 FString URyRuntimeLevelHelpers::GetActorLevelNameString(const AActor* actorIn)
 {
-    ULevel* level = GetActorLevel(actorIn);
+    const ULevel* level = GetActorLevel(actorIn);
     if(level)
     {
         return GetLevelNameString(level);
@@ -235,7 +318,7 @@ void URyRuntimeLevelHelpers::GetActorsOfTypeInLevel(const ULevel* level, TSubcla
         return;
     }
 
-    UWorld* const World = level->GetWorld();
+    const UWorld* const World = level->GetWorld();
     if(!World)
     {
         UE_LOG(LogRyRuntime, Warning, TEXT("RyRuntimeLevelHelpers::GetActorsOfTypeInLevel error. No World Context!"));
@@ -320,7 +403,7 @@ AActor* URyRuntimeLevelHelpers::SpawnActorAdvanced(UObject* WorldContextObject,
 
     if(spawnedActor && useDefaultScale)
     {
-        AActor* cdoActor = spawnedActor->GetClass()->GetDefaultObject<AActor>();
+        const AActor* cdoActor = spawnedActor->GetClass()->GetDefaultObject<AActor>();
         if(cdoActor)
         {
             spawnedActor->SetActorScale3D(cdoActor->GetActorScale3D());
@@ -605,7 +688,7 @@ ALevelScriptActor* URyRuntimeLevelHelpers::GetStreamingLevelScriptActor(ULevelSt
 */
 bool URyRuntimeLevelHelpers::FireLevelScriptRemoteEvent(UObject* WorldContextObject, FName EventName)
 {
-    UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
+    const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
     if (!World)
     {
         return false;
@@ -616,7 +699,7 @@ bool URyRuntimeLevelHelpers::FireLevelScriptRemoteEvent(UObject* WorldContextObj
     // Iterate over all levels, and try to find a matching function on the level's script actor
     for( TArray<ULevel*>::TConstIterator it = World->GetLevels().CreateConstIterator(); it; ++it )
     {
-        ULevel* CurLevel = *it;
+        const ULevel* CurLevel = *it;
         if( CurLevel && CurLevel->bIsVisible )
         {
             ALevelScriptActor* LSA = CurLevel->GetLevelScriptActor();
