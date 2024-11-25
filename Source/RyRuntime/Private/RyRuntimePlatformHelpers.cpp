@@ -8,6 +8,9 @@
 #include "HAL/PlatformApplicationMisc.h"
 #include "GameFramework/WorldSettings.h"
 
+#include "Misc/App.h"
+#include "Engine/Engine.h"
+
 #if PLATFORM_ANDROID && USE_ANDROID_JNI
 #include "Android/AndroidJNI.h"
 #include "Android/AndroidApplication.h"

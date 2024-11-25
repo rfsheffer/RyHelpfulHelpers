@@ -6,6 +6,7 @@
 #include "Internationalization/StringTableCore.h"
 #include "Internationalization/StringTableRegistry.h"
 #include "Misc/Paths.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
@@ -62,7 +63,11 @@ void URyRuntimeStringHelpers::PopChar(FString& sourceString)
     {
         return;
     }
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 5) || ENGINE_MAJOR_VERSION > 5
+    sourceString.RemoveAt(sourceString.Len() - 1, 1, EAllowShrinking::No);
+#else
     sourceString.RemoveAt(sourceString.Len() - 1, 1, false);
+#endif
 }
 
 //---------------------------------------------------------------------------------------------------------------------

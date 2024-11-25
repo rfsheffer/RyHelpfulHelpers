@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Runtime/Launch/Resources/Version.h"
+
 #include "RyRuntimeArrayHelpers.generated.h"
 
 //DECLARE_DYNAMIC_DELEGATE_RetVal_TwoParams(bool, FRyGenericArraySort, const int32&, A, const int32&, B);
@@ -43,7 +45,11 @@ public:
 		// Since 'Item' isn't really an int, step the stack manually
 		// We use the array inner type to understand what we are returning (the size)
 		const FProperty* InnerProp = ArrayProperty->Inner;
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 5) || ENGINE_MAJOR_VERSION > 5
+		const int32 PropertySize = InnerProp->GetElementSize() * InnerProp->ArrayDim;
+#else
 		const int32 PropertySize = InnerProp->ElementSize * InnerProp->ArrayDim;
+#endif
 		void* StorageSpace = FMemory_Alloca(PropertySize);
 		InnerProp->InitializeValue(StorageSpace);
 
@@ -84,7 +90,11 @@ public:
 		// Since 'Item' isn't really an int, step the stack manually
 		// We use the array inner type to understand what we are returning (the size)
 		const FProperty* InnerProp = ArrayProperty->Inner;
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 5) || ENGINE_MAJOR_VERSION > 5
+		const int32 PropertySize = InnerProp->GetElementSize() * InnerProp->ArrayDim;
+#else
 		const int32 PropertySize = InnerProp->ElementSize * InnerProp->ArrayDim;
+#endif
 		void* StorageSpace = FMemory_Alloca(PropertySize);
 		InnerProp->InitializeValue(StorageSpace);
 

@@ -39,8 +39,11 @@ TSoftObjectPtr<UWorld> URyRuntimeLevelHelpers::GetWorldSoftReferenceFromPath(con
     {
         fileName = fileName.Left(levelInstStart);
     }
-    
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 5) || ENGINE_MAJOR_VERSION > 5
+    return TSoftObjectPtr<UWorld>(FSoftObjectPath(FString::Printf(TEXT("%s/%s.%s"), *fullFilePath, *fileName, *fileName)));
+#else
     return TSoftObjectPtr<UWorld>(FString::Printf(TEXT("%s/%s.%s"), *fullFilePath, *fileName, *fileName));
+#endif
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -133,7 +136,11 @@ TSoftObjectPtr<UWorld> URyRuntimeLevelHelpers::GetCleanWorldSoftReference(const 
         }
     }
 
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 5) || ENGINE_MAJOR_VERSION > 5
+    return TSoftObjectPtr<UWorld>(FSoftObjectPath(worldRefPath));
+#else
     return TSoftObjectPtr<UWorld>(worldRefPath);
+#endif
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -738,7 +745,11 @@ ULevelStreamingDynamic* URyRuntimeLevelHelpers::LoadLevelInstance_Internal(UWorl
 
     if (ShortPackageName.StartsWith(World->StreamingLevelsPrefix))
     {
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 5) || ENGINE_MAJOR_VERSION > 5
+        ShortPackageName.RightChopInline(World->StreamingLevelsPrefix.Len(), EAllowShrinking::No);
+#else
         ShortPackageName.RightChopInline(World->StreamingLevelsPrefix.Len(), false);
+#endif
     }
 
     // Remove PIE prefix if it's there before we actually load the level

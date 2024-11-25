@@ -613,7 +613,9 @@ FORCEINLINE void URyRuntimePlatformHelpers::CustomNamedStat(const FString& Text,
 */
 FORCEINLINE void URyRuntimePlatformHelpers::BeginProfilerColor(const FColor& Color)
 {
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION < 5) || ENGINE_MAJOR_VERSION < 5
 	FPlatformMisc::BeginProfilerColor(Color);
+#endif
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -621,7 +623,9 @@ FORCEINLINE void URyRuntimePlatformHelpers::BeginProfilerColor(const FColor& Col
 */
 FORCEINLINE void URyRuntimePlatformHelpers::EndProfilerColor()
 {
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION < 5) || ENGINE_MAJOR_VERSION < 5
 	FPlatformMisc::EndProfilerColor();
+#endif
 }
 
 //---------------------------------------------------------------------------------------------------------------------

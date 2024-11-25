@@ -10,6 +10,11 @@
 #include "Runtime/Engine/Classes/PhysicsEngine/BodySetup.h"
 #include "Runtime/CoreUObject/Public/UObject/UObjectIterator.h"
 #include "Runtime/Engine/Classes/Components/PoseableMeshComponent.h"
+#include "Engine/SkeletalMesh.h"
+
+#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 5)
+#include "PhysicsEngine/SkeletalBodySetup.h"
+#endif
 
 //---------------------------------------------------------------------------------------------------------------------
 /**

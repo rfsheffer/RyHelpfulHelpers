@@ -14,6 +14,7 @@
 #include "Misc/FileHelper.h"
 #include "GenericPlatform/GenericPlatformOutputDevices.h"
 #include "Runtime/Engine/Classes/Engine/GameViewportClient.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
@@ -31,7 +32,11 @@ void URyRuntimeLogHelpers::PrintLogString(UObject* WorldContextObject, const FSt
             switch(World->GetNetMode())
             {
                 case NM_Client:
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 5) || ENGINE_MAJOR_VERSION > 5
+                    Prefix = FString::Printf(TEXT("Client %d: "), UE::GetPlayInEditorID() - 1);
+#else
                     Prefix = FString::Printf(TEXT("Client %d: "), GPlayInEditorID - 1);
+#endif
                     break;
                 case NM_DedicatedServer:
                 case NM_ListenServer:
