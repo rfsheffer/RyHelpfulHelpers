@@ -59,10 +59,18 @@ ERyShaderPlatform URyRuntimeRenderingHelpers::GetShaderPlatform(UObject* WorldCo
 	{
 	case SP_PCD3D_SM5:
 		return ERyShaderPlatform::SP_PCD3D_SM5;
+#if ENGINE_MAJOR_VERSION < 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION < 6)
 	case SP_METAL:
 		return ERyShaderPlatform::SP_METAL;
 	case SP_METAL_MRT:
 		return ERyShaderPlatform::SP_METAL_MRT;
+#endif
+#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 6)
+	case SP_METAL_ES3_1_IOS:
+		return ERyShaderPlatform::SP_METAL_ES3_1_IOS;
+	case SP_METAL_SM5_IOS:
+		return ERyShaderPlatform::SP_METAL_SM5_IOS;
+#endif
 	case SP_PCD3D_ES3_1:
 		return ERyShaderPlatform::SP_PCD3D_ES3_1;
 	case SP_OPENGL_PCES3_1:
@@ -79,22 +87,32 @@ ERyShaderPlatform URyRuntimeRenderingHelpers::GetShaderPlatform(UObject* WorldCo
 		return ERyShaderPlatform::SP_VULKAN_SM5;
 	case SP_VULKAN_ES3_1_ANDROID:
 		return ERyShaderPlatform::SP_VULKAN_ES3_1_ANDROID;
+#if ENGINE_MAJOR_VERSION < 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION < 6)
 	case SP_METAL_MACES3_1:
 		return ERyShaderPlatform::SP_METAL_MACES3_1;
-	case SP_OPENGL_ES3_1_ANDROID:
-		return ERyShaderPlatform::SP_OPENGL_ES3_1_ANDROID;
 	case SP_METAL_MRT_MAC:
 		return ERyShaderPlatform::SP_METAL_MRT_MAC;
+#endif
+	case SP_OPENGL_ES3_1_ANDROID:
+		return ERyShaderPlatform::SP_OPENGL_ES3_1_ANDROID;
 #if ENGINE_MAJOR_VERSION < 5
 	case SP_VULKAN_SM5_LUMIN:
 		return ERyShaderPlatform::SP_VULKAN_SM5_LUMIN;
 	case SP_VULKAN_ES3_1_LUMIN:
 		return ERyShaderPlatform::SP_VULKAN_ES3_1_LUMIN;
 #endif
+#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 6)
+	case SP_METAL_ES3_1_TVOS:
+		return ERyShaderPlatform::SP_METAL_ES3_1_TVOS;
+	case SP_METAL_SM5_TVOS:
+		return ERyShaderPlatform::SP_METAL_SM5_TVOS;
+	#endif
+#if ENGINE_MAJOR_VERSION < 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION < 6)
 	case SP_METAL_TVOS:
 		return ERyShaderPlatform::SP_METAL_TVOS;
 	case SP_METAL_MRT_TVOS:
 		return ERyShaderPlatform::SP_METAL_MRT_TVOS;
+#endif
 	case SP_VULKAN_SM5_ANDROID:
 		return ERyShaderPlatform::SP_VULKAN_SM5_ANDROID;
 #if ENGINE_MAJOR_VERSION >= 5
@@ -104,6 +122,15 @@ ERyShaderPlatform URyRuntimeRenderingHelpers::GetShaderPlatform(UObject* WorldCo
 	case SP_D3D_ES3_1_HOLOLENS:
 		return ERyShaderPlatform::SP_D3D_ES3_1_HOLOLENS;
 #endif
+#endif
+
+#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 6)
+	case SP_VULKAN_SM6:
+		return ERyShaderPlatform::SP_VULKAN_SM6;
+	case SP_METAL_SM6:
+		return ERyShaderPlatform::SP_METAL_SM6;
+	case SP_METAL_SIM:
+		return ERyShaderPlatform::SP_METAL_SIM;
 #endif
 	default: ;
 	}

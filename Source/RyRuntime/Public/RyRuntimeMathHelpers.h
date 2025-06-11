@@ -74,6 +74,9 @@ enum class ERyUnit : uint8
 	Candela UMETA(Hidden),
 	Lux UMETA(Hidden),
 	CandelaPerMeter2 UMETA(Hidden),
+#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 6)
+	Nit UMETA(Hidden),
+#endif
 #if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 3)
 	ExposureValue UMETA(Hidden),
 #endif
