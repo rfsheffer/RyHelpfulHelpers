@@ -15,7 +15,11 @@ bool URyRuntimeMetaHelpers::GetEnumIndexFromName(const FString enumName, FName e
 #if ENGINE_MAJOR_VERSION < 5
 	outerIn = ANY_PACKAGE;
 #endif
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 7) || ENGINE_MAJOR_VERSION > 5
+	const UEnum* EnumPtr = FindObject<UEnum>(outerIn, *enumName);
+#else
 	const UEnum* EnumPtr = FindObject<UEnum>(outerIn, *enumName, false);
+#endif
 	if(!EnumPtr)
 	{
 		// Look for the dynamic enum
@@ -57,7 +61,11 @@ bool URyRuntimeMetaHelpers::GetEnumValueFromName(const FString enumName, const F
 #if ENGINE_MAJOR_VERSION < 5
 	outerIn = ANY_PACKAGE;
 #endif
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 7) || ENGINE_MAJOR_VERSION > 5
+	const UEnum* EnumPtr = FindObject<UEnum>(outerIn, *enumName);
+#else
 	const UEnum* EnumPtr = FindObject<UEnum>(outerIn, *enumName, false);
+#endif
 	if(!EnumPtr)
 	{
 		// Look for the dynamic enum
@@ -98,7 +106,11 @@ bool URyRuntimeMetaHelpers::GetEnumNameByIndex(const FString enumName, const uin
 #if ENGINE_MAJOR_VERSION < 5
 	outerIn = ANY_PACKAGE;
 #endif
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 7) || ENGINE_MAJOR_VERSION > 5
+	const UEnum* EnumPtr = FindObject<UEnum>(outerIn, *enumName);
+#else
 	const UEnum* EnumPtr = FindObject<UEnum>(outerIn, *enumName, false);
+#endif
 	if(!EnumPtr)
 	{
 		// Look for the dynamic enum
@@ -134,7 +146,11 @@ bool URyRuntimeMetaHelpers::GetEnumNameByValue(const FString enumName, const int
 #if ENGINE_MAJOR_VERSION < 5
 	outerIn = ANY_PACKAGE;
 #endif
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 7) || ENGINE_MAJOR_VERSION > 5
+	const UEnum* EnumPtr = FindObject<UEnum>(outerIn, *enumName);
+#else
 	const UEnum* EnumPtr = FindObject<UEnum>(outerIn, *enumName, false);
+#endif
 	if(!EnumPtr)
 	{
 		// Look for the dynamic enum

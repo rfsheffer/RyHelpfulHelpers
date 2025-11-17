@@ -413,7 +413,11 @@ UEnum* UK2Node_LoadPackageWithPriority::GetRyAsyncLoadingResultEnum()
 {
 	if(!RyAsyncLoadingResultEnum)
 	{
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 7) || ENGINE_MAJOR_VERSION > 5
+		RyAsyncLoadingResultEnum = FindObject<UEnum>(nullptr, TEXT("/Script/RyRuntime.ERyAsyncLoadingResult"), EFindObjectFlags::ExactClass);
+#else
 		RyAsyncLoadingResultEnum = FindObject<UEnum>(nullptr, TEXT("/Script/RyRuntime.ERyAsyncLoadingResult"), true);
+#endif
 		check(RyAsyncLoadingResultEnum);
 		PreloadObject(RyAsyncLoadingResultEnum);
 	}

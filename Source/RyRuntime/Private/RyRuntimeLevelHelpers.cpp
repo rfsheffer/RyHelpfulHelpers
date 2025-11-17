@@ -311,7 +311,11 @@ bool URyRuntimeLevelHelpers::IsLevelPersistentLevel(const ULevel* levelIn)
 */
 UObject* URyRuntimeLevelHelpers::FindObjectInLevelByName(ULevel* levelToSearch, const FString& nameToFind)
 {
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 7) || ENGINE_MAJOR_VERSION > 5
+    return StaticFindObject(/*Class=*/ nullptr, levelToSearch, *nameToFind, EFindObjectFlags::ExactClass);
+#else
     return StaticFindObject(/*Class=*/ nullptr, levelToSearch, *nameToFind, true);
+#endif
 }
 
 //---------------------------------------------------------------------------------------------------------------------

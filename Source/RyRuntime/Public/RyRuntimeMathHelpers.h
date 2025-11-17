@@ -538,20 +538,20 @@ public:
 	/** 
 	* Checks whether the given location is inside this box.
 	* 
-	* @param position - The location to test for inside the bounding volume.
+	* @param in - The location to test for inside the bounding volume.
 	* @return true if location is inside this volume.
 	*/
 	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box")
-	static bool IsPositionInsideBox(const FVector& position, const FBox& box);
+	static bool IsPositionInsideBox(const FVector& in, const FBox& box);
 
 	/** 
 	* Checks whether the given location is inside or on this box.
 	* 
-	* @param position - The location to test for inside the bounding volume.
+	* @param in - The location to test for inside the bounding volume.
 	* @return true if location is inside this volume.
 	*/
 	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box")
-	static bool IsPositionInsideOrOnBox(const FVector& position, const FBox& box);
+	static bool IsPositionInsideOrOnBox(const FVector& in, const FBox& box);
 
 	/** 
 	* Checks whether a given box is fully encapsulated by this box.
@@ -565,11 +565,11 @@ public:
 	/** 
 	* Checks whether the given location is inside this box in the XY plane.
 	* 
-	* @param position - The location to test for inside the bounding box.
+	* @param in - The location to test for inside the bounding box.
 	* @return true if location is inside this box in the XY plane.
 	*/
 	UFUNCTION(BlueprintPure, Category="RyRuntime|Math|Box")
-	static bool IsPositionInsideBoxXY(const FVector& position, const FBox& box);
+	static bool IsPositionInsideBoxXY(const FVector& in, const FBox& box);
 
 	/** 
 	* Checks whether the given box is fully encapsulated by this box in the XY plane.
@@ -1073,18 +1073,18 @@ void URyRuntimeMathHelpers::TransformBoxBy(const FBox& boxToTransform, const FTr
 /**
 */
 FORCEINLINE
-bool URyRuntimeMathHelpers::IsPositionInsideBox(const FVector& position, const FBox& box)
+bool URyRuntimeMathHelpers::IsPositionInsideBox(const FVector& in, const FBox& box)
 {
-	return box.IsInside(position);
+	return box.IsInside(in);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
 */
 FORCEINLINE
-bool URyRuntimeMathHelpers::IsPositionInsideOrOnBox(const FVector& position, const FBox& box)
+bool URyRuntimeMathHelpers::IsPositionInsideOrOnBox(const FVector& in, const FBox& box)
 {
-	return box.IsInsideOrOn(position);
+	return box.IsInsideOrOn(in);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -1100,9 +1100,9 @@ bool URyRuntimeMathHelpers::IsBoxInsideOtherBox(const FBox& box, const FBox& oth
 /**
 */
 FORCEINLINE
-bool URyRuntimeMathHelpers::IsPositionInsideBoxXY(const FVector& position, const FBox& box)
+bool URyRuntimeMathHelpers::IsPositionInsideBoxXY(const FVector& in, const FBox& box)
 {
-	return box.IsInsideXY(position);
+	return box.IsInsideXY(in);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
