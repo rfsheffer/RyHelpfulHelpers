@@ -59,7 +59,7 @@ public:
     /// In Shipping and Test builds this function is greatly stripped, printing to the log and not to the users local console or the screen.
     UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContextObject", CallableWithoutWorldContext, Keywords = "log print", AdvancedDisplay = "4"), Category = "RyRuntime|LogHelpers")
 	static void PrintLogString(UObject* WorldContextObject, const FString& InString, const FString& CategoryName, ERyRuntimeLogVerbosity verbosity = ERyRuntimeLogVerbosity::Log, 
-                               bool PrintToScreen = false, bool PrintToLog = true, FLinearColor TextColor = FLinearColor(0.0, 0.66, 1.0), const float Duration = 0.0f);
+                               bool PrintToScreen = false, bool PrintToLog = true, FLinearColor TextColor = FLinearColor(0.0f, 0.66f, 1.0f), const float Duration = 0.0f);
 
 	/// Copies the current log to a destination file
 	/// If the destLogFileName is unusable because of conflict, a better choice will try to be determined.

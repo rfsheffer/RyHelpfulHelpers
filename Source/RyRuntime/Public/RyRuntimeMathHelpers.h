@@ -62,6 +62,11 @@ enum class ERyUnit : uint8
 	/** Impulse unit. */
 	NewtonSeconds, KilogramCentimeters, KilogramMeters,
 #endif
+	
+#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 8)
+	/** Loudness unit. */
+	Decibels,
+#endif
 
     /** Frequency units */
     Hertz, Kilohertz, Megahertz, Gigahertz, RevolutionsPerMinute,

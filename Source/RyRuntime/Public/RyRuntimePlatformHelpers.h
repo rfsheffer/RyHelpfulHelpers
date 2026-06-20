@@ -681,7 +681,11 @@ FORCEINLINE bool URyRuntimePlatformHelpers::IsInLowPowerMode()
 */
 FORCEINLINE float URyRuntimePlatformHelpers::GetDeviceTemperatureLevel()
 {
+#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 8)
+	return FPlatformMisc::GetDeviceTemperature();
+#else
 	return FPlatformMisc::GetDeviceTemperatureLevel();
+#endif
 }
 
 //---------------------------------------------------------------------------------------------------------------------
